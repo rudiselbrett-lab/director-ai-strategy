@@ -77,6 +77,14 @@
   .asof { color: rgba(255,255,255,0.5); font-size: 12px; margin-left: auto; white-space: nowrap; align-self: center; }
   @media (max-width: 880px) { .asof { display: none; } }
 
+  .demobar { background: var(--panel); border-bottom: 1px solid var(--hairline); }
+  .demobar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 7px 20px;
+    font-size: 11.5px; color: var(--ink-2);
+    display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap;
+  }
+  .demobar .smallcaps { color: var(--gold); }
+
   .wrap { max-width: 1180px; margin: 0 auto; padding: 26px 20px 48px; }
   [role="tabpanel"]:not([hidden]) { animation: fadeup 0.25s ease; }
   @keyframes fadeup { from { opacity: 0; transform: translateY(4px); } }
@@ -217,6 +225,31 @@
   .backlog .bscore { font: 700 12px var(--sans); font-variant-numeric: tabular-nums; }
   .backlog .bnote { color: var(--ink-3); font-size: 11.5px; margin-top: 10px; }
   .backlog .empty { color: var(--ink-3); padding: 8px 0; }
+
+  /* trend panels */
+  .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 960px) { .row3 { grid-template-columns: 1fr; } }
+  .trend .takeaway {
+    color: var(--ink-2); font-size: 11.5px; margin-top: 10px;
+    border-top: 1px solid var(--hairline); padding-top: 8px;
+  }
+  .trend .sw { width: 10px; height: 10px; display: inline-block; flex: none; }
+  .trend .sw.proj { background: #cde2fb; border: 1px solid var(--rule); }
+  .trend .sw.real { background: var(--link); }
+  .qrow { display: grid; grid-template-columns: 44px 1fr auto; gap: 9px; align-items: center; padding: 5px 0; }
+  .qlab { font-size: 11.5px; color: var(--ink-2); text-align: right; white-space: nowrap; }
+  .qtrack { position: relative; height: 14px; background: #cde2fb; border: 1px solid var(--hairline); border-radius: 0 2px 2px 0; }
+  .qfill { position: absolute; top: -1px; bottom: -1px; left: -1px; background: var(--link); border-radius: 0 2px 2px 0; }
+  .qval { font-size: 11px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cols { display: flex; align-items: flex-end; gap: 10px; height: 112px; padding-top: 4px; border-bottom: 1px solid var(--rule); }
+  .colwrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; min-width: 0; }
+  .colv { font-size: 10.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .colbar { width: 100%; max-width: 22px; background: var(--link); border-radius: 2px 2px 0 0; border: none; padding: 0; cursor: default; }
+  .colbar:hover, .colbar:focus-visible { filter: brightness(1.15); }
+  .collabs, .linemonths { display: flex; gap: 10px; padding-top: 5px; }
+  .collabs span, .linemonths span { flex: 1; text-align: center; font-size: 10.5px; color: var(--ink-3); }
+  .lineplot { width: 100%; height: auto; display: block; }
+  .lineplot text { fill: var(--ink-2); font: 600 11px var(--sans); }
 
   /* needs attention */
   .attn { margin-bottom: 14px; }
@@ -521,6 +554,21 @@
 
   footer { color: var(--ink-3); font-size: 11.5px; margin-top: 28px; max-width: 1180px; padding: 14px 20px 40px; margin-left: auto; margin-right: auto; border-top: 1px solid var(--hairline); }
   footer code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px; }
+
+  /* ---------- print / PDF ---------- */
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .topbar { position: static; }
+    .tabs, .filters, footer, details.ref { display: none; }
+    .asof { display: inline; color: rgba(255,255,255,0.75); }
+    .rail { position: static; }
+    .card, .stat, .tenet, .lstage, .opp, .brief, fieldset, .qrow { break-inside: avoid; }
+    .row2, .row3 { break-inside: avoid; }
+    .tscroll { overflow: visible; }
+    table.port { min-width: 0; font-size: 11px; }
+    .port th, .port td { padding: 6px 8px; }
+    .tip, dialog.playbook { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -540,6 +588,13 @@
     <span class="asof" id="asof"></span>
   </div>
 </nav>
+
+<div class="demobar">
+  <div class="demobar-inner">
+    <span class="smallcaps">Working demo</span>
+    <span>Illustrative data for discussion — in production this view reads live from Jira. Health, staleness, and the brief recompute on every load.</span>
+  </div>
+</div>
 
 <main class="wrap">
 
@@ -574,6 +629,33 @@
 
   <!-- stat band -->
   <div class="statband" id="kpis"></div>
+
+  <!-- trend row: the "is it getting better" view; portfolio history, not filtered -->
+  <div class="row3">
+    <section class="card trend" aria-label="Value realized versus projected by quarter">
+      <div class="cardhead">
+        <h2>Value — realized vs. projected</h2>
+        <div class="legend">
+          <span class="key"><span class="sw real"></span> Realized</span>
+          <span class="key"><span class="sw proj"></span> Projected</span>
+        </div>
+      </div>
+      <div id="trend-value"></div>
+      <div class="takeaway" id="tv-note"></div>
+    </section>
+    <section class="card trend" aria-label="Triage decisions per month">
+      <div class="cardhead"><h2>Triage decisions per month</h2></div>
+      <div class="cols" id="trend-decisions"></div>
+      <div class="collabs" id="trend-decisions-labels"></div>
+      <div class="takeaway" id="td-note"></div>
+    </section>
+    <section class="card trend" aria-label="Cycle time from intake to decision">
+      <div class="cardhead"><h2>Cycle time — intake to decision</h2></div>
+      <div id="trend-cycle"></div>
+      <div class="linemonths" id="trend-cycle-labels"></div>
+      <div class="takeaway" id="tc-note"></div>
+    </section>
+  </div>
 
   <div class="row2">
     <section class="card pipeline" aria-label="Pipeline by stage">
@@ -964,6 +1046,29 @@ const STAGE_DETAILS = {
         "Cost of Delay = business value + time criticality + risk reduction / enablement. Technology owns job size." ] },
     ],
   },
+};
+
+/* Portfolio history for the trend panels. Value figures are $K of
+   annual run-rate; realized is measured at Benefits Review. */
+const TRENDS = {
+  value: [
+    { q: "Q4 '25", projected: 1800, realized: 1500 },
+    { q: "Q1 '26", projected: 2600, realized: 2100 },
+    { q: "Q2 '26", projected: 4200, realized: 3400 },
+    { q: "Q3 '26", projected: 5700, realized: 2900, partial: true },
+  ],
+  decisions: [
+    { m: "Feb", n: 4,  mix: { Approve: 1, "Rapid Prototype": 1, Decline: 2 } },
+    { m: "Mar", n: 6,  mix: { Approve: 2, "Rapid Prototype": 1, "More Discovery": 1, Decline: 2 } },
+    { m: "Apr", n: 5,  mix: { Approve: 1, "Rapid Prototype": 2, Decline: 2 } },
+    { m: "May", n: 8,  mix: { Approve: 2, "Rapid Prototype": 2, Partner: 1, Decline: 3 } },
+    { m: "Jun", n: 9,  mix: { Approve: 3, "Rapid Prototype": 2, "More Discovery": 1, Decline: 3 } },
+    { m: "Jul", n: 11, mix: { Approve: 3, "Rapid Prototype": 3, Partner: 1, Decline: 4 } },
+  ],
+  cycle: [
+    { m: "Feb", days: 34 }, { m: "Mar", days: 31 }, { m: "Apr", days: 28 },
+    { m: "May", days: 26 }, { m: "Jun", days: 23 }, { m: "Jul", days: 21 },
+  ],
 };
 
 const USE_CASES = [
@@ -1618,6 +1723,8 @@ function renderStatic() {
     lg.append(card);
   });
 
+  renderTrends();
+
   // intake team criteria grid
   const CRITERIA = ["Strategic alignment", "Business value", "Scale", "Feasibility", "Risk exposure", "Confidence in stated value"];
   const cwrap = document.getElementById("criteria");
@@ -1637,6 +1744,128 @@ function renderStatic() {
     row.append(seg);
     cwrap.append(row);
   });
+}
+
+/* ---------- trend panels (portfolio history — rendered once) ---------- */
+function renderTrends() {
+  // Value: per-quarter track (projected) with fill (realized), one hue
+  const vwrap = document.getElementById("trend-value");
+  const maxP = Math.max(...TRENDS.value.map(v => v.projected));
+  for (const v of TRENDS.value) {
+    const row = el("div", "qrow");
+    row.append(el("div", "qlab", v.q));
+    const track = el("div", "qtrack");
+    track.style.width = (v.projected / maxP * 100) + "%";
+    const fill = el("div", "qfill");
+    fill.style.width = Math.round(v.realized / v.projected * 100) + "%";
+    track.append(fill);
+    track.tabIndex = 0;
+    track.setAttribute("role", "img");
+    track.setAttribute("aria-label", v.q + ": " + fmtMoney(v.realized) + " realized of " +
+      fmtMoney(v.projected) + " projected" + (v.partial ? " (quarter in flight)" : ""));
+    const enter = ev => {
+      tip.replaceChildren();
+      tip.append(el("div", "tt", v.q + (v.partial ? " — in flight" : "")));
+      for (const [val, lab] of [[fmtMoney(v.realized), "realized"], [fmtMoney(v.projected), "projected"]]) {
+        const r = el("div", "tr");
+        r.append(el("span", "tv", val), el("span", "tl", lab));
+        tip.append(r);
+      }
+      if (ev.clientX !== undefined && ev.type !== "focus") showTipAt(ev.clientX, ev.clientY);
+      else { const b = track.getBoundingClientRect(); showTipAt(b.left + b.width / 2, b.bottom); }
+    };
+    track.addEventListener("pointermove", enter);
+    track.addEventListener("pointerleave", hideTip);
+    track.addEventListener("focus", enter);
+    track.addEventListener("blur", hideTip);
+    row.append(track, el("div", "qval", fmtMoney(v.realized) + " / " + fmtMoney(v.projected)));
+    vwrap.append(row);
+  }
+  const vLast = TRENDS.value[TRENDS.value.length - 1];
+  document.getElementById("tv-note").textContent =
+    fmtMoney(vLast.realized) + " realized of " + fmtMoney(vLast.projected) + " projected — " + vLast.q + " still in flight.";
+
+  // Decisions: single-series columns with value on the cap
+  const dwrap = document.getElementById("trend-decisions");
+  const dlabs = document.getElementById("trend-decisions-labels");
+  const maxN = Math.max(...TRENDS.decisions.map(d => d.n));
+  for (const d of TRENDS.decisions) {
+    const cw = el("div", "colwrap");
+    cw.append(el("div", "colv", String(d.n)));
+    const bar = el("button", "colbar");
+    bar.type = "button";
+    bar.style.height = Math.round(d.n / maxN * 74) + "px";
+    bar.setAttribute("aria-label", d.m + ": " + d.n + " decisions — " +
+      Object.entries(d.mix).map(([k, v]) => v + " " + k).join(", "));
+    const enter = ev => {
+      tip.replaceChildren();
+      tip.append(el("div", "tt", d.m + " — " + d.n + " decisions"));
+      for (const [k, v] of Object.entries(d.mix)) {
+        const r = el("div", "tr");
+        r.append(el("span", "tv", String(v)), el("span", "tl", k));
+        tip.append(r);
+      }
+      if (ev.clientX !== undefined && ev.type !== "focus") showTipAt(ev.clientX, ev.clientY);
+      else { const b = bar.getBoundingClientRect(); showTipAt(b.left + b.width / 2, b.bottom); }
+    };
+    bar.addEventListener("pointermove", enter);
+    bar.addEventListener("pointerleave", hideTip);
+    bar.addEventListener("focus", enter);
+    bar.addEventListener("blur", hideTip);
+    cw.append(bar);
+    dwrap.append(cw);
+    dlabs.append(el("span", null, d.m));
+  }
+  const dFirst = TRENDS.decisions[0], dLast = TRENDS.decisions[TRENDS.decisions.length - 1];
+  document.getElementById("td-note").textContent =
+    dLast.n + " decisions in " + dLast.m + ", up from " + dFirst.n + " in " + dFirst.m + " — throughput, not backlog.";
+
+  // Cycle time: single 2px line with end labels
+  const cwrap = document.getElementById("trend-cycle");
+  const clabs = document.getElementById("trend-cycle-labels");
+  const pts = TRENDS.cycle;
+  const W = 330, H = 100, padX = 26, padTop = 24, padBot = 12;
+  const dMin = Math.min(...pts.map(p => p.days)), dMax = Math.max(...pts.map(p => p.days));
+  const x = i => padX + i * (W - 2 * padX) / (pts.length - 1);
+  const y = d => padTop + (dMax - d) / (dMax - dMin) * (H - padTop - padBot);
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.setAttribute("class", "lineplot");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "Median days from intake to decision, " +
+    pts.map(p => p.m + " " + p.days).join(", "));
+  const base = document.createElementNS(svgNS, "line");
+  base.setAttribute("x1", padX - 8); base.setAttribute("x2", W - padX + 8);
+  base.setAttribute("y1", H - 1); base.setAttribute("y2", H - 1);
+  base.setAttribute("stroke", "#c9cdd4"); base.setAttribute("stroke-width", "1");
+  svg.append(base);
+  const line = document.createElementNS(svgNS, "polyline");
+  line.setAttribute("points", pts.map((p, i) => x(i) + "," + y(p.days)).join(" "));
+  line.setAttribute("fill", "none");
+  line.setAttribute("stroke", "#0f56a5");
+  line.setAttribute("stroke-width", "2");
+  line.setAttribute("stroke-linejoin", "round");
+  line.setAttribute("stroke-linecap", "round");
+  svg.append(line);
+  pts.forEach((p, i) => {
+    const c = document.createElementNS(svgNS, "circle");
+    c.setAttribute("cx", x(i)); c.setAttribute("cy", y(p.days)); c.setAttribute("r", "4");
+    c.setAttribute("fill", "#0f56a5"); c.setAttribute("stroke", "#ffffff"); c.setAttribute("stroke-width", "2");
+    svg.append(c);
+    if (i === 0 || i === pts.length - 1) {
+      const t = document.createElementNS(svgNS, "text");
+      t.setAttribute("x", x(i)); t.setAttribute("y", y(p.days) - 10);
+      t.setAttribute("text-anchor", "middle");
+      t.textContent = i === 0 ? String(p.days) : p.days + "d";
+      svg.append(t);
+    }
+  });
+  cwrap.append(svg);
+  for (const p of pts) clabs.append(el("span", null, p.m));
+  const cFirst = pts[0], cLast = pts[pts.length - 1];
+  document.getElementById("tc-note").textContent =
+    "Median " + cLast.days + " days in " + cLast.m + ", down from " + cFirst.days + " in " + cFirst.m + ".";
 }
 
 /* ---------- intake coach: rates narrative answers as they're written ----------
