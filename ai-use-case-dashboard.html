@@ -5,61 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Use Case Portfolio</title>
 <style>
-  /* ---------- design tokens (light) ---------- */
+  /* ---------- design tokens — deliberately white ---------- */
   :root {
     color-scheme: light;
-    --page:           #f9f9f7;
-    --surface-1:      #fcfcfb;
-    --text-primary:   #0b0b0b;
+    --page:           #ffffff;
+    --surface-1:      #ffffff;
+    --panel:          #f7f7f5;
+    --text-primary:   #101010;
     --text-secondary: #52514e;
-    --text-muted:     #898781;
-    --grid:           #e1e0d9;
-    --baseline:       #c3c2b7;
-    --border:         rgba(11,11,11,0.10);
+    --text-muted:     #8b8983;
+    --grid:           #ececea;
+    --baseline:       #d6d5d0;
+    --border:         #e7e6e2;
     --accent:         #2a78d6;
+    --accent-deep:    #1c5cab;
     --accent-text:    #1c5cab;
-    --accent-wash:    rgba(42,120,214,0.08);
+    --accent-wash:    rgba(42,120,214,0.07);
+    --accent-wash-2:  rgba(42,120,214,0.12);
     /* status palette — fixed, never themed */
     --status-good:     #0ca30c;
     --status-warning:  #fab219;
     --status-critical: #d03b3b;
     --status-serious:  #ec835a;
-    --wash:            rgba(11,11,11,0.04);
-    --shadow: 0 1px 2px rgba(11,11,11,0.04), 0 8px 24px rgba(11,11,11,0.05);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:where(:not([data-theme="light"])) {
-      color-scheme: dark;
-      --page:           #0d0d0d;
-      --surface-1:      #1a1a19;
-      --text-primary:   #ffffff;
-      --text-secondary: #c3c2b7;
-      --text-muted:     #898781;
-      --grid:           #2c2c2a;
-      --baseline:       #383835;
-      --border:         rgba(255,255,255,0.10);
-      --accent:         #3987e5;
-      --accent-text:    #86b6ef;
-      --accent-wash:    rgba(57,135,229,0.14);
-      --wash:           rgba(255,255,255,0.06);
-      --shadow: none;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --page:           #0d0d0d;
-    --surface-1:      #1a1a19;
-    --text-primary:   #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted:     #898781;
-    --grid:           #2c2c2a;
-    --baseline:       #383835;
-    --border:         rgba(255,255,255,0.10);
-    --accent:         #3987e5;
-    --accent-text:    #86b6ef;
-    --accent-wash:    rgba(57,135,229,0.14);
-    --wash:           rgba(255,255,255,0.06);
-    --shadow: none;
+    --wash:            rgba(16,16,16,0.035);
+    --shadow: 0 1px 2px rgba(16,16,16,0.04), 0 10px 28px rgba(16,16,16,0.05);
+    --shadow-lift: 0 2px 4px rgba(16,16,16,0.05), 0 14px 36px rgba(16,16,16,0.09);
   }
 
   * { box-sizing: border-box; }
@@ -71,36 +41,63 @@
     font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  button { font: inherit; color: inherit; }
 
   /* ---------- top bar & tabs ---------- */
   .topbar {
     position: sticky; top: 0; z-index: 40;
-    background: var(--surface-1);
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
   }
   .topbar-inner {
     max-width: 1180px; margin: 0 auto; padding: 0 20px;
-    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
   }
-  .brand { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; padding: 14px 0; white-space: nowrap; }
-  .brand .brand-sub { color: var(--text-muted); font-weight: 500; font-size: 13px; margin-left: 8px; }
-  .tabs { display: flex; gap: 4px; align-self: stretch; }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 13px 0; white-space: nowrap; }
+  .logomark {
+    width: 27px; height: 27px; border-radius: 8px; flex: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    color: #fff; display: grid; place-items: center; font-size: 13px;
+  }
+  .brand .t { font-size: 15.5px; font-weight: 700; letter-spacing: -0.01em; }
+  .brand .brand-sub { color: var(--text-muted); font-weight: 500; font-size: 12.5px; }
+  .tabs { display: flex; gap: 2px; align-self: stretch; }
   .tabs button {
-    font: inherit; font-size: 13.5px; font-weight: 600;
+    font-size: 13.5px; font-weight: 600;
     color: var(--text-secondary); background: none; border: none; cursor: pointer;
-    padding: 0 14px; position: relative;
+    padding: 0 13px; position: relative;
   }
   .tabs button:hover { color: var(--text-primary); }
   .tabs button[aria-selected="true"] { color: var(--accent-text); }
   .tabs button[aria-selected="true"]::after {
     content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px;
-    height: 2px; background: var(--accent); border-radius: 2px 2px 0 0;
+    height: 2.5px; background: var(--accent); border-radius: 3px 3px 0 0;
   }
   .asof { color: var(--text-muted); font-size: 12.5px; margin-left: auto; white-space: nowrap; }
-  @media (max-width: 720px) { .asof { display: none; } }
+  @media (max-width: 880px) { .asof { display: none; } }
 
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 48px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 26px 20px 48px; }
+  [role="tabpanel"]:not([hidden]) { animation: fadeup 0.28s ease; }
+  @keyframes fadeup { from { opacity: 0; transform: translateY(5px); } }
+
   .tagline { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 18px; max-width: 860px; }
+
+  /* clickable text that opens a playbook */
+  .linky {
+    background: none; border: none; padding: 0; cursor: pointer; text-align: inherit;
+    font-size: inherit; font-weight: inherit; color: inherit;
+    border-bottom: 1px dashed transparent;
+  }
+  .linky:hover { color: var(--accent-text); border-bottom-color: var(--accent-text); }
+
+  .infobtn {
+    display: inline-grid; place-items: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1px solid var(--baseline); background: none; cursor: pointer;
+    font-size: 10px; font-weight: 700; color: var(--text-muted);
+    vertical-align: 1px;
+  }
+  .infobtn:hover { border-color: var(--accent); color: var(--accent-text); background: var(--accent-wash); }
 
   /* ---------- filter row ---------- */
   .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 18px; }
@@ -118,21 +115,27 @@
   }
   .filters .chk input { accent-color: var(--accent); }
   .filters .reset {
-    font: inherit; font-size: 13px; color: var(--text-secondary);
+    font-size: 13px; color: var(--text-secondary);
     background: none; border: none; cursor: pointer; padding: 7px 10px; border-radius: 9px;
   }
   .filters .reset:hover { background: var(--wash); color: var(--text-primary); }
 
-  /* ---------- KPI row ---------- */
+  /* ---------- KPI row (tiles are click-to-filter) ---------- */
   .kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
   @media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
   .tile {
     background: var(--surface-1); border: 1px solid var(--border);
     border-radius: 14px; padding: 15px 16px 13px; box-shadow: var(--shadow);
+    text-align: left; transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   }
+  button.tile { cursor: pointer; }
+  button.tile:hover { box-shadow: var(--shadow-lift); transform: translateY(-1px); }
+  .tile.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow); }
   .tile .label { color: var(--text-secondary); font-size: 12.5px; font-weight: 550; display: flex; align-items: center; gap: 7px; }
   .tile .value { font-size: 32px; font-weight: 650; letter-spacing: -0.02em; margin-top: 3px; }
   .tile .sub { color: var(--text-muted); font-size: 12px; margin-top: 1px; }
+  .tile .hint { color: var(--accent-text); font-size: 11px; margin-top: 5px; opacity: 0; transition: opacity 0.15s ease; }
+  button.tile:hover .hint, .tile.active .hint { opacity: 1; }
 
   /* status glyph dot: color + icon, never color alone */
   .dot {
@@ -144,7 +147,7 @@
   .dot.warning  { background: var(--status-warning);  color: #0b0b0b; }
   .dot.critical { background: var(--status-critical); color: #fff; }
   .dot.serious  { background: var(--status-serious);  color: #0b0b0b; }
-  .dot.neutral  { background: var(--baseline);        color: var(--surface-1); }
+  .dot.neutral  { background: var(--baseline);        color: #fff; }
 
   /* ---------- cards / charts ---------- */
   .row2 { display: grid; grid-template-columns: 3fr 2fr; gap: 12px; margin-bottom: 16px; }
@@ -166,7 +169,7 @@
   .pipeline .pname { font-size: 12.5px; color: var(--text-secondary); text-align: right; }
   .pipeline .track { position: relative; height: 24px; }
   .pipeline .bar { display: flex; gap: 2px; height: 24px; }
-  .pipeline .seg { height: 100%; cursor: default; outline-offset: 2px; }
+  .pipeline .seg { height: 100%; cursor: default; outline-offset: 2px; border: none; padding: 0; appearance: none; border-radius: 0; }
   .pipeline .seg:hover, .pipeline .seg:focus-visible { filter: brightness(1.12); }
   .pipeline .seg.good     { background: var(--status-good); }
   .pipeline .seg.warning  { background: var(--status-warning); }
@@ -187,7 +190,7 @@
   .chip {
     font-size: 11.5px; color: var(--text-secondary);
     border: 1px solid var(--border); border-radius: 999px;
-    padding: 2px 8px; white-space: nowrap; background: var(--wash);
+    padding: 2px 8px; white-space: nowrap; background: var(--panel);
   }
   .attn .empty { color: var(--text-muted); padding: 12px 0; }
 
@@ -208,7 +211,7 @@
   .port thead th .arrow { font-size: 9px; margin-left: 3px; color: var(--accent-text); }
   .port tbody td { border-bottom: 1px solid var(--grid); vertical-align: top; }
   .port tbody tr:last-child td { border-bottom: none; }
-  .port tbody tr:hover { background: var(--wash); }
+  .port tbody tr:hover { background: var(--accent-wash); }
   .port .name { font-weight: 600; }
   .port .sub { color: var(--text-muted); font-size: 12px; margin-top: 1px; }
   .port .num { font-variant-numeric: tabular-nums; }
@@ -223,15 +226,16 @@
   .flag {
     display: inline-block; font-size: 10.5px; color: var(--text-secondary);
     border: 1px solid var(--border); border-radius: 5px; padding: 0 5px; margin: 2px 4px 0 0;
+    background: var(--panel);
   }
   .empty-table { color: var(--text-muted); padding: 18px 18px 22px; }
 
   /* ---------- tooltip ---------- */
   .tip {
-    position: fixed; z-index: 50; max-width: 280px;
+    position: fixed; z-index: 60; max-width: 280px;
     background: var(--surface-1); border: 1px solid var(--border);
     border-radius: 10px; padding: 8px 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+    box-shadow: var(--shadow-lift);
     pointer-events: none; display: none; font-size: 12.5px;
   }
   .tip .tt { font-weight: 650; margin-bottom: 4px; }
@@ -271,16 +275,20 @@
     font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--accent-text);
   }
-  .mission { padding: 26px 0 8px; max-width: 780px; }
+  .mission {
+    padding: 30px 32px; max-width: none; border-radius: 18px;
+    background: linear-gradient(135deg, var(--accent-wash) 0%, rgba(42,120,214,0.02) 55%, transparent 100%);
+    border: 1px solid var(--border);
+  }
   .mission .statement {
     font-size: 27px; line-height: 1.3; font-weight: 650; letter-spacing: -0.015em;
-    margin: 10px 0 12px;
+    margin: 10px 0 12px; max-width: 820px;
   }
-  @media (max-width: 720px) { .mission .statement { font-size: 22px; } }
+  @media (max-width: 720px) { .mission { padding: 22px; } .mission .statement { font-size: 22px; } }
   .mission .statement em { font-style: normal; color: var(--accent-text); }
-  .mission .statement-sub { color: var(--text-secondary); font-size: 15px; margin: 0; }
+  .mission .statement-sub { color: var(--text-secondary); font-size: 15px; margin: 0; max-width: 760px; }
 
-  .sect { margin-top: 40px; }
+  .sect { margin-top: 44px; }
   .secthead { display: flex; align-items: baseline; gap: 12px; margin: 0 0 4px; }
   .secthead h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
   .sectsub { color: var(--text-secondary); font-size: 13.5px; margin: 2px 0 16px; max-width: 760px; }
@@ -288,7 +296,7 @@
   .tenets { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
   .tenet {
     background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
-    padding: 16px; box-shadow: var(--shadow);
+    padding: 16px; box-shadow: var(--shadow); border-top: 3px solid var(--accent);
   }
   .tenet .no { font-size: 11.5px; font-weight: 700; color: var(--accent-text); letter-spacing: 0.06em; }
   .tenet h3 { font-size: 14.5px; font-weight: 650; margin: 6px 0 6px; letter-spacing: -0.005em; }
@@ -305,34 +313,48 @@
   .lifegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   @media (max-width: 980px) { .lifegrid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .lifegrid { grid-template-columns: 1fr; } }
-  .lstage {
+  button.lstage {
     background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
-    padding: 14px 15px; box-shadow: var(--shadow);
+    padding: 14px 15px; box-shadow: var(--shadow); cursor: pointer; text-align: left;
+    display: flex; flex-direction: column;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
   }
+  button.lstage:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); border-color: var(--accent); }
   .lstage .top { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
   .stepnum {
     width: 24px; height: 24px; border-radius: 8px; flex: none;
-    background: var(--accent-wash); color: var(--accent-text);
+    background: var(--accent-wash-2); color: var(--accent-text);
     display: grid; place-items: center; font-size: 12px; font-weight: 700;
   }
   .lstage h3 { font-size: 13.5px; font-weight: 650; margin: 0; }
   .lstage .out { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 8px; }
   .lstage .meta { font-size: 11.5px; color: var(--text-muted); }
   .lstage .meta b { color: var(--text-secondary); font-weight: 550; }
+  .lstage .more { margin-top: auto; padding-top: 10px; font-size: 12px; font-weight: 600; color: var(--accent-text); }
   .gatenote { color: var(--text-muted); font-size: 12.5px; margin-top: 12px; }
 
-  .fivedec { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 14px; }
-  .dec {
-    border: 1px solid var(--border); border-radius: 12px; padding: 12px 13px;
+  .fivedec { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 14px; align-items: start; }
+  details.dec {
+    border: 1px solid var(--border); border-radius: 12px;
     background: var(--surface-1);
   }
-  .dec h4 { font-size: 12.5px; font-weight: 700; margin: 0 0 4px; }
-  .dec p { font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.45; }
+  details.dec > summary {
+    list-style: none; cursor: pointer; padding: 12px 13px;
+  }
+  details.dec > summary::-webkit-details-marker { display: none; }
+  details.dec h4 { font-size: 12.5px; font-weight: 700; margin: 0 0 4px; display: flex; align-items: center; justify-content: space-between; }
+  details.dec h4::after { content: "+"; color: var(--accent-text); font-weight: 600; }
+  details.dec[open] h4::after { content: "–"; }
+  details.dec summary p { font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.45; }
+  details.dec .decbody { padding: 0 13px 12px; font-size: 12px; color: var(--text-secondary); }
+  details.dec .decbody b { color: var(--text-primary); font-weight: 600; }
+  details.dec .decbody p { margin: 4px 0; }
+  details.dec[open] { border-color: var(--accent); }
 
   .quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
   .quote {
     border-left: 3px solid var(--accent); border-radius: 3px;
-    padding: 4px 0 4px 16px;
+    padding: 4px 0 4px 16px; margin: 0;
     font-size: 15px; line-height: 1.45; font-weight: 550; letter-spacing: -0.005em;
   }
   .quote .src { display: block; margin-top: 8px; font-size: 11.5px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
@@ -344,7 +366,7 @@
   }
   .opp .tag {
     display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--accent-text); background: var(--accent-wash);
+    text-transform: uppercase; color: var(--accent-text); background: var(--accent-wash-2);
     border-radius: 6px; padding: 3px 8px; margin-bottom: 9px;
   }
   .opp h3 { font-size: 14.5px; font-weight: 650; margin: 0 0 6px; }
@@ -360,11 +382,141 @@
   ol.steps li::before {
     content: counter(step);
     width: 24px; height: 24px; border-radius: 8px; flex: none;
-    background: var(--accent-wash); color: var(--accent-text);
+    background: var(--accent-wash-2); color: var(--accent-text);
     display: grid; place-items: center; font-size: 12px; font-weight: 700;
   }
   ol.steps .stitle { font-weight: 600; font-size: 13.5px; }
   ol.steps .sdesc { color: var(--text-secondary); font-size: 12.5px; }
+
+  /* ---------- stage playbook modal ---------- */
+  dialog.playbook {
+    width: min(680px, 92vw); border: 1px solid var(--border); border-radius: 16px;
+    padding: 0; box-shadow: 0 24px 64px rgba(16,16,16,0.22); background: var(--surface-1);
+  }
+  dialog.playbook::backdrop { background: rgba(16,16,16,0.35); }
+  .pbhead {
+    padding: 20px 24px 14px; border-bottom: 1px solid var(--grid);
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .pbhead .htext { flex: 1; }
+  .pbhead .kicker { display: block; margin-bottom: 4px; }
+  .pbhead h2 { font-size: 19px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .pbchips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pbchips .chip { background: var(--panel); }
+  .pbclose {
+    border: 1px solid var(--border); background: none; cursor: pointer;
+    width: 30px; height: 30px; border-radius: 9px; font-size: 15px; color: var(--text-secondary);
+    flex: none;
+  }
+  .pbclose:hover { background: var(--wash); color: var(--text-primary); }
+  .pbbody { padding: 8px 24px 20px; max-height: 62vh; overflow-y: auto; }
+  .pbbody h3 { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin: 18px 0 8px; }
+  .pbbody ul { margin: 0; padding-left: 18px; }
+  .pbbody li { color: var(--text-secondary); font-size: 13px; margin: 5px 0; line-height: 1.5; }
+  .pbbody li b { color: var(--text-primary); font-weight: 600; }
+  .pbfoot { padding: 0 24px 20px; }
+  .pbfoot .golink {
+    display: inline-block; background: var(--accent); color: #fff; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 10px;
+  }
+  .pbfoot .golink:hover { background: var(--accent-deep); }
+
+  /* ---------- intake form tab ---------- */
+  .pagehead {
+    padding: 28px 32px; border-radius: 18px; border: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--accent-wash) 0%, rgba(42,120,214,0.02) 55%, transparent 100%);
+    margin-bottom: 20px;
+  }
+  .pagehead h1 { font-size: 23px; font-weight: 700; letter-spacing: -0.015em; margin: 8px 0 8px; }
+  .pagehead p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; max-width: 720px; }
+  .headchips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .headchips .chip { background: #fff; font-size: 12px; padding: 4px 11px; }
+
+  .intakegrid { display: grid; grid-template-columns: 5fr 2fr; gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .intakegrid { grid-template-columns: 1fr; } }
+
+  .iform fieldset {
+    border: 1px solid var(--border); border-radius: 14px; background: var(--surface-1);
+    padding: 18px 20px 20px; margin: 0 0 14px; box-shadow: var(--shadow);
+  }
+  .iform legend {
+    display: flex; align-items: center; gap: 9px; padding: 0 6px;
+    font-size: 13.5px; font-weight: 700;
+  }
+  .iform legend .stepnum { width: 22px; height: 22px; font-size: 11px; }
+  .fnote { color: var(--text-muted); font-size: 12px; margin: 2px 0 14px; }
+  .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .frow3 { display: grid; grid-template-columns: 2fr 1.5fr 1fr; gap: 12px; }
+  @media (max-width: 720px) { .frow, .frow3 { grid-template-columns: 1fr; } }
+  .field { margin-bottom: 13px; }
+  .field label { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 5px; }
+  .field label .opt-note { color: var(--text-muted); font-weight: 500; }
+  .field input[type="text"], .field input[type="date"], .field textarea {
+    width: 100%; font: inherit; font-size: 13.5px; color: var(--text-primary);
+    border: 1px solid var(--border); border-radius: 9px; padding: 9px 11px;
+    background: #fff;
+  }
+  .field textarea { min-height: 72px; resize: vertical; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-wash-2); }
+
+  .optgrid { display: grid; gap: 8px; }
+  .optgrid.cols2 { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 720px) { .optgrid.cols2 { grid-template-columns: 1fr; } }
+  label.opt {
+    display: flex; gap: 10px; align-items: flex-start;
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    cursor: pointer; background: #fff; transition: border-color 0.12s ease, background 0.12s ease;
+  }
+  label.opt:hover { border-color: var(--baseline); }
+  label.opt:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
+  label.opt input { accent-color: var(--accent); margin-top: 2px; flex: none; }
+  label.opt .ot { font-size: 13px; font-weight: 600; }
+  label.opt .od { font-size: 12px; color: var(--text-secondary); }
+
+  .submitrow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+  .primarybtn {
+    background: var(--accent); color: #fff; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 650; padding: 11px 22px; border-radius: 11px;
+    box-shadow: var(--shadow);
+  }
+  .primarybtn:hover { background: var(--accent-deep); }
+  .submitrow .mocknote { color: var(--text-muted); font-size: 12px; }
+
+  .rail { position: sticky; top: 68px; display: grid; gap: 12px; }
+  @media (max-width: 900px) { .rail { position: static; } }
+  .rail .card { padding: 15px 16px; }
+  .rail h3 { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 9px; }
+  .rail ul { margin: 0; padding-left: 16px; }
+  .rail li { font-size: 12.5px; color: var(--text-secondary); margin: 5px 0; line-height: 1.45; }
+  .rail li b { color: var(--text-primary); font-weight: 600; }
+
+  .teamonly {
+    margin-top: 6px; border: 1px solid var(--border); border-radius: 14px;
+    background: var(--panel); padding: 18px 20px 20px;
+  }
+  .teamonly .tohead { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .teamonly .tohead .kicker { color: var(--text-muted); }
+  .teamonly .rule { border-top: 1px dashed var(--baseline); margin: 10px 0 14px; }
+  .criteria { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px; margin-bottom: 16px; }
+  @media (max-width: 720px) { .criteria { grid-template-columns: 1fr; } }
+  .crit { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .crit .cl { font-size: 12.5px; font-weight: 550; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: #fff; }
+  .seg label { position: relative; cursor: pointer; }
+  .seg label + label { border-left: 1px solid var(--border); }
+  .seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .seg span { display: block; padding: 5px 12px; font-size: 12px; color: var(--text-secondary); }
+  .seg label:has(input:checked) span { background: var(--accent); color: #fff; font-weight: 600; }
+  .seg label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .recsteps { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .recsteps label { position: relative; cursor: pointer; }
+  .recsteps input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .recsteps span {
+    display: block; border: 1px solid var(--border); border-radius: 999px;
+    background: #fff; padding: 6px 14px; font-size: 12.5px; color: var(--text-secondary);
+  }
+  .recsteps label:has(input:checked) span { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .recsteps label:has(input:focus-visible) span { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   footer { color: var(--text-muted); font-size: 12px; margin-top: 28px; max-width: 1180px; padding: 0 20px 40px; margin-left: auto; margin-right: auto; }
   footer code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; }
@@ -374,10 +526,15 @@
 
 <nav class="topbar">
   <div class="topbar-inner">
-    <div class="brand">AI Use Case Portfolio<span class="brand-sub">Consumer Bank</span></div>
+    <div class="brand">
+      <span class="logomark" aria-hidden="true">✦</span>
+      <span class="t">AI Use Case Portfolio</span>
+      <span class="brand-sub">Consumer Bank</span>
+    </div>
     <div class="tabs" role="tablist" aria-label="Views">
       <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="true" aria-controls="tab-portfolio">Portfolio</button>
       <button type="button" role="tab" id="tabbtn-thinking" aria-selected="false" aria-controls="tab-thinking">How I Think About This</button>
+      <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake Form</button>
     </div>
     <span class="asof" id="asof"></span>
   </div>
@@ -388,7 +545,7 @@
 <!-- ================= PORTFOLIO TAB ================= -->
 <section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio">
 
-  <p class="tagline">One view, always current — what's in flight, what it's worth, who owns it, and what it's waiting on. Jira is the system of record; this page is the view.</p>
+  <p class="tagline">One view, always current — what's in flight, what it's worth, who owns it, and what it's waiting on. Jira is the system of record; this page is the view. Click any stage name for its playbook, or a KPI tile to filter.</p>
 
   <!-- filter row: scopes every number, chart, and table row below it -->
   <div class="filters" id="filters">
@@ -404,6 +561,7 @@
       <option value="fresh">Fresh</option>
       <option value="aging">Aging</option>
       <option value="stale">Stale</option>
+      <option value="notfresh">Aging or stale</option>
     </select>
     <input type="search" id="f-q" placeholder="Search name, owner, sponsor, ID…" aria-label="Search use cases">
     <label class="chk"><input type="checkbox" id="f-closed"> Show closed</label>
@@ -466,8 +624,6 @@
         <thead><tr><th>Stage</th><th>At-risk window</th><th>Aging after</th><th>Stale after</th><th>Cadence source</th></tr></thead>
         <tbody></tbody>
       </table>
-
-      <p>Stage ownership, operating forums, and triage decisions live on the <strong>How I Think About This</strong> tab.</p>
     </div>
   </details>
 </section>
@@ -505,17 +661,32 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">03</span><h2>The lifecycle</h2></div>
-    <p class="sectsub">Eight stages, each with one primary outcome, one accountable owner, and one system of record. No initiative advances without satisfying the decision criteria for its current stage.</p>
+    <p class="sectsub">Eight stages, each with one primary outcome, one accountable owner, and one system of record. No initiative advances without satisfying the decision criteria for its current stage. <strong>Click any stage for its playbook.</strong></p>
     <div class="lifegrid" id="lifegrid"></div>
     <p class="gatenote">Declining early is part of the process — the cost of a bad idea is lowest before anyone builds it. Declined and Transferred outcomes stay in the portfolio as data.</p>
 
-    <h3 style="font-size:13.5px; margin:22px 0 2px;">Triage: every use case leaves with a decision, an owner, and a date</h3>
+    <h3 style="font-size:13.5px; margin:24px 0 2px;">Triage: every use case leaves with a decision, an owner, and a date <span style="color:var(--text-muted); font-weight:500;">— click a decision for what it needs and what it gets</span></h3>
     <div class="fivedec">
-      <div class="dec"><h4>Approve</h4><p>Value is credible; committing capacity now. Needs a named sponsor, no open risk flag, and an agreed value measure.</p></div>
-      <div class="dec"><h4>Rapid Prototype</h4><p>Value plausible but unproven — two weeks, capped, to buy evidence. Returns to triage once, then Approve or Decline.</p></div>
-      <div class="dec"><h4>More Discovery</h4><p>One specific written question blocks the decision. One cycle; a second return forces Approve or Decline.</p></div>
-      <div class="dec"><h4>Partner</h4><p>The capability belongs elsewhere. Warm handoff to a contacted — not assumed — receiving team; closes as Transferred.</p></div>
-      <div class="dec"><h4>Decline</h4><p>Not proceeding — a normal outcome, with a stated reason. The requester hears it directly, not via the portfolio view.</p></div>
+      <details class="dec">
+        <summary><h4>Approve</h4><p>Value is credible and we are committing capacity now.</p></summary>
+        <div class="decbody"><p><b>Needs:</b> named sponsor, no open risk flag, agreed value measure.</p><p><b>Gets:</b> a delivery owner and capacity in the next increment.</p></div>
+      </details>
+      <details class="dec">
+        <summary><h4>Rapid Prototype</h4><p>Value is plausible but unproven — buy evidence before a build.</p></summary>
+        <div class="decbody"><p><b>Needs:</b> one stated question and a threshold for a good answer.</p><p><b>Gets:</b> two weeks, capped. Returns to triage once, then Approve or Decline.</p></div>
+      </details>
+      <details class="dec">
+        <summary><h4>More Discovery</h4><p>One specific question blocks the decision. Not a holding pattern.</p></summary>
+        <div class="decbody"><p><b>Needs:</b> the question in writing, an owner, a return date.</p><p><b>Gets:</b> one cycle. A second return forces Approve or Decline.</p></div>
+      </details>
+      <details class="dec">
+        <summary><h4>Partner</h4><p>The capability belongs elsewhere.</p></summary>
+        <div class="decbody"><p><b>Needs:</b> the receiving team contacted, not assumed.</p><p><b>Gets:</b> a warm handoff; closes as Transferred, tracked in a filter.</p></div>
+      </details>
+      <details class="dec">
+        <summary><h4>Decline</h4><p>Not proceeding — a normal outcome.</p></summary>
+        <div class="decbody"><p><b>Needs:</b> a reason from the list — low value, not feasible now, duplicate, already solved, or risk outweighs benefit.</p><p><b>Gets:</b> the requester hears it directly, not via the portfolio view.</p></div>
+      </details>
     </div>
   </div>
 
@@ -571,14 +742,188 @@
   </div>
 
 </section>
+
+<!-- ================= INTAKE FORM TAB ================= -->
+<section id="tab-intake" role="tabpanel" aria-labelledby="tabbtn-intake" hidden>
+
+  <div class="pagehead">
+    <div class="kicker">Capture surface</div>
+    <h1>AI / Automation Use Case Intake</h1>
+    <p>Intake is deliberately lightweight: the goal is to decide whether a use case is worth building, not to fully specify it. Ask only what the requester can answer — detailed benefit, effort, and risk work happens after experimentation.</p>
+    <div class="headchips">
+      <span class="chip">⏱ Target: 15 minutes</span>
+      <span class="chip">Reviewed weekly</span>
+      <span class="chip">Jira is the system of record</span>
+      <span class="chip">Routed, not queued</span>
+    </div>
+  </div>
+
+  <div class="intakegrid">
+    <form class="iform" id="iform" novalidate>
+
+      <fieldset>
+        <legend><span class="stepnum">1</span> General information</legend>
+        <div class="frow3">
+          <div class="field"><label for="uc-name">Use case name</label><input type="text" id="uc-name" placeholder="e.g., Complaint triage and routing"></div>
+          <div class="field"><label for="uc-sponsor">Business owner / sponsor</label><input type="text" id="uc-sponsor" placeholder="Named sponsor — no sponsor, no approval"></div>
+          <div class="field"><label for="uc-func">Bank function</label><input type="text" id="uc-func" placeholder="e.g., Customer Care"></div>
+        </div>
+        <div class="frow">
+          <div class="field"><label for="uc-submitter">Submitted by</label><input type="text" id="uc-submitter"></div>
+          <div class="field"><label for="uc-date">Date</label><input type="date" id="uc-date"></div>
+        </div>
+        <div class="field"><label for="uc-problem">What problem are we solving, and why now?</label><textarea id="uc-problem"></textarea></div>
+        <div class="field"><label for="uc-process">What does the process look like today, and what changes?</label><textarea id="uc-process"></textarea></div>
+        <div class="field"><label for="uc-metric">What metric defines success, and what is it today?</label><textarea id="uc-metric" placeholder="Discovery will turn this into a measured baseline and a target."></textarea></div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="stepnum">2</span> Business benefit</legend>
+        <div class="field">
+          <label>Impact <span class="opt-note">(select all that apply)</span></label>
+          <div class="optgrid cols2">
+            <label class="opt"><input type="checkbox" name="impact" value="cost"><span class="ot">Cost / productivity improvement</span></label>
+            <label class="opt"><input type="checkbox" name="impact" value="cycle"><span class="ot">Cycle time reduction</span></label>
+            <label class="opt"><input type="checkbox" name="impact" value="risk"><span class="ot">Risk / control improvement</span></label>
+            <label class="opt"><input type="checkbox" name="impact" value="insight"><span class="ot">Decision / insight improvement</span></label>
+            <label class="opt"><input type="checkbox" name="impact" value="other"><span class="ot">Other</span></label>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="field">
+            <label>Value <span class="opt-note">(select one)</span></label>
+            <div class="optgrid">
+              <label class="opt"><input type="radio" name="value" value="high"><span><span class="ot">High</span><div class="od">Material or measurable $ impact</div></span></label>
+              <label class="opt"><input type="radio" name="value" value="med"><span><span class="ot">Medium</span><div class="od">Efficiency or cost avoidance</div></span></label>
+              <label class="opt"><input type="radio" name="value" value="low"><span><span class="ot">Low</span><div class="od">Limited quantifiable value</div></span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Scale <span class="opt-note">(select one)</span></label>
+            <div class="optgrid">
+              <label class="opt"><input type="radio" name="scale" value="enterprise"><span><span class="ot">Enterprise</span><div class="od">Multiple functions</div></span></label>
+              <label class="opt"><input type="radio" name="scale" value="function"><span><span class="ot">Single function</span></span></label>
+              <label class="opt"><input type="radio" name="scale" value="team"><span><span class="ot">Team / niche</span></span></label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="stepnum">3</span> Feasibility</legend>
+        <div class="field">
+          <label>Data readiness <span class="opt-note">(select one)</span></label>
+          <div class="optgrid">
+            <label class="opt"><input type="radio" name="dataready" value="ready"><span><span class="ot">Ready</span><div class="od">Data exists and is accessible</div></span></label>
+            <label class="opt"><input type="radio" name="dataready" value="partial"><span><span class="ot">Partially ready</span><div class="od">Gaps or cleanup needed</div></span></label>
+            <label class="opt"><input type="radio" name="dataready" value="notready"><span><span class="ot">Not ready</span></span></label>
+          </div>
+        </div>
+        <div class="field"><label for="uc-sources">Primary data sources <span class="opt-note">(optional)</span></label><input type="text" id="uc-sources"></div>
+        <div class="field">
+          <label>Expected effort <span class="opt-note">(select one — covers process variation, integration, and technology support together)</span></label>
+          <div class="optgrid">
+            <label class="opt"><input type="radio" name="effort" value="low"><span><span class="ot">Low</span><div class="od">Standardized process, existing tools, business-owned configuration</div></span></label>
+            <label class="opt"><input type="radio" name="effort" value="med"><span><span class="ot">Medium</span><div class="od">Some process variation, integration, or shared services support</div></span></label>
+            <label class="opt"><input type="radio" name="effort" value="high"><span><span class="ot">High</span><div class="od">Manual or inconsistent process, new tools, or dedicated engineering</div></span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="stepnum">4</span> Risk flags</legend>
+        <p class="fnote">Routing only — detailed risk review happens post-experimentation. Any flag routes to Risk or MRM before Approve; a prototype may still proceed in a controlled environment.</p>
+        <div class="optgrid">
+          <label class="opt"><input type="checkbox" name="riskflag" value="npi"><span class="ot">Uses customer or nonpublic personal information (NPI)</span></label>
+          <label class="opt"><input type="checkbox" name="riskflag" value="reg"><span class="ot">Output feeds a regulatory or financial report</span></label>
+          <label class="opt"><input type="checkbox" name="riskflag" value="nohuman"><span class="ot">Runs without human review of the output</span></label>
+          <label class="opt"><input type="checkbox" name="riskflag" value="none" id="risk-none"><span class="ot">None of the above</span></label>
+        </div>
+      </fieldset>
+
+      <div class="submitrow">
+        <button type="submit" class="primarybtn">Submit use case</button>
+        <span class="mocknote">Mock — in production this creates a Jira issue in the AI Use Case Capability.</span>
+      </div>
+    </form>
+
+    <aside class="rail">
+      <div class="card">
+        <h3>How this works</h3>
+        <ul>
+          <li><b>Ask only what the requester can answer</b> — problem, current process, benefit, data readiness, rough effort, risk flags.</li>
+          <li><b>Fifteen minutes.</b> Longer means we're asking for detail we haven't earned yet.</li>
+          <li><b>Refinement comes after experimentation</b>, once we know something real.</li>
+          <li><b>The intake team adds context, not gatekeeping</b> — what's in flight, what's been tried, what it takes to run.</li>
+          <li><b>Declining early is part of the process.</b> The cost of a bad idea is lowest before anyone builds it.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Where this goes</h3>
+        <ul>
+          <li>Every submission becomes a <b>Jira issue</b> in the AI Use Case Capability and carries that ID forward.</li>
+          <li>This page holds the narrative; <b>Jira holds status, priority, and the audit trail</b>.</li>
+          <li>Nothing gets worked, staffed, or reported until it exists in Jira.</li>
+          <li>Declined submissions get a Jira issue too, closed with the rationale — <b>declines are portfolio data</b>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What happens next</h3>
+        <ul>
+          <li>Reviewed at the <b>weekly AI Intake Review</b>.</li>
+          <li>Routed — never queued — to <b>Discovery, Rapid Prototype, Partner, Approve, or Decline</b>.</li>
+          <li>Every submission leaves triage with <b>a decision, an owner, and a date</b>.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <div class="teamonly">
+    <div class="tohead">
+      <span class="kicker">Intake team use only</span>
+      <span style="color:var(--text-muted); font-size:12px;">Completed before the forum — required to leave In Triage.</span>
+    </div>
+    <div class="rule"></div>
+    <div class="criteria" id="criteria"></div>
+    <div class="field">
+      <label>Recommended next step</label>
+      <div class="recsteps">
+        <label><input type="radio" name="recstep" value="approve"><span>Approve</span></label>
+        <label><input type="radio" name="recstep" value="proto"><span>Rapid Prototype</span></label>
+        <label><input type="radio" name="recstep" value="discovery"><span>More Discovery</span></label>
+        <label><input type="radio" name="recstep" value="partner"><span>Partner with another team</span></label>
+        <label><input type="radio" name="recstep" value="decline"><span>Decline</span></label>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label for="uc-rationale">Rationale</label>
+      <textarea id="uc-rationale" style="background:#fff;"></textarea>
+    </div>
+  </div>
+
+</section>
 </main>
 
 <footer>
   Data lives in the <code>USE_CASES</code> array at the top of this file's script — edit it by hand or regenerate it from a Jira export.
-  Health and staleness are computed against today's date every time the page loads.
+  Health and staleness are computed against today's date every time the page loads. The intake form is a mock and does not submit anywhere.
 </footer>
 
 <div class="tip" id="tip" role="status"></div>
+
+<!-- stage playbook modal -->
+<dialog class="playbook" id="playbook" aria-labelledby="pb-title">
+  <div class="pbhead">
+    <div class="htext">
+      <span class="kicker" id="pb-kicker"></span>
+      <h2 id="pb-title"></h2>
+      <div class="pbchips" id="pb-chips"></div>
+    </div>
+    <button type="button" class="pbclose" id="pb-close" aria-label="Close">✕</button>
+  </div>
+  <div class="pbbody" id="pb-body"></div>
+  <div class="pbfoot" id="pb-foot"></div>
+</dialog>
 
 <script>
 "use strict";
@@ -608,6 +953,133 @@ const STAGES = [
   { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly benefits review",
     outcome: "Benefits measured and reported", owner: "Business owner, portfolio team", record: "Benefits dashboard" },
 ];
+
+/* Playbook content per stage — sourced from the operating notes. */
+const STAGE_DETAILS = {
+  intake: {
+    chips: ["Cadence: weekly", "Target: 15 minutes"],
+    sections: [
+      { h: "How this works", items: [
+        "Deliberately lightweight — decide whether a use case is worth building, not fully specify it.",
+        "Ask only what the requester can answer: the problem, the current process, expected benefit, data readiness, rough effort, and a short set of risk flags.",
+        "Target fifteen minutes to complete. If it takes longer, we are asking for detail we have not earned yet.",
+        "Defer refinement until after experimentation — detailed benefit, effort, and risk work happens once we know something real.",
+        "The intake team's job is context, not gatekeeping: how this compares to what is in flight, what has been tried elsewhere, and what it would take to run.",
+        "Every submission gets routed, not queued.",
+        "Declining early is part of the process. The cost of a bad idea is lowest before anyone builds it." ] },
+      { h: "Where this goes", items: [
+        "The intake page is the capture surface; Jira is the system of record.",
+        "Every submission becomes a Jira issue in the AI Use Case Capability and carries that ID forward.",
+        "Nothing gets worked, staffed, or reported on until it exists in Jira.",
+        "Declined submissions get a Jira issue too, closed as Declined with the rationale — declines are portfolio data." ] },
+    ],
+    link: { label: "Open the intake form →", tab: "intake" },
+  },
+  triage: {
+    chips: ["Weekly, 30 minutes", "One cycle max"],
+    sections: [
+      { h: "What it is", items: [
+        "Every use case leaves with a decision, an owner, and a date.",
+        "Nothing sits in triage more than one cycle.",
+        "Anything arriving without prep is deferred one cycle, not debated." ] },
+      { h: "Who decides", items: [
+        "The intake owner preps each submission and presents it — and does not decide.",
+        "The triage forum (AI product, delivery, data, Risk) advises and challenges — and does not vote.",
+        "The AI product lead decides. One call, one person. Consensus is not required and is not waited for.",
+        "The business sponsor is accountable for value after Approve. No named sponsor, no approval." ] },
+      { h: "The five decisions", items: [
+        "Approve — value is credible; committing capacity now.",
+        "Rapid Prototype — two weeks, capped, to buy evidence. Returns to triage once.",
+        "More Discovery — one written question, one cycle. A second return forces Approve or Decline.",
+        "Partner — warm handoff to a contacted receiving team; closes as Transferred.",
+        "Decline — a normal outcome, with a stated reason. The requester hears it directly." ] },
+      { h: "Standing rules", items: [
+        "Any risk flag routes to Risk or MRM before Approve. A prototype may proceed in a controlled environment.",
+        "Discovery and Prototype are capacity limited — approving something new means stopping something current, decided in the room." ] },
+    ],
+  },
+  discovery: {
+    chips: ["Timebox: four weeks", "Exit on time with what you have"],
+    sections: [
+      { h: "What it is", items: [
+        "Intake numbers were estimates. Discovery replaces them with evidence.",
+        "Approval to experiment is not approval to build." ] },
+      { h: "What gets validated — asserted to evidenced", items: [
+        "Value — a baseline measured today, a target, and the measurement method. Signed off by the business sponsor, not the product team.",
+        "Feasibility — a technical approach, integration points, and a sizing range from the team that would build it.",
+        "Data readiness — named sources, access confirmed, quality assessed. The data has been pulled and inspected, not located on a diagram.",
+        "Process fit — where this sits in the business routine and what changes. The people doing the work have seen it.",
+        "Risk and controls — designation, classification, and required controls confirmed with Risk or MRM, not assumed." ] },
+      { h: "The discovery package — two pages", items: [
+        "If it needs more than two pages, the use case is not understood yet.",
+        "Problem and current state with the measured baseline; proposed approach and process fit; value case with sponsor sign-off; feasibility and sizing range; data findings; risk designation and open items; a recommendation — and what would make us stop." ] },
+      { h: "Exit — four outcomes", items: [
+        "Build — evidence holds; moves on with capacity.",
+        "Reshape — value is real, the approach is wrong. One reshaped pass, not an open loop.",
+        "Park — blocked by something external; state the trigger that brings it back.",
+        "Stop — evidence did not hold. Normal and expected: it cost four weeks instead of two quarters." ] },
+    ],
+  },
+  prioritization: {
+    chips: ["Method: WSJF", "Fibonacci 1–20", "Rescored quarterly"],
+    sections: [
+      { h: "What it is", items: [
+        "WSJF — Weighted Shortest Job First. Cost of Delay divided by job size; the highest score goes first.",
+        "Only use cases with a completed discovery package are scored. An estimate cannot be ranked against evidence." ] },
+      { h: "The four components", items: [
+        "Business value — dollar impact, capacity created, or risk reduced, from the discovery baseline.",
+        "Time criticality — does the value decay if we wait? If nothing changes in six months, this is a 1.",
+        "Risk reduction / opportunity enablement — what this unlocks beyond itself: a reusable pattern, a platform capability, a control improvement.",
+        "Job size — effort to first production value, not the full roadmap. Sized by technology; the business does not size the work." ] },
+      { h: "How we score", items: [
+        "One column at a time across all use cases — never one use case at a time.",
+        "Anchor each column: find the smallest, call it 1, score everything relative to it.",
+        "Fifteen minutes per column. Debate the outliers, not the middle. Score the whole set in one sitting or the anchors drift.",
+        "Sponsors present the case but do not score their own use case. The AI product lead breaks ties, on the record." ] },
+      { h: "Standing rules", items: [
+        "WSJF ranks, it does not schedule — capacity decides how far down the list we get.",
+        "A high score does not jump an unstarted item over work in flight. Finish or stop, do not swarm.",
+        "Score changes are logged. An unexplained jump in rank is how a portfolio loses credibility." ] },
+    ],
+  },
+  portfolio: {
+    chips: ["Monthly council"],
+    sections: [
+      { h: "What it decides", items: [
+        "Advance, defer, or reject — against the ranked backlog and available capacity.",
+        "Rank is the default order of execution. Deviating from rank is an exception with a stated reason, recorded.",
+        "The ranked backlog is visible to anyone without asking — score, components, owner, size, and status." ] },
+    ],
+  },
+  governance: {
+    chips: ["Engages early, by tier"],
+    sections: [
+      { h: "What it confirms", items: [
+        "Model risk designation, data classification, and required controls — recorded in Archer.",
+        "Risk, Legal, and MRM engage early and by tier, so controls are the reason we can move, not the reason we can't." ] },
+      { h: "Where I'd take it", items: [
+        "Governance moves left: BLR expertise embedded in Discovery & Sizing turns governance into a continuous check running alongside the work, not a downstream queue." ] },
+    ],
+  },
+  delivery: {
+    chips: ["Funded at quarterly planning"],
+    sections: [
+      { h: "What it means", items: [
+        "Funding and execution approved at quarterly planning; capacity committed against the ranked backlog.",
+        "Finished, not launched: a use case is done when it sits in a business routine with a named owner and measured value — not when it ships." ] },
+    ],
+  },
+  value: {
+    chips: ["Quarterly benefits review"],
+    sections: [
+      { h: "What it measures", items: [
+        "Benefits measured and reported against the baseline captured in discovery, on the benefits dashboard.",
+        "The business owner — not the delivery team — answers whether expected outcomes are being achieved." ] },
+      { h: "Where I'd take it", items: [
+        "Feed adoption and cost data back after every release, so WSJF recalibrates in near real time instead of quarterly." ] },
+    ],
+  },
+};
 
 const USE_CASES = [
   { id: "AI-001", name: "Contact center call summarization", func: "Contact Center",
@@ -753,18 +1225,70 @@ function healthBadge(h) {
 }
 
 /* ---------- tabs ---------- */
-const tabButtons = [document.getElementById("tabbtn-portfolio"), document.getElementById("tabbtn-thinking")];
+const TAB_IDS = ["portfolio", "thinking", "intake"];
 function selectTab(which) {
-  for (const btn of tabButtons) {
-    const on = btn.id === "tabbtn-" + which;
+  for (const id of TAB_IDS) {
+    const btn = document.getElementById("tabbtn-" + id);
+    const on = id === which;
     btn.setAttribute("aria-selected", String(on));
-    document.getElementById(btn.getAttribute("aria-controls")).hidden = !on;
+    document.getElementById("tab-" + id).hidden = !on;
   }
   history.replaceState(null, "", "#" + which);
 }
-for (const btn of tabButtons)
-  btn.addEventListener("click", () => selectTab(btn.id.replace("tabbtn-", "")));
-if (location.hash === "#thinking") selectTab("thinking");
+for (const id of TAB_IDS)
+  document.getElementById("tabbtn-" + id).addEventListener("click", () => selectTab(id));
+if (TAB_IDS.includes(location.hash.slice(1))) selectTab(location.hash.slice(1));
+
+/* ---------- stage playbook modal ---------- */
+const playbook = document.getElementById("playbook");
+document.getElementById("pb-close").addEventListener("click", () => playbook.close());
+playbook.addEventListener("click", e => { if (e.target === playbook) playbook.close(); });
+
+function openStage(stageId) {
+  const s = stageById[stageId];
+  const d = STAGE_DETAILS[stageId];
+  if (!s || !d) return;
+  document.getElementById("pb-kicker").textContent = "Stage " + (stageOrder[stageId] + 1) + " of " + STAGES.length + " — playbook";
+  document.getElementById("pb-title").textContent = s.name;
+  const chips = document.getElementById("pb-chips");
+  chips.replaceChildren();
+  for (const c of ["Owner: " + s.owner, "Record: " + s.record, ...d.chips])
+    chips.append(el("span", "chip", c));
+  const body = document.getElementById("pb-body");
+  body.replaceChildren();
+  body.append(el("h3", null, "Primary outcome"));
+  const outUl = el("ul"); outUl.append(el("li", null, s.outcome)); body.append(outUl);
+  for (const sec of d.sections) {
+    body.append(el("h3", null, sec.h));
+    const ul = el("ul");
+    for (const item of sec.items) {
+      const li = el("li");
+      const dash = item.indexOf(" — ");
+      if (dash > 0 && dash < 60) {
+        li.append(el("b", null, item.slice(0, dash)), document.createTextNode(item.slice(dash)));
+      } else li.textContent = item;
+      ul.append(li);
+    }
+    body.append(ul);
+  }
+  const foot = document.getElementById("pb-foot");
+  foot.replaceChildren();
+  if (d.link) {
+    const go = el("button", "golink", d.link.label);
+    go.type = "button";
+    go.addEventListener("click", () => { playbook.close(); selectTab(d.link.tab); });
+    foot.append(go);
+  }
+  playbook.showModal();
+}
+
+function stageLink(stageId, text, cls) {
+  const b = el("button", "linky" + (cls ? " " + cls : ""), text);
+  b.type = "button";
+  b.title = "View the " + stageById[stageId].name + " playbook";
+  b.addEventListener("click", () => openStage(stageId));
+  return b;
+}
 
 /* ---------- filters ---------- */
 const fStage = document.getElementById("f-stage");
@@ -825,6 +1349,14 @@ const headrow = document.getElementById("headrow");
 for (const c of COLS) {
   const th = el("th", null, c.label);
   th.appendChild(el("span", "arrow", ""));
+  if (c.key === "wsjf") {
+    const info = el("button", "infobtn", "i");
+    info.type = "button";
+    info.title = "How WSJF scoring works";
+    info.style.marginLeft = "5px";
+    info.addEventListener("click", e => { e.stopPropagation(); openStage("prioritization"); });
+    th.appendChild(info);
+  }
   th.addEventListener("click", () => {
     if (sortKey === c.key) sortDir = -sortDir; else { sortKey = c.key; sortDir = 1; }
     render();
@@ -844,7 +1376,8 @@ function render() {
     if (fStage.value && u.stage !== fStage.value) return false;
     if (!u.closed) {
       if (fHealth.value && u.health !== fHealth.value) return false;
-      if (fFresh.value && u.fresh !== fFresh.value) return false;
+      if (fFresh.value === "notfresh") { if (u.fresh === "fresh") return false; }
+      else if (fFresh.value && u.fresh !== fFresh.value) return false;
     } else if (fHealth.value || fFresh.value) return false;
     if (q) {
       const hay = (u.id + " " + u.name + " " + u.owner + " " + u.sponsor + " " + u.func).toLowerCase();
@@ -873,18 +1406,24 @@ function renderKpis(active) {
     if (u.fresh !== "fresh") counts.staleish++;
   }
   const tiles = [
-    { label: "In flight", value: active.length, sub: "active use cases", dot: null },
-    { label: "On track", value: counts.good, sub: "target beyond risk window", dot: "good", glyph: "✓" },
-    { label: "At risk", value: counts.warning, sub: "target inside risk window", dot: "warning", glyph: "!" },
-    { label: "Overdue", value: counts.critical, sub: "past target date", dot: "critical", glyph: "✕" },
-    { label: "Stale", value: counts.staleish, sub: "no update in > 1 cycle", dot: "serious", glyph: "…" },
+    { label: "In flight", value: active.length, sub: "active use cases" },
+    { label: "On track", value: counts.good, sub: "target beyond risk window", dot: "good", glyph: "✓", filter: () => fHealth.value = fHealth.value === "good" ? "" : "good", active: fHealth.value === "good" },
+    { label: "At risk", value: counts.warning, sub: "target inside risk window", dot: "warning", glyph: "!", filter: () => fHealth.value = fHealth.value === "warning" ? "" : "warning", active: fHealth.value === "warning" },
+    { label: "Overdue", value: counts.critical, sub: "past target date", dot: "critical", glyph: "✕", filter: () => fHealth.value = fHealth.value === "critical" ? "" : "critical", active: fHealth.value === "critical" },
+    { label: "Stale", value: counts.staleish, sub: "no update in > 1 cycle", dot: "serious", glyph: "…", filter: () => fFresh.value = fFresh.value === "notfresh" ? "" : "notfresh", active: fFresh.value === "notfresh" },
   ];
   for (const t of tiles) {
-    const tile = el("div", "tile");
+    const tile = el(t.filter ? "button" : "div", "tile" + (t.active ? " active" : ""));
+    if (t.filter) {
+      tile.type = "button";
+      tile.addEventListener("click", () => { t.filter(); render(); });
+      tile.setAttribute("aria-pressed", String(!!t.active));
+    }
     const lab = el("div", "label");
     if (t.dot) { const d = el("span", "dot " + t.dot, t.glyph); d.setAttribute("aria-hidden", "true"); lab.append(d); }
     lab.append(document.createTextNode(t.label));
     tile.append(lab, el("div", "value", String(t.value)), el("div", "sub", t.sub));
+    if (t.filter) tile.append(el("div", "hint", t.active ? "Filtering — click to clear" : "Click to filter"));
     kpis.append(tile);
   }
 }
@@ -901,18 +1440,19 @@ function renderPipeline(active) {
 
   for (const r of byStage) {
     const row = el("div", "prow");
-    row.append(el("div", "pname", r.stage.name));
+    const nameCell = el("div", "pname");
+    nameCell.append(stageLink(r.stage.id, r.stage.name));
+    row.append(nameCell);
     const track = el("div", "track axisline");
     if (r.items.length) {
       const bar = el("div", "bar");
       bar.style.width = (r.items.length / max * 100) + "%";
       r.groups.forEach((g, i) => {
-        const seg = el("div", "seg " + g.h + (i === r.groups.length - 1 ? " last" : ""));
+        const seg = el("button", "seg " + g.h + (i === r.groups.length - 1 ? " last" : ""));
+        seg.type = "button";
         seg.style.flexGrow = String(g.items.length);
         seg.style.flexBasis = "0";
         seg.style.minWidth = "10px";
-        seg.tabIndex = 0;
-        seg.setAttribute("role", "img");
         seg.setAttribute("aria-label",
           r.stage.name + ": " + g.items.length + " " + HEALTH[g.h].label.toLowerCase() + " — " +
           g.items.map(it => it.id).join(", "));
@@ -1007,7 +1547,12 @@ function renderTable(visible) {
     tr.append(tdName);
 
     const tdStage = el("td");
-    tdStage.append(el("div", null, u.closed ? "Closed" : u.stageName));
+    if (u.closed) tdStage.append(el("div", null, "Closed"));
+    else {
+      const wrapDiv = el("div");
+      wrapDiv.append(stageLink(u.stage, u.stageName));
+      tdStage.append(wrapDiv);
+    }
     tdStage.append(el("div", "sub", u.closed ? fmtDate(u.closed.date) : (u.next || "")));
     tr.append(tdStage);
 
@@ -1068,10 +1613,11 @@ function renderStatic() {
     tb.append(tr);
   }
 
-  // lifecycle grid (operating model tab)
+  // lifecycle grid (operating model tab) — each card opens its playbook
   const lg = document.getElementById("lifegrid");
   STAGES.forEach((s, i) => {
-    const card = el("div", "lstage");
+    const card = el("button", "lstage");
+    card.type = "button";
     const top = el("div", "top");
     top.append(el("span", "stepnum", String(i + 1)), el("h3", null, s.name));
     card.append(top, el("p", "out", s.outcome));
@@ -1081,10 +1627,65 @@ function renderStatic() {
     const recLine = el("div");
     recLine.append(el("b", null, "Record: "), document.createTextNode(s.record));
     meta.append(ownerLine, recLine);
-    card.append(meta);
+    card.append(meta, el("div", "more", "Playbook →"));
+    card.addEventListener("click", () => openStage(s.id));
     lg.append(card);
   });
+
+  // intake team criteria grid
+  const CRITERIA = ["Strategic alignment", "Business value", "Scale", "Feasibility", "Risk exposure", "Confidence in stated value"];
+  const cwrap = document.getElementById("criteria");
+  CRITERIA.forEach((c, i) => {
+    const row = el("div", "crit");
+    row.append(el("span", "cl", c));
+    const seg = el("div", "seg");
+    seg.setAttribute("role", "radiogroup");
+    seg.setAttribute("aria-label", c);
+    for (const lvl of ["High", "Med", "Low"]) {
+      const lab = el("label");
+      const inp = document.createElement("input");
+      inp.type = "radio"; inp.name = "crit-" + i; inp.value = lvl.toLowerCase();
+      lab.append(inp, el("span", null, lvl));
+      seg.append(lab);
+    }
+    row.append(seg);
+    cwrap.append(row);
+  });
 }
+
+/* ---------- intake form mock behavior ---------- */
+const riskNone = document.getElementById("risk-none");
+document.querySelectorAll('input[name="riskflag"]').forEach(cb => {
+  cb.addEventListener("change", () => {
+    if (cb === riskNone && cb.checked)
+      document.querySelectorAll('input[name="riskflag"]').forEach(o => { if (o !== riskNone) o.checked = false; });
+    else if (cb.checked) riskNone.checked = false;
+  });
+});
+
+document.getElementById("iform").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = document.getElementById("uc-name").value.trim() || "Untitled use case";
+  const nextId = "AI-" + String(USE_CASES.length + 1).padStart(3, "0");
+  const flags = [...document.querySelectorAll('input[name="riskflag"]:checked')].map(c => c.value).filter(v => v !== "none");
+
+  document.getElementById("pb-kicker").textContent = "Mock submission";
+  document.getElementById("pb-title").textContent = "Captured: " + name;
+  const chips = document.getElementById("pb-chips");
+  chips.replaceChildren(el("span", "chip", "Would become " + nextId), el("span", "chip", "Next: weekly AI Intake Review"));
+  const body = document.getElementById("pb-body");
+  body.replaceChildren();
+  body.append(el("h3", null, "What happens in production"));
+  const ul = el("ul");
+  ul.append(el("li", null, "This submission becomes a Jira issue in the AI Use Case Capability and carries the ID " + nextId + " forward — this page holds the narrative; Jira holds status, priority, and the audit trail."));
+  ul.append(el("li", null, flags.length
+    ? "A risk flag is checked, so it routes to Risk / MRM before any Approve. A rapid prototype could still proceed in a controlled environment."
+    : "No risk flags checked — if it's also small, it's a candidate for the fast lane straight from Triage to Delivery."));
+  ul.append(el("li", null, "The intake team adds context — comparison to what's in flight, prior attempts, run cost — and it leaves the next triage with a decision, an owner, and a date."));
+  body.append(ul);
+  document.getElementById("pb-foot").replaceChildren();
+  playbook.showModal();
+});
 
 render();
 </script>
