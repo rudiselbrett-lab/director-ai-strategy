@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Use Case Portfolio</title>
+<style>
+  /* ---------- design tokens (light) ---------- */
+  :root {
+    color-scheme: light;
+    --page:           #f9f9f7;
+    --surface-1:      #fcfcfb;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --grid:           #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    /* status palette — fixed, never themed */
+    --status-good:     #0ca30c;
+    --status-warning:  #fab219;
+    --status-critical: #d03b3b;
+    --status-serious:  #ec835a;
+    --good-text:       #006300;
+    --wash:            rgba(11,11,11,0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page:           #0d0d0d;
+      --surface-1:      #1a1a19;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --grid:           #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --good-text:      #0ca30c;
+      --wash:           rgba(255,255,255,0.06);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page:           #0d0d0d;
+    --surface-1:      #1a1a19;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --grid:           #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --good-text:      #0ca30c;
+    --wash:           rgba(255,255,255,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text-primary);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 48px; }
+
+  /* ---------- header ---------- */
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 6px; }
+  header h1 { font-size: 21px; font-weight: 650; margin: 0; letter-spacing: -0.01em; }
+  .asof { color: var(--text-muted); font-size: 13px; margin-left: auto; }
+  .tagline { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 18px; }
+
+  /* ---------- filter row ---------- */
+  .filters {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    margin-bottom: 16px;
+  }
+  .filters select, .filters input[type="search"] {
+    font: inherit; color: var(--text-primary);
+    background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px;
+  }
+  .filters input[type="search"] { min-width: 200px; flex: 0 1 240px; }
+  .filters label.chk {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--text-secondary); font-size: 13px; padding: 6px 4px; cursor: pointer;
+  }
+  .filters .reset {
+    font: inherit; font-size: 13px; color: var(--text-secondary);
+    background: none; border: none; cursor: pointer; padding: 6px 8px; border-radius: 8px;
+  }
+  .filters .reset:hover { background: var(--wash); }
+
+  /* ---------- KPI row ---------- */
+  .kpis {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px 12px;
+  }
+  .tile .label { color: var(--text-secondary); font-size: 12.5px; display: flex; align-items: center; gap: 6px; }
+  .tile .value { font-size: 30px; font-weight: 600; margin-top: 2px; }
+  .tile .sub { color: var(--text-muted); font-size: 12px; margin-top: 1px; }
+
+  /* status glyph dot: color + icon, never color alone */
+  .dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 4px; flex: none;
+    font-size: 10px; font-weight: 700; line-height: 1;
+  }
+  .dot.good     { background: var(--status-good);     color: #fff; }
+  .dot.warning  { background: var(--status-warning);  color: #0b0b0b; }
+  .dot.critical { background: var(--status-critical); color: #fff; }
+  .dot.serious  { background: var(--status-serious);  color: #0b0b0b; }
+  .dot.neutral  { background: var(--baseline);        color: var(--surface-1); }
+
+  /* ---------- cards / charts ---------- */
+  .row2 { display: grid; grid-template-columns: 3fr 2fr; gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 860px) { .row2 { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px;
+  }
+  .card h2 { font-size: 14px; font-weight: 650; margin: 0; }
+  .card .cardhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-bottom: 12px; }
+  .legend { display: flex; gap: 12px; margin-left: auto; flex-wrap: wrap; }
+  .legend .key { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+
+  /* pipeline chart */
+  .pipeline .prow {
+    display: grid; grid-template-columns: 150px 1fr 34px;
+    align-items: center; gap: 10px; padding: 3px 0;
+  }
+  .pipeline .pname { font-size: 12.5px; color: var(--text-secondary); text-align: right; }
+  .pipeline .track { position: relative; height: 24px; }
+  .pipeline .bar { display: flex; gap: 2px; height: 24px; }
+  .pipeline .seg { height: 100%; cursor: default; outline-offset: 2px; }
+  .pipeline .seg:hover, .pipeline .seg:focus-visible { filter: brightness(1.12); }
+  .pipeline .seg.good     { background: var(--status-good); }
+  .pipeline .seg.warning  { background: var(--status-warning); }
+  .pipeline .seg.critical { background: var(--status-critical); }
+  .pipeline .seg.first { border-radius: 0; }
+  .pipeline .seg.last  { border-radius: 0 4px 4px 0; }
+  .pipeline .seg.first.last { border-radius: 0 4px 4px 0; }
+  .pipeline .ptotal { font-size: 12.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .pipeline .zero { color: var(--text-muted); font-size: 12px; line-height: 24px; }
+  .axisline { border-left: 1px solid var(--baseline); }
+
+  /* needs attention list */
+  .attn ul { list-style: none; margin: 0; padding: 0; }
+  .attn li { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--grid); align-items: flex-start; }
+  .attn li:first-child { border-top: none; }
+  .attn .who { min-width: 0; flex: 1; }
+  .attn .nm { font-weight: 600; font-size: 13.5px; }
+  .attn .st { color: var(--text-muted); font-size: 12px; }
+  .attn .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+  .chip {
+    font-size: 11.5px; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 2px 8px; white-space: nowrap;
+  }
+  .attn .empty { color: var(--text-muted); padding: 12px 0; }
+
+  /* ---------- table ---------- */
+  .tablecard { padding: 6px 0 0; overflow: hidden; }
+  .tablecard .cardhead { padding: 10px 16px 8px; margin-bottom: 0; }
+  .tscroll { overflow-x: auto; }
+  table.port { border-collapse: collapse; width: 100%; min-width: 880px; }
+  .port th, .port td { text-align: left; padding: 9px 12px; }
+  .port th:first-child, .port td:first-child { padding-left: 16px; }
+  .port th:last-child, .port td:last-child { padding-right: 16px; }
+  .port thead th {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text-muted); font-weight: 600; white-space: nowrap;
+    border-bottom: 1px solid var(--baseline); cursor: pointer; user-select: none;
+  }
+  .port thead th:hover { color: var(--text-secondary); }
+  .port thead th .arrow { font-size: 9px; margin-left: 3px; }
+  .port tbody td { border-bottom: 1px solid var(--grid); vertical-align: top; }
+  .port tbody tr:last-child td { border-bottom: none; }
+  .port tbody tr:hover { background: var(--wash); }
+  .port .name { font-weight: 600; }
+  .port .sub { color: var(--text-muted); font-size: 12px; margin-top: 1px; }
+  .port .num { font-variant-numeric: tabular-nums; }
+  .port .waiting { color: var(--text-secondary); font-size: 12px; margin-top: 2px; }
+  .port tr.closedrow td { color: var(--text-muted); }
+  .port tr.closedrow .name { color: var(--text-secondary); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; white-space: nowrap; color: var(--text-primary);
+  }
+  .badge .txt { font-weight: 500; }
+  .flag {
+    display: inline-block; font-size: 10.5px; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; margin: 2px 4px 0 0;
+  }
+  .empty-table { color: var(--text-muted); padding: 18px 16px 22px; }
+
+  /* ---------- tooltip ---------- */
+  .tip {
+    position: fixed; z-index: 50; max-width: 280px;
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+    pointer-events: none; display: none; font-size: 12.5px;
+  }
+  .tip .tt { font-weight: 650; margin-bottom: 4px; }
+  .tip .tr { display: flex; gap: 8px; align-items: baseline; }
+  .tip .tv { font-weight: 650; }
+  .tip .tl { color: var(--text-secondary); }
+  .tip ul { margin: 4px 0 0; padding-left: 16px; color: var(--text-secondary); }
+
+  /* ---------- process reference ---------- */
+  details.ref { margin-top: 16px; }
+  details.ref > summary {
+    cursor: pointer; font-weight: 650; font-size: 14px;
+    padding: 12px 16px; background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 12px;
+    list-style: none;
+  }
+  details.ref > summary::-webkit-details-marker { display: none; }
+  details.ref > summary::before { content: "▸ "; color: var(--text-muted); }
+  details.ref[open] > summary::before { content: "▾ "; }
+  details.ref[open] > summary { border-radius: 12px 12px 0 0; }
+  .refbody {
+    border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 12px 12px; background: var(--surface-1);
+    padding: 4px 16px 18px;
+  }
+  .refbody h3 { font-size: 13px; margin: 18px 0 8px; }
+  .refbody p { color: var(--text-secondary); font-size: 13px; margin: 6px 0; }
+  table.mini { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  .mini th, .mini td { text-align: left; padding: 6px 10px 6px 0; vertical-align: top; }
+  .mini thead th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--baseline); }
+  .mini tbody td { border-bottom: 1px solid var(--grid); color: var(--text-secondary); }
+  .mini tbody td:first-child { color: var(--text-primary); font-weight: 500; white-space: nowrap; }
+  .mini tbody tr:last-child td { border-bottom: none; }
+  .stagechips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0 2px; }
+  .stagechip {
+    font-size: 12px; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px;
+    background: var(--wash);
+  }
+  .stagechips .arr { color: var(--text-muted); font-size: 11px; }
+
+  footer { color: var(--text-muted); font-size: 12px; margin-top: 20px; }
+  footer code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>AI Use Case Portfolio</h1>
+    <span class="asof" id="asof"></span>
+  </header>
+  <p class="tagline">One view, always current — what's in flight, what it's worth, who owns it, and what it's waiting on. Jira is the system of record; this page is the view.</p>
+
+  <!-- filter row: scopes every number, chart, and table row below it -->
+  <div class="filters" id="filters">
+    <select id="f-stage" aria-label="Filter by stage"></select>
+    <select id="f-health" aria-label="Filter by health">
+      <option value="">All health</option>
+      <option value="good">On track</option>
+      <option value="warning">At risk</option>
+      <option value="critical">Overdue</option>
+    </select>
+    <select id="f-fresh" aria-label="Filter by freshness">
+      <option value="">All freshness</option>
+      <option value="fresh">Fresh</option>
+      <option value="aging">Aging</option>
+      <option value="stale">Stale</option>
+    </select>
+    <input type="search" id="f-q" placeholder="Search name, owner, sponsor, ID…" aria-label="Search use cases">
+    <label class="chk"><input type="checkbox" id="f-closed"> Show closed</label>
+    <button class="reset" id="f-reset" type="button">Reset</button>
+  </div>
+
+  <!-- KPI row -->
+  <div class="kpis" id="kpis"></div>
+
+  <div class="row2">
+    <section class="card pipeline" aria-label="Pipeline by stage">
+      <div class="cardhead">
+        <h2>Pipeline by stage</h2>
+        <div class="legend" aria-hidden="false">
+          <span class="key"><span class="dot good">✓</span> On track</span>
+          <span class="key"><span class="dot warning">!</span> At risk</span>
+          <span class="key"><span class="dot critical">✕</span> Overdue</span>
+        </div>
+      </div>
+      <div id="pipeline"></div>
+    </section>
+
+    <section class="card attn" aria-label="Needs attention">
+      <div class="cardhead"><h2>Needs attention</h2></div>
+      <ul id="attn"></ul>
+    </section>
+  </div>
+
+  <section class="card tablecard" aria-label="All use cases">
+    <div class="cardhead">
+      <h2>All use cases</h2>
+      <span class="asof" id="tablecount"></span>
+    </div>
+    <div class="tscroll">
+      <table class="port" id="porttable">
+        <thead><tr id="headrow"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty-table" id="emptytable" hidden>No use cases match the current filters.</div>
+  </section>
+
+  <details class="ref">
+    <summary>How to read this dashboard &amp; process reference</summary>
+    <div class="refbody">
+
+      <h3>The lifecycle</h3>
+      <div class="stagechips" id="stagestrip"></div>
+      <p>No initiative advances without satisfying the decision criteria for its current stage. Closed outcomes (Declined, Transferred) are portfolio data too — toggle “Show closed” above.</p>
+
+      <h3>Health — red / yellow / green against the expected completion date</h3>
+      <table class="mini">
+        <thead><tr><th>Health</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge"><span class="dot good">✓</span><span class="txt">On track</span></span></td><td>Target date is beyond the stage's at-risk window.</td></tr>
+          <tr><td><span class="badge"><span class="dot warning">!</span><span class="txt">At risk</span></span></td><td>Target date is inside the at-risk window (see per-stage thresholds below).</td></tr>
+          <tr><td><span class="badge"><span class="dot critical">✕</span><span class="txt">Overdue</span></span></td><td>Target date has passed without an exit decision.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Staleness — based on last update, by stage cadence</h3>
+      <p>A use case is <strong>aging</strong> when it has gone longer than one review cycle without an update, and <strong>stale</strong> at more than two cycles. Thresholds per stage:</p>
+      <table class="mini" id="staletable">
+        <thead><tr><th>Stage</th><th>Aging after</th><th>Stale after</th><th>Cadence source</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Stage ownership and decisions</h3>
+      <table class="mini">
+        <thead><tr><th>Stage</th><th>Primary outcome</th><th>Owner</th><th>System of record</th></tr></thead>
+        <tbody>
+          <tr><td>Intake</td><td>Problem statement captured</td><td>Business sponsor</td><td>Intake form / Jira</td></tr>
+          <tr><td>Triage</td><td>Reuse and initial risk review</td><td>Portfolio team</td><td>Jira backlog</td></tr>
+          <tr><td>Discovery &amp; Sizing</td><td>Value, feasibility, data readiness validated</td><td>Product, business, technology</td><td>Discovery package</td></tr>
+          <tr><td>Prioritization</td><td>WSJF score assigned</td><td>AI portfolio team</td><td>Portfolio backlog</td></tr>
+          <tr><td>Portfolio Decision</td><td>Advance, defer, or reject</td><td>AI Portfolio Council</td><td>AI roadmap</td></tr>
+          <tr><td>Governance</td><td>Risk and control requirements confirmed</td><td>Risk, compliance, model governance</td><td>Archer</td></tr>
+          <tr><td>Delivery &amp; Scale</td><td>Funding and execution approved</td><td>Product and technology</td><td>Quarterly plan</td></tr>
+          <tr><td>Value Realization</td><td>Benefits measured and reported</td><td>Business owner, portfolio team</td><td>Benefits dashboard</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Operating routines</h3>
+      <table class="mini">
+        <thead><tr><th>Forum</th><th>Cadence</th><th>Decision</th></tr></thead>
+        <tbody>
+          <tr><td>AI Intake Review</td><td>Weekly</td><td>Ready for discovery?</td></tr>
+          <tr><td>Triage</td><td>Weekly, 30 min</td><td>Approve / Rapid Prototype / More Discovery / Partner / Decline</td></tr>
+          <tr><td>Discovery Review</td><td>Bi-weekly</td><td>Ready for prioritization?</td></tr>
+          <tr><td>AI Portfolio Council</td><td>Monthly</td><td>What gets prioritized?</td></tr>
+          <tr><td>Governance Review</td><td>As needed</td><td>What controls and approvals are required?</td></tr>
+          <tr><td>Quarterly Planning</td><td>Quarterly</td><td>What gets funded and staffed?</td></tr>
+          <tr><td>Benefits Review</td><td>Quarterly</td><td>Are expected outcomes being achieved?</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Triage outcomes</h3>
+      <table class="mini">
+        <thead><tr><th>Decision</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Approve</td><td>Value is credible; committing capacity now. Needs a named sponsor, no open risk flag, and an agreed value measure.</td></tr>
+          <tr><td>Rapid Prototype</td><td>Value plausible but unproven — two weeks, capped, to buy evidence. Returns to triage once.</td></tr>
+          <tr><td>More Discovery</td><td>One specific written question blocks the decision. One cycle; a second return forces Approve or Decline.</td></tr>
+          <tr><td>Partner</td><td>The capability belongs elsewhere. Warm handoff; closes as Transferred.</td></tr>
+          <tr><td>Decline</td><td>Not proceeding — a normal outcome. Requester hears it directly, with the reason.</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </details>
+
+  <footer>
+    Data lives in the <code>USE_CASES</code> array at the top of this file's script — edit it by hand or regenerate it from a Jira export.
+    Health and staleness are computed against today's date every time the page loads.
+  </footer>
+</div>
+
+<div class="tip" id="tip" role="status"></div>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   DATA — edit this section (or generate it from a Jira export).
+   Dates are YYYY-MM-DD. `target` is the expected completion date of the
+   CURRENT stage. `lastUpdate` drives staleness. `closed` marks Declined
+   or Transferred outcomes.
+   ===================================================================== */
+
+const STAGES = [
+  { id: "intake",         name: "Intake",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly intake review" },
+  { id: "triage",         name: "Triage",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly triage — one cycle max" },
+  { id: "discovery",      name: "Discovery & Sizing", staleDays: 10, riskWindow: 5,  cadence: "Four-week timebox" },
+  { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,  cadence: "Monthly scoring session" },
+  { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,  cadence: "Monthly Portfolio Council" },
+  { id: "governance",     name: "Governance",         staleDays: 14, riskWindow: 7,  cadence: "Governance review, as needed" },
+  { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14, cadence: "Quarterly plan / sprint cadence" },
+  { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly benefits review" },
+];
+
+const USE_CASES = [
+  { id: "AI-001", name: "Contact center call summarization", func: "Contact Center",
+    stage: "delivery", owner: "M. Alvarez", sponsor: "Contact Center Ops", wsjf: 4.2,
+    risk: ["NPI"], waitingOn: null,
+    lastUpdate: "2026-07-30", target: "2026-09-30", next: "Benefits baseline capture" },
+
+  { id: "AI-002", name: "Complaint triage and routing", func: "Customer Care",
+    stage: "discovery", owner: "J. Whitfield", sponsor: "Head of Customer Care", wsjf: null,
+    risk: ["NPI"], waitingOn: null,
+    lastUpdate: "2026-07-31", target: "2026-08-07", next: "Discovery Review Aug 5" },
+
+  { id: "AI-003", name: "Fraud alert prioritization", func: "Fraud Operations",
+    stage: "governance", owner: "S. Okafor", sponsor: "Fraud Ops Director", wsjf: 6.8,
+    risk: ["NPI"], waitingOn: "MRM model designation",
+    lastUpdate: "2026-07-17", target: "2026-07-27", next: "Governance Review" },
+
+  { id: "AI-004", name: "KYC document extraction", func: "Onboarding",
+    stage: "discovery", owner: "R. Patel", sponsor: "Deposits Operations", wsjf: null,
+    risk: ["NPI", "Reg report"], waitingOn: "Data access approval for KYC repository",
+    lastUpdate: "2026-07-10", target: "2026-08-03", next: "Discovery Review Aug 5" },
+
+  { id: "AI-005", name: "Collections outreach timing", func: "Collections",
+    stage: "prioritization", owner: "D. Kim", sponsor: "Collections VP", wsjf: 7.5,
+    risk: [], waitingOn: null,
+    lastUpdate: "2026-08-01", target: "2026-08-21", next: "Portfolio Council Aug 20" },
+
+  { id: "AI-006", name: "Branch staffing forecast", func: "Branch Network",
+    stage: "portfolio", owner: "L. Nguyen", sponsor: "Retail Distribution", wsjf: 5.1,
+    risk: [], waitingOn: null,
+    lastUpdate: "2026-07-22", target: "2026-08-20", next: "Portfolio Council Aug 20" },
+
+  { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
+    stage: "triage", owner: "Intake team", sponsor: "Consumer Marketing", wsjf: null,
+    risk: [], waitingOn: null,
+    lastUpdate: "2026-08-01", target: "2026-08-06", next: "Triage Aug 6 — fast-lane candidate" },
+
+  { id: "AI-008", name: "Chat deflection FAQ assistant", func: "Digital Banking",
+    stage: "delivery", owner: "M. Alvarez", sponsor: "Digital Channels", wsjf: 5.9,
+    risk: ["No human review"], waitingOn: null,
+    lastUpdate: "2026-07-24", target: "2026-08-14", next: "Pilot exit review" },
+
+  { id: "AI-009", name: "Wire fraud anomaly detection", func: "Payments",
+    stage: "intake", owner: "Intake team", sponsor: "Payments Risk", wsjf: null,
+    risk: ["NPI"], waitingOn: null,
+    lastUpdate: "2026-07-31", target: "2026-08-07", next: "Intake Review Aug 7" },
+
+  { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
+    stage: "intake", owner: "Intake team", sponsor: "— (sponsor not named)", wsjf: null,
+    risk: [], waitingOn: "Named business sponsor",
+    lastUpdate: "2026-07-17", target: "2026-07-24", next: "Blocked at intake — no sponsor, no approval" },
+
+  { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
+    stage: "value", owner: "T. Brooks", sponsor: "Lending Operations", wsjf: 8.9,
+    risk: ["NPI"], waitingOn: null,
+    lastUpdate: "2026-07-06", target: "2026-09-30", next: "Benefits Review (Q3)" },
+
+  { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
+    stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null,
+    risk: [], waitingOn: "Prep incomplete — deferred one cycle",
+    lastUpdate: "2026-07-22", target: "2026-07-29", next: "Second triage return — decision forced" },
+
+  { id: "AI-013", name: "ATM cash forecasting", func: "Branch Network",
+    stage: "discovery", owner: "R. Patel", sponsor: "Treasury Services", wsjf: null,
+    risk: [], waitingOn: null,
+    lastUpdate: "2026-07-30", target: "2026-08-24", next: "Discovery Review Aug 26" },
+
+  { id: "AI-014", name: "Dispute intake summarizer", func: "Customer Care",
+    stage: "prioritization", owner: "D. Kim", sponsor: "Card Services", wsjf: 3.4,
+    risk: ["NPI"], waitingOn: null,
+    lastUpdate: "2026-07-15", target: "2026-08-21", next: "Portfolio Council Aug 20" },
+
+  { id: "AI-015", name: "RM email auto-drafting", func: "Small Business",
+    stage: "triage", owner: "Intake team", sponsor: "Small Business Banking", wsjf: null,
+    risk: [], waitingOn: null,
+    lastUpdate: "2026-07-22", target: "2026-07-22", next: "—",
+    closed: { outcome: "Declined", reason: "Low quantifiable value; duplicates enterprise CRM assistant", date: "2026-07-22" } },
+
+  { id: "AI-016", name: "HR policy chatbot", func: "Human Resources",
+    stage: "triage", owner: "Intake team", sponsor: "HR Shared Services", wsjf: null,
+    risk: [], waitingOn: null,
+    lastUpdate: "2026-07-15", target: "2026-07-15", next: "—",
+    closed: { outcome: "Transferred", reason: "Employee-facing chat belongs to the Enterprise AI team", date: "2026-07-15" } },
+];
+
+/* =====================================================================
+   ENGINE — no edits needed below this line.
+   ===================================================================== */
+
+const DAY = 86400000;
+const stageById = Object.fromEntries(STAGES.map(s => [s.id, s]));
+const stageOrder = Object.fromEntries(STAGES.map((s, i) => [s.id, i]));
+
+function utc(dstr) { const [y, m, d] = dstr.split("-").map(Number); return Date.UTC(y, m - 1, d); }
+function todayUTC() { const n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); }
+function fmtDate(dstr) {
+  const [y, m, d] = dstr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+const HEALTH = {
+  good:     { label: "On track", glyph: "✓", rank: 0 },
+  warning:  { label: "At risk",  glyph: "!", rank: 1 },
+  critical: { label: "Overdue",  glyph: "✕", rank: 2 },
+};
+const FRESH = {
+  fresh: { label: "Fresh", rank: 0 },
+  aging: { label: "Aging", rank: 1 },
+  stale: { label: "Stale", rank: 2 },
+};
+
+function enrich(uc, today) {
+  const st = stageById[uc.stage];
+  const daysTo = Math.round((utc(uc.target) - today) / DAY);
+  const sinceUpdate = Math.round((today - utc(uc.lastUpdate)) / DAY);
+  let health = "good";
+  if (!uc.closed) {
+    if (daysTo < 0) health = "critical";
+    else if (daysTo <= st.riskWindow) health = "warning";
+  }
+  let fresh = "fresh";
+  if (!uc.closed) {
+    if (sinceUpdate > st.staleDays * 2) fresh = "stale";
+    else if (sinceUpdate > st.staleDays) fresh = "aging";
+  }
+  return { ...uc, stageName: st.name, daysTo, sinceUpdate, health, fresh };
+}
+
+/* ---------- tiny DOM helper (textContent only — data is untrusted) ---------- */
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined && text !== null) n.textContent = text;
+  return n;
+}
+
+function healthBadge(h) {
+  const b = el("span", "badge");
+  const d = el("span", "dot " + h, HEALTH[h].glyph);
+  d.setAttribute("aria-hidden", "true");
+  b.append(d, el("span", "txt", HEALTH[h].label));
+  return b;
+}
+
+/* ---------- filters ---------- */
+const fStage = document.getElementById("f-stage");
+const fHealth = document.getElementById("f-health");
+const fFresh = document.getElementById("f-fresh");
+const fQ = document.getElementById("f-q");
+const fClosed = document.getElementById("f-closed");
+
+fStage.append(el("option", null, "All stages"));
+fStage.options[0].value = "";
+for (const s of STAGES) { const o = el("option", null, s.name); o.value = s.id; fStage.append(o); }
+
+for (const c of [fStage, fHealth, fFresh, fClosed]) c.addEventListener("change", render);
+fQ.addEventListener("input", render);
+document.getElementById("f-reset").addEventListener("click", () => {
+  fStage.value = ""; fHealth.value = ""; fFresh.value = ""; fQ.value = ""; fClosed.checked = false;
+  render();
+});
+
+/* ---------- tooltip ---------- */
+const tip = document.getElementById("tip");
+function showTipAt(x, y) {
+  tip.style.display = "block";
+  const r = tip.getBoundingClientRect();
+  const px = Math.min(x + 14, window.innerWidth - r.width - 8);
+  const py = Math.min(y + 14, window.innerHeight - r.height - 8);
+  tip.style.left = px + "px";
+  tip.style.top = py + "px";
+}
+function hideTip() { tip.style.display = "none"; }
+document.addEventListener("keydown", e => { if (e.key === "Escape") hideTip(); });
+
+function segTip(stageName, h, items) {
+  tip.replaceChildren();
+  tip.append(el("div", "tt", stageName));
+  const row = el("div", "tr");
+  row.append(el("span", "tv", String(items.length)), el("span", "tl", HEALTH[h].label.toLowerCase()));
+  tip.append(row);
+  const ul = el("ul");
+  for (const it of items.slice(0, 5)) ul.append(el("li", null, it.id + " · " + it.name));
+  if (items.length > 5) ul.append(el("li", null, "+" + (items.length - 5) + " more"));
+  tip.append(ul);
+}
+
+/* ---------- table sorting ---------- */
+const COLS = [
+  { key: "name",   label: "Use case",  cmp: (a, b) => a.name.localeCompare(b.name) },
+  { key: "stage",  label: "Stage",     cmp: (a, b) => stageOrder[a.stage] - stageOrder[b.stage] },
+  { key: "owner",  label: "Owner",     cmp: (a, b) => a.owner.localeCompare(b.owner) },
+  { key: "wsjf",   label: "WSJF",      cmp: (a, b) => (b.wsjf ?? -1) - (a.wsjf ?? -1) },
+  { key: "target", label: "Target",    cmp: (a, b) => a.daysTo - b.daysTo },
+  { key: "health", label: "Health",    cmp: (a, b) => HEALTH[b.health].rank - HEALTH[a.health].rank || a.daysTo - b.daysTo },
+  { key: "fresh",  label: "Last update", cmp: (a, b) => b.sinceUpdate - a.sinceUpdate },
+];
+let sortKey = "health", sortDir = 1; // dir 1 = the column's natural order
+
+const headrow = document.getElementById("headrow");
+for (const c of COLS) {
+  const th = el("th", null, c.label);
+  th.appendChild(el("span", "arrow", ""));
+  th.addEventListener("click", () => {
+    if (sortKey === c.key) sortDir = -sortDir; else { sortKey = c.key; sortDir = 1; }
+    render();
+  });
+  th.dataset.key = c.key;
+  headrow.append(th);
+}
+
+/* ---------- render ---------- */
+function render() {
+  const today = todayUTC();
+  const all = USE_CASES.map(uc => enrich(uc, today));
+  const q = fQ.value.trim().toLowerCase();
+
+  const visible = all.filter(u => {
+    if (u.closed && !fClosed.checked) return false;
+    if (fStage.value && u.stage !== fStage.value) return false;
+    if (!u.closed) {
+      if (fHealth.value && u.health !== fHealth.value) return false;
+      if (fFresh.value && u.fresh !== fFresh.value) return false;
+    } else if (fHealth.value || fFresh.value) return false;
+    if (q) {
+      const hay = (u.id + " " + u.name + " " + u.owner + " " + u.sponsor + " " + u.func).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  const active = visible.filter(u => !u.closed);
+
+  document.getElementById("asof").textContent = "As of " +
+    new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+
+  renderKpis(active);
+  renderPipeline(active);
+  renderAttention(active);
+  renderTable(visible);
+  renderRef();
+}
+
+function renderKpis(active) {
+  const kpis = document.getElementById("kpis");
+  kpis.replaceChildren();
+  const counts = { good: 0, warning: 0, critical: 0, staleish: 0 };
+  for (const u of active) {
+    counts[u.health]++;
+    if (u.fresh !== "fresh") counts.staleish++;
+  }
+  const tiles = [
+    { label: "In flight", value: active.length, sub: "active use cases", dot: null },
+    { label: "On track", value: counts.good, sub: "target beyond risk window", dot: "good", glyph: "✓" },
+    { label: "At risk", value: counts.warning, sub: "target inside risk window", dot: "warning", glyph: "!" },
+    { label: "Overdue", value: counts.critical, sub: "past target date", dot: "critical", glyph: "✕" },
+    { label: "Stale", value: counts.staleish, sub: "no update in > 1 cycle", dot: "serious", glyph: "…" },
+  ];
+  for (const t of tiles) {
+    const tile = el("div", "tile");
+    const lab = el("div", "label");
+    if (t.dot) { const d = el("span", "dot " + t.dot, t.glyph); d.setAttribute("aria-hidden", "true"); lab.append(d); }
+    lab.append(document.createTextNode(t.label));
+    tile.append(lab, el("div", "value", String(t.value)), el("div", "sub", t.sub));
+    kpis.append(tile);
+  }
+}
+
+function renderPipeline(active) {
+  const wrap = document.getElementById("pipeline");
+  wrap.replaceChildren();
+  const byStage = STAGES.map(s => {
+    const items = active.filter(u => u.stage === s.id);
+    return { stage: s, items,
+      groups: ["good", "warning", "critical"].map(h => ({ h, items: items.filter(u => u.health === h) })).filter(g => g.items.length) };
+  });
+  const max = Math.max(1, ...byStage.map(r => r.items.length));
+
+  for (const r of byStage) {
+    const row = el("div", "prow");
+    row.append(el("div", "pname", r.stage.name));
+    const track = el("div", "track axisline");
+    if (r.items.length) {
+      const bar = el("div", "bar");
+      bar.style.width = (r.items.length / max * 100) + "%";
+      r.groups.forEach((g, i) => {
+        const seg = el("div", "seg " + g.h + (i === 0 ? " first" : "") + (i === r.groups.length - 1 ? " last" : ""));
+        seg.style.flexGrow = String(g.items.length);
+        seg.style.flexBasis = "0";
+        seg.style.minWidth = "10px";
+        seg.tabIndex = 0;
+        seg.setAttribute("role", "img");
+        seg.setAttribute("aria-label",
+          r.stage.name + ": " + g.items.length + " " + HEALTH[g.h].label.toLowerCase() + " — " +
+          g.items.map(it => it.id).join(", "));
+        const enter = ev => {
+          segTip(r.stage.name, g.h, g.items);
+          if (ev.clientX !== undefined && ev.type !== "focus") showTipAt(ev.clientX, ev.clientY);
+          else { const b = seg.getBoundingClientRect(); showTipAt(b.left + b.width / 2, b.bottom); }
+        };
+        seg.addEventListener("pointermove", enter);
+        seg.addEventListener("pointerleave", hideTip);
+        seg.addEventListener("focus", enter);
+        seg.addEventListener("blur", hideTip);
+        bar.append(seg);
+      });
+      track.append(bar);
+      row.append(track, el("div", "ptotal", String(r.items.length)));
+    } else {
+      track.append(el("div", "zero", "—"));
+      row.append(track, el("div", "ptotal", ""));
+    }
+    wrap.append(row);
+  }
+}
+
+function renderAttention(active) {
+  const ul = document.getElementById("attn");
+  ul.replaceChildren();
+  const flagged = active
+    .filter(u => u.health === "critical" || u.fresh === "stale" || u.waitingOn)
+    .sort((a, b) =>
+      (HEALTH[b.health].rank - HEALTH[a.health].rank) ||
+      (FRESH[b.fresh].rank - FRESH[a.fresh].rank) ||
+      (a.daysTo - b.daysTo));
+
+  if (!flagged.length) {
+    ul.append(el("li", "empty", "Nothing needs attention in this slice."));
+    return;
+  }
+  for (const u of flagged.slice(0, 8)) {
+    const li = el("li");
+    const d = el("span", "dot " + u.health, HEALTH[u.health].glyph);
+    d.setAttribute("aria-hidden", "true");
+    const who = el("div", "who");
+    who.append(el("div", "nm", u.id + " · " + u.name), el("div", "st", u.stageName));
+    const chips = el("div", "chips");
+    if (u.daysTo < 0) chips.append(el("span", "chip", Math.abs(u.daysTo) + "d overdue"));
+    if (u.fresh !== "fresh") chips.append(el("span", "chip", u.sinceUpdate + "d since update"));
+    if (u.waitingOn) chips.append(el("span", "chip", "Waiting: " + u.waitingOn));
+    who.append(chips);
+    li.append(d, who);
+    ul.append(li);
+  }
+  if (flagged.length > 8) ul.append(el("li", "empty", "+" + (flagged.length - 8) + " more in the table below."));
+}
+
+function renderTable(visible) {
+  // sort indicator
+  for (const th of headrow.children) {
+    const arrow = th.querySelector(".arrow");
+    if (th.dataset.key === sortKey) {
+      arrow.textContent = sortDir === 1 ? "▼" : "▲";
+      th.setAttribute("aria-sort", sortDir === 1 ? "descending" : "ascending");
+    } else { arrow.textContent = ""; th.removeAttribute("aria-sort"); }
+  }
+
+  const col = COLS.find(c => c.key === sortKey);
+  const rows = [...visible].sort((a, b) => {
+    const closedDelta = (a.closed ? 1 : 0) - (b.closed ? 1 : 0); // closed rows sink
+    return closedDelta || sortDir * col.cmp(a, b);
+  });
+
+  const tbody = document.getElementById("tbody");
+  tbody.replaceChildren();
+  document.getElementById("emptytable").hidden = rows.length > 0;
+  document.getElementById("porttable").style.display = rows.length ? "" : "none";
+  document.getElementById("tablecount").textContent =
+    rows.length + " of " + USE_CASES.length + " use cases";
+
+  for (const u of rows) {
+    const tr = el("tr", u.closed ? "closedrow" : null);
+
+    const tdName = el("td");
+    tdName.append(el("div", "name", u.id + " · " + u.name));
+    tdName.append(el("div", "sub", u.func));
+    if (u.risk.length) {
+      const fl = el("div");
+      for (const r of u.risk) fl.append(el("span", "flag", r));
+      tdName.append(fl);
+    }
+    if (!u.closed && u.waitingOn) tdName.append(el("div", "waiting", "Waiting on: " + u.waitingOn));
+    if (u.closed) tdName.append(el("div", "waiting", u.closed.outcome + " — " + u.closed.reason));
+    tr.append(tdName);
+
+    const tdStage = el("td");
+    tdStage.append(el("div", null, u.closed ? "Closed" : u.stageName));
+    tdStage.append(el("div", "sub", u.closed ? fmtDate(u.closed.date) : (u.next || "")));
+    tr.append(tdStage);
+
+    const tdOwner = el("td");
+    tdOwner.append(el("div", null, u.owner), el("div", "sub", u.sponsor));
+    tr.append(tdOwner);
+
+    const tdW = el("td", "num", u.wsjf == null ? "—" : u.wsjf.toFixed(1));
+    tr.append(tdW);
+
+    const tdT = el("td", "num");
+    if (u.closed) tdT.append(el("div", null, "—"));
+    else {
+      tdT.append(el("div", null, fmtDate(u.target)));
+      tdT.append(el("div", "sub",
+        u.daysTo < 0 ? Math.abs(u.daysTo) + "d overdue" :
+        u.daysTo === 0 ? "due today" : "in " + u.daysTo + "d"));
+    }
+    tr.append(tdT);
+
+    const tdH = el("td");
+    if (u.closed) {
+      const b = el("span", "badge");
+      const d = el("span", "dot neutral", "◦"); d.setAttribute("aria-hidden", "true");
+      b.append(d, el("span", "txt", u.closed.outcome));
+      tdH.append(b);
+    } else tdH.append(healthBadge(u.health));
+    tr.append(tdH);
+
+    const tdU = el("td", "num");
+    tdU.append(el("div", null, u.sinceUpdate + "d ago"));
+    if (!u.closed && u.fresh !== "fresh") {
+      const b = el("span", "badge");
+      const d = el("span", "dot serious", "…"); d.setAttribute("aria-hidden", "true");
+      b.append(d, el("span", "txt", FRESH[u.fresh].label));
+      tdU.append(b);
+    }
+    tr.append(tdU);
+
+    tbody.append(tr);
+  }
+}
+
+let refRendered = false;
+function renderRef() {
+  if (refRendered) return;
+  refRendered = true;
+  const strip = document.getElementById("stagestrip");
+  STAGES.forEach((s, i) => {
+    if (i) strip.append(el("span", "arr", "▸"));
+    strip.append(el("span", "stagechip", s.name));
+  });
+  const tb = document.querySelector("#staletable tbody");
+  for (const s of STAGES) {
+    const tr = el("tr");
+    tr.append(el("td", null, s.name),
+      el("td", null, "> " + s.staleDays + " days"),
+      el("td", null, "> " + s.staleDays * 2 + " days"),
+      el("td", null, s.cadence));
+    tb.append(tr);
+  }
+}
+
+render();
+</script>
+</body>
+</html>
