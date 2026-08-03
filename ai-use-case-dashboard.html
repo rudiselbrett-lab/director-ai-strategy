@@ -594,7 +594,7 @@
         <h2>Ranked backlog — WSJF <button class="infobtn" id="wsjf-info" type="button" title="How WSJF scoring works">i</button></h2>
       </div>
       <div id="backlogrows"></div>
-      <div class="bnote">Rank is the default order of execution. Deviating from rank is a recorded exception.</div>
+      <div class="bnote">Rank is the default order of execution; deviations are recorded with a rationale.</div>
     </section>
   </div>
 
@@ -660,7 +660,7 @@
     <div class="secthead"><span class="kicker">01</span><h2>Core principles</h2></div>
     <p class="sectsub">Same questions, same scoring, every time — six themes that decide what we build and how we win.</p>
     <div class="tenets">
-      <div class="tenet"><div class="no">01</div><h3>Hypothesis first</h3><p>Start with what we believe and what would disprove it. Every use case carries a kill condition — no kill condition, no start.</p></div>
+      <div class="tenet"><div class="no">01</div><h3>Hypothesis first</h3><p>Start with what we believe and what would disprove it. Every use case states up front what would tell us to stop.</p></div>
       <div class="tenet"><div class="no">02</div><h3>Evidence before scale</h3><p>Pilots exist to answer a question, not to prove we were right. Stop is a successful discovery — it cost four weeks, not two quarters.</p></div>
       <div class="tenet"><div class="no">03</div><h3>Value and feasibility together</h3><p>Neither one alone gets a use case funded.</p></div>
       <div class="tenet"><div class="no">04</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner, and measured value — not shipped.</p></div>
@@ -671,7 +671,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>The lifecycle</h2></div>
-    <p class="sectsub">Eight stages — one accountability, one accountable role, one system of record each. Nothing advances without meeting its stage's decision criteria. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
+    <p class="sectsub">Eight stages — one accountability, one accountable role, one system of record each, with clear decision criteria for advancing. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
     <div class="lifegrid" id="lifegrid"></div>
     <p class="gatenote">Declining early is part of the process — declined and transferred outcomes stay in the portfolio as data.</p>
   </div>
@@ -742,7 +742,7 @@
         <legend><span class="stepnum">1</span> General information</legend>
         <div class="frow3">
           <div class="field"><label for="uc-name">Use case name</label><input type="text" id="uc-name" placeholder="e.g., Complaint triage and routing"></div>
-          <div class="field"><label for="uc-sponsor">Business owner / sponsor</label><input type="text" id="uc-sponsor" placeholder="Named sponsor — no sponsor, no approval"></div>
+          <div class="field"><label for="uc-sponsor">Business owner / sponsor</label><input type="text" id="uc-sponsor" placeholder="Accountable for value after approval"></div>
           <div class="field"><label for="uc-func">Bank function</label><input type="text" id="uc-func" placeholder="e.g., Customer Care"></div>
         </div>
         <div class="frow">
@@ -837,7 +837,7 @@
         <h3>Where this goes</h3>
         <ul>
           <li>Every submission becomes a <b>Jira issue</b> and carries that ID forward.</li>
-          <li>Nothing gets worked, staffed, or reported until it exists in Jira.</li>
+          <li>Work is staffed and reported from Jira — if it's there, it's in the portfolio.</li>
           <li>Declines get a Jira issue too — <b>declines are portfolio data</b>.</li>
         </ul>
       </div>
@@ -854,7 +854,7 @@
   <div class="teamonly">
     <div class="tohead">
       <span class="kicker">Intake team use only</span>
-      <span style="color:var(--ink-3); font-size:11.5px;">Completed before the forum — required to leave In Triage.</span>
+      <span style="color:var(--ink-3); font-size:11.5px;">Completed before the forum to support the triage decision.</span>
     </div>
     <div class="rule"></div>
     <div class="criteria" id="criteria"></div>
@@ -944,13 +944,12 @@ const STAGE_DETAILS = {
   },
   triage: {
     chips: ["Weekly, 30 minutes", "One cycle max"],
-    quote: "One call, one person. Consensus is not required and is not waited for.",
+    quote: "Every use case leaves with a decision, an owner, and a date.",
     sections: [
-      { h: "The rules", items: [
-        "Every use case leaves with a decision, an owner, and a date.",
-        "The AI product lead decides. No named sponsor, no approval.",
+      { h: "How it works", items: [
+        "The AI product lead makes the call, with a named business sponsor accountable for value.",
         "Any risk flag routes to Risk or MRM before Approve.",
-        "Capacity limited: approving something new means stopping something current." ] },
+        "Capacity is limited — new approvals are weighed against work already in flight." ] },
       { h: "The five decisions", items: [
         "Approve — value is credible; committing capacity now.",
         "Rapid Prototype — two weeks, capped, to buy evidence.",
@@ -1020,7 +1019,7 @@ const USE_CASES = [
   { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
     stage: "intake", owner: "Intake team", sponsor: "— (sponsor not named)", wsjf: null, est: null,
     risk: [], waitingOn: "Named business sponsor",
-    lastUpdate: "2026-07-17", target: "2026-07-24", next: "Blocked at intake — no sponsor, no approval" },
+    lastUpdate: "2026-07-17", target: "2026-07-24", next: "Blocked at intake — awaiting a named sponsor" },
 
   { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
     stage: "value", owner: "T. Brooks", sponsor: "Lending Operations", wsjf: 8.9, est: 1400,
@@ -1030,7 +1029,7 @@ const USE_CASES = [
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
     stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null, est: null,
     risk: [], waitingOn: "Prep incomplete — deferred one cycle",
-    lastUpdate: "2026-07-22", target: "2026-07-29", next: "Second triage return — decision forced" },
+    lastUpdate: "2026-07-22", target: "2026-07-29", next: "Second triage return — decision due this cycle" },
 
   { id: "AI-013", name: "ATM cash forecasting", func: "Branch Network",
     stage: "discovery", owner: "R. Patel", sponsor: "Treasury Services", wsjf: null, est: null,
@@ -1710,7 +1709,7 @@ coachFor("uc-metric", text => {
   if (!/(%|percent|hour|day|minute|second|week|cost|\$|dollar|nps|csat|rate|volume|count|error|defect|rework|cycle|time|score|fte|call|case|ticket|complaint|dispute)/i.test(text))
     tips.push("Name the metric in units — hours per case, % rejected, $ per month.");
   if (!hasNumber(text))
-    tips.push("State today's value. A target without a measured baseline is not evidence.");
+    tips.push("State today's value, so there's a baseline to measure improvement against.");
   return { level: tips.length === 0 ? "good" : tips.length === 1 ? "warning" : "serious",
     tips, praise: "A named metric with today's baseline — exactly what discovery needs to verify." };
 });
