@@ -26,6 +26,7 @@ jobs:
         run: |
           mkdir -p _site
           cp ai-use-case-dashboard.html _site/index.html
+          cp 404.html _site/404.html
       - uses: actions/configure-pages@v5
         with:
           enablement: true
