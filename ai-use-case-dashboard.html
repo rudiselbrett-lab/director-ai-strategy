@@ -643,7 +643,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">03</span><h2>The lifecycle</h2></div>
-    <p class="sectsub">Eight stages — one outcome, one owner, one system of record each. Nothing advances without meeting its stage's decision criteria. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
+    <p class="sectsub">Eight stages — one accountability, one accountable role, one system of record each. Nothing advances without meeting its stage's decision criteria. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
     <div class="lifegrid" id="lifegrid"></div>
     <p class="gatenote">Declining early is part of the process — declined and transferred outcomes stay in the portfolio as data.</p>
   </div>
@@ -891,21 +891,21 @@
 
 const STAGES = [
   { id: "intake",         name: "Intake",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly intake review",
-    outcome: "Problem statement captured", owner: "Business sponsor", record: "Intake form / Jira" },
+    outcome: "Define the problem and desired outcome", owner: "Business Sponsor", record: "Intake form / Jira" },
   { id: "triage",         name: "Triage",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly triage — one cycle max",
-    outcome: "Reuse and initial risk review", owner: "Portfolio team", record: "Jira backlog" },
+    outcome: "Assess, route, and identify reuse opportunities", owner: "AI Portfolio Team", record: "Jira backlog" },
   { id: "discovery",      name: "Discovery & Sizing", staleDays: 10, riskWindow: 5,  cadence: "Four-week timebox",
-    outcome: "Value, feasibility, data readiness validated", owner: "Product, business, technology", record: "Discovery package" },
+    outcome: "Validate value, feasibility, and scope", owner: "Product Manager", record: "Discovery package" },
   { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,  cadence: "Monthly scoring session",
-    outcome: "WSJF score assigned", owner: "AI portfolio team", record: "Portfolio backlog" },
+    outcome: "Evaluate and rank opportunities", owner: "AI Portfolio Team", record: "Portfolio backlog" },
   { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,  cadence: "Monthly Portfolio Council",
-    outcome: "Advance, defer, or reject", owner: "AI Portfolio Council", record: "AI roadmap" },
+    outcome: "Approve, defer, or reject investment", owner: "AI Portfolio Council", record: "AI roadmap" },
   { id: "governance",     name: "Governance",         staleDays: 14, riskWindow: 7,  cadence: "Governance review, as needed",
-    outcome: "Risk and control requirements confirmed", owner: "Risk, compliance, model governance", record: "Archer" },
+    outcome: "Confirm risk, compliance, and control requirements are satisfied", owner: "Business Line Risk", record: "Archer" },
   { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14, cadence: "Quarterly plan / sprint cadence",
-    outcome: "Funding and execution approved", owner: "Product and technology", record: "Quarterly plan" },
+    outcome: "Deliver, launch, and scale the solution", owner: "Product Manager", record: "Quarterly plan" },
   { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly benefits review",
-    outcome: "Benefits measured and reported", owner: "Business owner, portfolio team", record: "Benefits dashboard" },
+    outcome: "Measure and realize business outcomes", owner: "Business Sponsor", record: "Benefits dashboard" },
 ];
 
 /* Playbook content — preview depth, three stages only. */
@@ -1120,7 +1120,7 @@ function openStage(stageId) {
   document.getElementById("pb-title").textContent = s.name;
   const chips = document.getElementById("pb-chips");
   chips.replaceChildren();
-  for (const c of ["Owner: " + s.owner, "Record: " + s.record, ...d.chips])
+  for (const c of ["Accountable: " + s.owner, "Record: " + s.record, ...d.chips])
     chips.append(el("span", "chip", c));
   const body = document.getElementById("pb-body");
   body.replaceChildren();
@@ -1490,7 +1490,7 @@ function renderStatic() {
     card.append(top, el("p", "out", s.outcome));
     const meta = el("div", "meta");
     const ownerLine = el("div");
-    ownerLine.append(el("b", null, "Owner: "), document.createTextNode(s.owner));
+    ownerLine.append(el("b", null, "Accountable: "), document.createTextNode(s.owner));
     const recLine = el("div");
     recLine.append(el("b", null, "Record: "), document.createTextNode(s.record));
     meta.append(ownerLine, recLine);
