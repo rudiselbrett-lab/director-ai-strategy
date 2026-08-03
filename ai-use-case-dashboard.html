@@ -328,19 +328,13 @@
   .secthead h2 { font: 400 21px/1.2 var(--serif); margin: 0; }
   .sectsub { color: var(--ink-2); font-size: 13px; margin: 4px 0 16px; max-width: 760px; }
 
-  .tenets { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 26px; border-top: 1px solid var(--rule); }
+  .tenets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 26px; border-top: 1px solid var(--rule); }
+  @media (max-width: 900px) { .tenets { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .tenets { grid-template-columns: 1fr; } }
   .tenet { padding: 14px 0 16px; border-top: 1px solid transparent; }
   .tenet .no { color: var(--gold); font: 700 11px/1.2 var(--sans); letter-spacing: 0.1em; }
   .tenet h3 { font: 400 16px/1.3 var(--serif); margin: 7px 0 6px; }
   .tenet p { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; margin: 0; }
-
-  .principles { display: flex; flex-wrap: wrap; gap: 8px; }
-  .principle {
-    border: 1px solid var(--hairline); background: var(--panel);
-    padding: 7px 13px; font-size: 12.5px; color: var(--ink);
-  }
-  .principle strong { font-weight: 700; }
-  .principle span { color: var(--ink-2); }
 
   .lifegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   @media (max-width: 980px) { .lifegrid { grid-template-columns: repeat(2, 1fr); } }
@@ -364,14 +358,6 @@
   .lstage .meta b { color: var(--ink-2); font-weight: 600; }
   .lstage .more { margin-top: auto; padding-top: 10px; font: 600 11.5px var(--sans); color: var(--link); }
   .gatenote { color: var(--ink-3); font-size: 12px; margin-top: 12px; }
-
-  .quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-  .quote {
-    border-left: 2px solid var(--gold);
-    padding: 2px 0 2px 16px; margin: 0;
-    font: italic 400 16.5px/1.45 var(--serif);
-  }
-  .quote .src { display: block; margin-top: 8px; font: 700 10px/1.2 var(--sans); font-style: normal; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase; }
 
   .opps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
   .opp { background: #fff; border: 1px solid var(--hairline); padding: 15px 16px; }
@@ -416,6 +402,11 @@
   .pbclose:hover { background: var(--wash); color: var(--ink); }
   .pbbody { padding: 6px 24px 20px; max-height: 62vh; overflow-y: auto; }
   .pbbody h3 { font: 600 10.5px/1.2 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); margin: 16px 0 8px; }
+  .pbbody .pbquote {
+    border-left: 2px solid var(--gold);
+    padding: 2px 0 2px 14px; margin: 14px 0 2px;
+    font: italic 400 15.5px/1.45 var(--serif); color: var(--ink);
+  }
   .pbbody ul { margin: 0; padding-left: 17px; }
   .pbbody li { color: var(--ink-2); font-size: 13px; margin: 5px 0; line-height: 1.5; }
   .pbbody li b { color: var(--ink); font-weight: 600; }
@@ -666,45 +657,27 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">01</span><h2>How we operate</h2></div>
-    <p class="sectsub">Five commitments that shape every decision in the portfolio.</p>
+    <div class="secthead"><span class="kicker">01</span><h2>Core principles</h2></div>
+    <p class="sectsub">Same questions, same scoring, every time — six themes that decide what we build and how we win.</p>
     <div class="tenets">
-      <div class="tenet"><div class="no">01</div><h3>Bets, not projects</h3><p>Every use case has a stated expected value and a kill condition. No kill condition, no start.</p></div>
-      <div class="tenet"><div class="no">02</div><h3>Evidence before scale</h3><p>Pilots exist to answer a question, not to prove we were right.</p></div>
-      <div class="tenet"><div class="no">03</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner, and measured value — not shipped.</p></div>
-      <div class="tenet"><div class="no">04</div><h3>One view, always current</h3><p>Anyone can see status, value, owner, and blockers without asking us.</p></div>
-      <div class="tenet"><div class="no">05</div><h3>Speed is a governance outcome</h3><p>Risk, Legal, and MRM engage early and by tier — controls are why we can move.</p></div>
+      <div class="tenet"><div class="no">01</div><h3>Hypothesis first</h3><p>Start with what we believe and what would disprove it. Every use case carries a kill condition — no kill condition, no start.</p></div>
+      <div class="tenet"><div class="no">02</div><h3>Evidence before scale</h3><p>Pilots exist to answer a question, not to prove we were right. Stop is a successful discovery — it cost four weeks, not two quarters.</p></div>
+      <div class="tenet"><div class="no">03</div><h3>Value and feasibility together</h3><p>Neither one alone gets a use case funded.</p></div>
+      <div class="tenet"><div class="no">04</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner, and measured value — not shipped.</p></div>
+      <div class="tenet"><div class="no">05</div><h3>Connected data</h3><p>Every stage, decision, and outcome is measured and visible, so we can manage the process and improve it.</p></div>
+      <div class="tenet"><div class="no">06</div><h3>Speed is a governance outcome</h3><p>Risk, Legal, and MRM engage early and by tier — controls are why we can move.</p></div>
     </div>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">02</span><h2>Core principles</h2></div>
-    <div class="principles">
-      <span class="principle"><strong>Value and feasibility together</strong> <span>— neither one alone gets a use case funded</span></span>
-      <span class="principle"><strong>Clarity and consistency</strong> <span>— same questions, same scoring, every time</span></span>
-      <span class="principle"><strong>Connected data</strong> <span>— every stage, decision, and outcome is measured, so we can manage the process and improve it</span></span>
-      <span class="principle"><strong>Hypothesis first</strong> <span>— start with what we believe and what would disprove it</span></span>
-    </div>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">03</span><h2>The lifecycle</h2></div>
+    <div class="secthead"><span class="kicker">02</span><h2>The lifecycle</h2></div>
     <p class="sectsub">Eight stages — one accountability, one accountable role, one system of record each. Nothing advances without meeting its stage's decision criteria. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
     <div class="lifegrid" id="lifegrid"></div>
     <p class="gatenote">Declining early is part of the process — declined and transferred outcomes stay in the portfolio as data.</p>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>What I hold the process to</h2></div>
-    <div class="quotes">
-      <blockquote class="quote">"If intake takes longer than fifteen minutes, we're asking for detail we haven't earned yet."<span class="src">Intake</span></blockquote>
-      <blockquote class="quote">"Stop is a successful discovery. It cost four weeks instead of two quarters."<span class="src">Discovery &amp; Sizing</span></blockquote>
-      <blockquote class="quote">"WSJF ranks, it does not schedule. Capacity decides how far down the list we get."<span class="src">Prioritization</span></blockquote>
-    </div>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">05</span><h2>Operating routines</h2></div>
+    <div class="secthead"><span class="kicker">03</span><h2>Operating routines</h2></div>
     <p class="sectsub">Standing forums, each owning one decision, at a fixed cadence.</p>
     <div class="card" style="padding: 6px 20px;">
       <table class="mini">
@@ -723,7 +696,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">06</span><h2>Where I'd push it next</h2></div>
+    <div class="secthead"><span class="kicker">04</span><h2>Where I'd push it next</h2></div>
     <p class="sectsub">The stage-gate creates clarity; agile keeps it honest.</p>
     <div class="opps">
       <div class="opp"><span class="tag">Agile opportunity</span><h3>Handle risk up front, prototype fast</h3><p>Product, UX, and Engineering review ideas together; every experiment carries success metrics and exit criteria up front.</p></div>
@@ -735,7 +708,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">07</span><h2>Next steps</h2></div>
+    <div class="secthead"><span class="kicker">05</span><h2>Next steps</h2></div>
     <ol class="steps">
       <li><div class="stitle">Socialize the intake process</div></li>
       <li><div class="stitle">Educate the Bank organization on the process</div></li>
@@ -959,6 +932,7 @@ const STAGES = [
 const STAGE_DETAILS = {
   intake: {
     chips: ["Weekly review", "Target: 15 minutes"],
+    quote: "If intake takes longer than fifteen minutes, we're asking for detail we haven't earned yet.",
     sections: [
       { h: "How it works", items: [
         "Lightweight on purpose — decide whether it's worth building, not fully specify it.",
@@ -970,10 +944,11 @@ const STAGE_DETAILS = {
   },
   triage: {
     chips: ["Weekly, 30 minutes", "One cycle max"],
+    quote: "One call, one person. Consensus is not required and is not waited for.",
     sections: [
       { h: "The rules", items: [
         "Every use case leaves with a decision, an owner, and a date.",
-        "The AI product lead decides — one call, one person. No named sponsor, no approval.",
+        "The AI product lead decides. No named sponsor, no approval.",
         "Any risk flag routes to Risk or MRM before Approve.",
         "Capacity limited: approving something new means stopping something current." ] },
       { h: "The five decisions", items: [
@@ -986,12 +961,12 @@ const STAGE_DETAILS = {
   },
   prioritization: {
     chips: ["WSJF", "Fibonacci 1–20"],
+    quote: "WSJF ranks, it does not schedule. Capacity decides how far down the list we get.",
     sections: [
       { h: "How it works", items: [
         "WSJF = Cost of Delay ÷ job size. Highest score goes first.",
         "Only use cases with a completed discovery package are scored — an estimate cannot be ranked against evidence.",
-        "Cost of Delay = business value + time criticality + risk reduction / enablement. Technology owns job size.",
-        "WSJF ranks, it does not schedule — capacity decides how far down the list we get." ] },
+        "Cost of Delay = business value + time criticality + risk reduction / enablement. Technology owns job size." ] },
     ],
   },
 };
@@ -1175,6 +1150,7 @@ function openStage(stageId) {
     chips.append(el("span", "chip", c));
   const body = document.getElementById("pb-body");
   body.replaceChildren();
+  if (d.quote) body.append(el("blockquote", "pbquote", "“" + d.quote + "”"));
   for (const sec of d.sections) {
     body.append(el("h3", null, sec.h));
     const ul = el("ul");
