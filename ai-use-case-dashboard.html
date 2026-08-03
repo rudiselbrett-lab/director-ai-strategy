@@ -313,12 +313,13 @@
   .lifegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   @media (max-width: 980px) { .lifegrid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .lifegrid { grid-template-columns: 1fr; } }
-  button.lstage {
+  .lstage {
     background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
-    padding: 14px 15px; box-shadow: var(--shadow); cursor: pointer; text-align: left;
+    padding: 14px 15px; box-shadow: var(--shadow); text-align: left;
     display: flex; flex-direction: column;
     transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
   }
+  button.lstage { cursor: pointer; }
   button.lstage:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); border-color: var(--accent); }
   .lstage .top { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
   .stepnum {
@@ -332,24 +333,6 @@
   .lstage .meta b { color: var(--text-secondary); font-weight: 550; }
   .lstage .more { margin-top: auto; padding-top: 10px; font-size: 12px; font-weight: 600; color: var(--accent-text); }
   .gatenote { color: var(--text-muted); font-size: 12.5px; margin-top: 12px; }
-
-  .fivedec { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 14px; align-items: start; }
-  details.dec {
-    border: 1px solid var(--border); border-radius: 12px;
-    background: var(--surface-1);
-  }
-  details.dec > summary {
-    list-style: none; cursor: pointer; padding: 12px 13px;
-  }
-  details.dec > summary::-webkit-details-marker { display: none; }
-  details.dec h4 { font-size: 12.5px; font-weight: 700; margin: 0 0 4px; display: flex; align-items: center; justify-content: space-between; }
-  details.dec h4::after { content: "+"; color: var(--accent-text); font-weight: 600; }
-  details.dec[open] h4::after { content: "–"; }
-  details.dec summary p { font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.45; }
-  details.dec .decbody { padding: 0 13px 12px; font-size: 12px; color: var(--text-secondary); }
-  details.dec .decbody b { color: var(--text-primary); font-weight: 600; }
-  details.dec .decbody p { margin: 4px 0; }
-  details.dec[open] { border-color: var(--accent); }
 
   .quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
   .quote {
@@ -385,8 +368,7 @@
     background: var(--accent-wash-2); color: var(--accent-text);
     display: grid; place-items: center; font-size: 12px; font-weight: 700;
   }
-  ol.steps .stitle { font-weight: 600; font-size: 13.5px; }
-  ol.steps .sdesc { color: var(--text-secondary); font-size: 12.5px; }
+  ol.steps .stitle { font-weight: 600; font-size: 13.5px; align-self: center; }
 
   /* ---------- stage playbook modal ---------- */
   dialog.playbook {
@@ -545,7 +527,7 @@
 <!-- ================= PORTFOLIO TAB ================= -->
 <section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio">
 
-  <p class="tagline">One view, always current — what's in flight, what it's worth, who owns it, and what it's waiting on. Jira is the system of record; this page is the view. Click any stage name for its playbook, or a KPI tile to filter.</p>
+  <p class="tagline">One view, always current — what's in flight, who owns it, and what it's waiting on. Click a KPI tile to filter; stage names open a short playbook.</p>
 
   <!-- filter row: scopes every number, chart, and table row below it -->
   <div class="filters" id="filters">
@@ -634,18 +616,18 @@
   <div class="mission">
     <div class="kicker">Mission</div>
     <p class="statement">We turn Consumer Bank's AI capacity into a small number of capabilities that <em>measurably change</em> how customers bank with us and how the business runs.</p>
-    <p class="statement-sub">Clarity and prioritization are how we get there. One process for every AI idea, so capacity goes to what's worth building — and everything else stops early, cheaply, and on purpose.</p>
+    <p class="statement-sub">Clarity and prioritization are how we get there. One process for every AI idea, so capacity goes to what's worth building.</p>
   </div>
 
   <div class="sect">
     <div class="secthead"><span class="kicker">01</span><h2>How we operate</h2></div>
     <p class="sectsub">Five commitments that shape every decision in the portfolio.</p>
     <div class="tenets">
-      <div class="tenet"><div class="no">01</div><h3>Bets, not projects</h3><p>Every use case is a hypothesis with a stated expected value and a kill condition. If we can't say what would make us stop, we don't start.</p></div>
-      <div class="tenet"><div class="no">02</div><h3>Evidence before scale</h3><p>Pilots exist to answer a question, not to prove we were right. We instrument for the answer up front.</p></div>
-      <div class="tenet"><div class="no">03</div><h3>Finished, not launched</h3><p>A use case is done when it sits in a business routine with a named owner and measured value — not when it ships.</p></div>
-      <div class="tenet"><div class="no">04</div><h3>One view, always current</h3><p>Anyone can see what's in flight, what it's worth, who owns it, and what it's waiting on — without asking us.</p></div>
-      <div class="tenet"><div class="no">05</div><h3>Speed is a governance outcome</h3><p>Risk, Legal, and Model Risk Management engage early and by tier, so controls are the reason we can move — not the reason we can't.</p></div>
+      <div class="tenet"><div class="no">01</div><h3>Bets, not projects</h3><p>Every use case has a stated expected value and a kill condition. No kill condition, no start.</p></div>
+      <div class="tenet"><div class="no">02</div><h3>Evidence before scale</h3><p>Pilots exist to answer a question, not to prove we were right.</p></div>
+      <div class="tenet"><div class="no">03</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner, and measured value — not shipped.</p></div>
+      <div class="tenet"><div class="no">04</div><h3>One view, always current</h3><p>Anyone can see status, value, owner, and blockers without asking us.</p></div>
+      <div class="tenet"><div class="no">05</div><h3>Speed is a governance outcome</h3><p>Risk, Legal, and MRM engage early and by tier — controls are why we can move.</p></div>
     </div>
   </div>
 
@@ -661,33 +643,9 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">03</span><h2>The lifecycle</h2></div>
-    <p class="sectsub">Eight stages, each with one primary outcome, one accountable owner, and one system of record. No initiative advances without satisfying the decision criteria for its current stage. <strong>Click any stage for its playbook.</strong></p>
+    <p class="sectsub">Eight stages — one outcome, one owner, one system of record each. Nothing advances without meeting its stage's decision criteria. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
     <div class="lifegrid" id="lifegrid"></div>
-    <p class="gatenote">Declining early is part of the process — the cost of a bad idea is lowest before anyone builds it. Declined and Transferred outcomes stay in the portfolio as data.</p>
-
-    <h3 style="font-size:13.5px; margin:24px 0 2px;">Triage: every use case leaves with a decision, an owner, and a date <span style="color:var(--text-muted); font-weight:500;">— click a decision for what it needs and what it gets</span></h3>
-    <div class="fivedec">
-      <details class="dec">
-        <summary><h4>Approve</h4><p>Value is credible and we are committing capacity now.</p></summary>
-        <div class="decbody"><p><b>Needs:</b> named sponsor, no open risk flag, agreed value measure.</p><p><b>Gets:</b> a delivery owner and capacity in the next increment.</p></div>
-      </details>
-      <details class="dec">
-        <summary><h4>Rapid Prototype</h4><p>Value is plausible but unproven — buy evidence before a build.</p></summary>
-        <div class="decbody"><p><b>Needs:</b> one stated question and a threshold for a good answer.</p><p><b>Gets:</b> two weeks, capped. Returns to triage once, then Approve or Decline.</p></div>
-      </details>
-      <details class="dec">
-        <summary><h4>More Discovery</h4><p>One specific question blocks the decision. Not a holding pattern.</p></summary>
-        <div class="decbody"><p><b>Needs:</b> the question in writing, an owner, a return date.</p><p><b>Gets:</b> one cycle. A second return forces Approve or Decline.</p></div>
-      </details>
-      <details class="dec">
-        <summary><h4>Partner</h4><p>The capability belongs elsewhere.</p></summary>
-        <div class="decbody"><p><b>Needs:</b> the receiving team contacted, not assumed.</p><p><b>Gets:</b> a warm handoff; closes as Transferred, tracked in a filter.</p></div>
-      </details>
-      <details class="dec">
-        <summary><h4>Decline</h4><p>Not proceeding — a normal outcome.</p></summary>
-        <div class="decbody"><p><b>Needs:</b> a reason from the list — low value, not feasible now, duplicate, already solved, or risk outweighs benefit.</p><p><b>Gets:</b> the requester hears it directly, not via the portfolio view.</p></div>
-      </details>
-    </div>
+    <p class="gatenote">Declining early is part of the process — declined and transferred outcomes stay in the portfolio as data.</p>
   </div>
 
   <div class="sect">
@@ -701,7 +659,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">05</span><h2>Operating routines</h2></div>
-    <p class="sectsub">Standing forums, each owning one decision, at a fixed cadence — so a use case is never waiting on a meeting that doesn't exist.</p>
+    <p class="sectsub">Standing forums, each owning one decision, at a fixed cadence.</p>
     <div class="card" style="padding: 6px 18px;">
       <table class="mini">
         <thead><tr><th>Forum</th><th>Cadence</th><th>The one decision it owns</th></tr></thead>
@@ -720,24 +678,24 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">06</span><h2>Where I'd push it next</h2></div>
-    <p class="sectsub">The stage-gate creates clarity; agile keeps it honest. Five deliberate moves to make the process faster without giving up control.</p>
+    <p class="sectsub">The stage-gate creates clarity; agile keeps it honest.</p>
     <div class="opps">
-      <div class="opp"><span class="tag">Agile opportunity</span><h3>Handle risk up front, prototype fast</h3><p>Product, UX, and Engineering review ideas together to separate high-potential opportunities from the rest quickly. Every experiment carries success metrics and exit criteria defined up front, so scale / iterate / pivot / stop is an informed call, not a debate.</p></div>
-      <div class="opp"><span class="tag">Agile opportunity</span><h3>A fast lane for small, low-risk use cases</h3><p>Full WSJF scoring and full governance for a small, low-risk pilot is the overhead agile exists to cut. With Business Line Risk able to make a fast risk call at the line, work below a defined size/risk threshold skips from Triage straight to Delivery — no waiting on the monthly Council.</p></div>
-      <div class="opp"><span class="tag">Agile opportunity</span><h3>Governance moves left</h3><p>As BLR takes on risk ownership at the line of business, Governance stops being a downstream handoff. BLR expertise embedded in Discovery &amp; Sizing turns governance into a continuous check running alongside the work — not a queue a use case waits in after it's already been prioritized.</p></div>
-      <div class="opp"><span class="tag">Agile opportunity</span><h3>Pull instead of push</h3><p>Today a use case only moves on the calendar: weekly triage, monthly council, quarterly planning. A WIP-limited Portfolio Kanban — the model SAFe itself uses — lets anything that clears its bar move the moment it's ready instead of waiting for the next scheduled forum.</p></div>
-      <div class="opp"><span class="tag">Agile opportunity</span><h3>Feed value back continuously</h3><p>Benefits Review runs quarterly, so WSJF inputs recalibrate four times a year. Feeding actual adoption and cost data back after every release keeps the scoring model honest in near real time instead of on a lag.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Handle risk up front, prototype fast</h3><p>Product, UX, and Engineering review ideas together; every experiment carries success metrics and exit criteria up front.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>A fast lane for small, low-risk use cases</h3><p>Below a defined size/risk threshold — with a fast BLR risk call at the line — work skips from Triage straight to Delivery.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Governance moves left</h3><p>BLR embedded in Discovery &amp; Sizing makes governance a continuous check alongside the work, not a downstream queue.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Pull instead of push</h3><p>A WIP-limited Portfolio Kanban lets anything that clears its bar move the moment it's ready, not at the next scheduled forum.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Feed value back continuously</h3><p>Adoption and cost data flow back after every release, so WSJF recalibrates in near real time instead of quarterly.</p></div>
     </div>
   </div>
 
   <div class="sect">
     <div class="secthead"><span class="kicker">07</span><h2>Next steps</h2></div>
     <ol class="steps">
-      <li><div><div class="stitle">Socialize the intake process</div><div class="sdesc">Walk sponsors and business lines through how ideas enter and what a good submission looks like.</div></div></li>
-      <li><div><div class="stitle">Educate the Bank organization on the process</div><div class="sdesc">Same questions, same scoring, every time — everyone should know the path and the bar.</div></div></li>
-      <li><div><div class="stitle">Bank D&amp;A builds the MS intake form</div><div class="sdesc">A fifteen-minute capture surface; every submission becomes a Jira issue from that point forward.</div></div></li>
-      <li><div><div class="stitle">Use case owners populate intake for top-ranked use cases</div><div class="sdesc">Owners answer only what they can: problem, current process, benefit, data readiness, effort, risk flags.</div></div></li>
-      <li><div><div class="stitle">Bank D&amp;A Tech reviews and prioritizes for experiment</div><div class="sdesc">Context, not gatekeeping — route each submission to Discovery, Rapid Prototype, Partner, or Decline.</div></div></li>
+      <li><div class="stitle">Socialize the intake process</div></li>
+      <li><div class="stitle">Educate the Bank organization on the process</div></li>
+      <li><div class="stitle">Bank D&amp;A builds the MS intake form</div></li>
+      <li><div class="stitle">Use case owners populate intake for top-ranked use cases</div></li>
+      <li><div class="stitle">Bank D&amp;A Tech reviews and prioritizes for experiment</div></li>
     </ol>
   </div>
 
@@ -749,7 +707,7 @@
   <div class="pagehead">
     <div class="kicker">Capture surface</div>
     <h1>AI / Automation Use Case Intake</h1>
-    <p>Intake is deliberately lightweight: the goal is to decide whether a use case is worth building, not to fully specify it. Ask only what the requester can answer — detailed benefit, effort, and risk work happens after experimentation.</p>
+    <p>Deliberately lightweight: decide whether a use case is worth building, not fully specify it. Detailed benefit, effort, and risk work happens after experimentation.</p>
     <div class="headchips">
       <span class="chip">⏱ Target: 15 minutes</span>
       <span class="chip">Reviewed weekly</span>
@@ -851,28 +809,24 @@
       <div class="card">
         <h3>How this works</h3>
         <ul>
-          <li><b>Ask only what the requester can answer</b> — problem, current process, benefit, data readiness, rough effort, risk flags.</li>
           <li><b>Fifteen minutes.</b> Longer means we're asking for detail we haven't earned yet.</li>
-          <li><b>Refinement comes after experimentation</b>, once we know something real.</li>
-          <li><b>The intake team adds context, not gatekeeping</b> — what's in flight, what's been tried, what it takes to run.</li>
-          <li><b>Declining early is part of the process.</b> The cost of a bad idea is lowest before anyone builds it.</li>
+          <li><b>Ask only what the requester can answer</b> — refinement comes after experimentation.</li>
+          <li><b>Declining early is part of the process.</b> A bad idea is cheapest before anyone builds it.</li>
         </ul>
       </div>
       <div class="card">
         <h3>Where this goes</h3>
         <ul>
-          <li>Every submission becomes a <b>Jira issue</b> in the AI Use Case Capability and carries that ID forward.</li>
-          <li>This page holds the narrative; <b>Jira holds status, priority, and the audit trail</b>.</li>
+          <li>Every submission becomes a <b>Jira issue</b> and carries that ID forward.</li>
           <li>Nothing gets worked, staffed, or reported until it exists in Jira.</li>
-          <li>Declined submissions get a Jira issue too, closed with the rationale — <b>declines are portfolio data</b>.</li>
+          <li>Declines get a Jira issue too — <b>declines are portfolio data</b>.</li>
         </ul>
       </div>
       <div class="card">
         <h3>What happens next</h3>
         <ul>
-          <li>Reviewed at the <b>weekly AI Intake Review</b>.</li>
-          <li>Routed — never queued — to <b>Discovery, Rapid Prototype, Partner, Approve, or Decline</b>.</li>
-          <li>Every submission leaves triage with <b>a decision, an owner, and a date</b>.</li>
+          <li>Reviewed at the <b>weekly AI Intake Review</b>, routed — never queued.</li>
+          <li>Leaves triage with <b>a decision, an owner, and a date</b>.</li>
         </ul>
       </div>
     </aside>
@@ -954,129 +908,43 @@ const STAGES = [
     outcome: "Benefits measured and reported", owner: "Business owner, portfolio team", record: "Benefits dashboard" },
 ];
 
-/* Playbook content per stage — sourced from the operating notes. */
+/* Playbook content — preview depth, three stages only. */
 const STAGE_DETAILS = {
   intake: {
-    chips: ["Cadence: weekly", "Target: 15 minutes"],
+    chips: ["Weekly review", "Target: 15 minutes"],
     sections: [
-      { h: "How this works", items: [
-        "Deliberately lightweight — decide whether a use case is worth building, not fully specify it.",
-        "Ask only what the requester can answer: the problem, the current process, expected benefit, data readiness, rough effort, and a short set of risk flags.",
-        "Target fifteen minutes to complete. If it takes longer, we are asking for detail we have not earned yet.",
-        "Defer refinement until after experimentation — detailed benefit, effort, and risk work happens once we know something real.",
-        "The intake team's job is context, not gatekeeping: how this compares to what is in flight, what has been tried elsewhere, and what it would take to run.",
+      { h: "How it works", items: [
+        "Lightweight on purpose — decide whether it's worth building, not fully specify it.",
         "Every submission gets routed, not queued.",
-        "Declining early is part of the process. The cost of a bad idea is lowest before anyone builds it." ] },
-      { h: "Where this goes", items: [
-        "The intake page is the capture surface; Jira is the system of record.",
-        "Every submission becomes a Jira issue in the AI Use Case Capability and carries that ID forward.",
-        "Nothing gets worked, staffed, or reported on until it exists in Jira.",
-        "Declined submissions get a Jira issue too, closed as Declined with the rationale — declines are portfolio data." ] },
+        "Declining early is part of the process — a bad idea is cheapest before anyone builds it.",
+        "Everything becomes a Jira issue and carries that ID forward. Declines included." ] },
     ],
     link: { label: "Open the intake form →", tab: "intake" },
   },
   triage: {
     chips: ["Weekly, 30 minutes", "One cycle max"],
     sections: [
-      { h: "What it is", items: [
+      { h: "The rules", items: [
         "Every use case leaves with a decision, an owner, and a date.",
-        "Nothing sits in triage more than one cycle.",
-        "Anything arriving without prep is deferred one cycle, not debated." ] },
-      { h: "Who decides", items: [
-        "The intake owner preps each submission and presents it — and does not decide.",
-        "The triage forum (AI product, delivery, data, Risk) advises and challenges — and does not vote.",
-        "The AI product lead decides. One call, one person. Consensus is not required and is not waited for.",
-        "The business sponsor is accountable for value after Approve. No named sponsor, no approval." ] },
+        "The AI product lead decides — one call, one person. No named sponsor, no approval.",
+        "Any risk flag routes to Risk or MRM before Approve.",
+        "Capacity limited: approving something new means stopping something current." ] },
       { h: "The five decisions", items: [
         "Approve — value is credible; committing capacity now.",
-        "Rapid Prototype — two weeks, capped, to buy evidence. Returns to triage once.",
-        "More Discovery — one written question, one cycle. A second return forces Approve or Decline.",
-        "Partner — warm handoff to a contacted receiving team; closes as Transferred.",
-        "Decline — a normal outcome, with a stated reason. The requester hears it directly." ] },
-      { h: "Standing rules", items: [
-        "Any risk flag routes to Risk or MRM before Approve. A prototype may proceed in a controlled environment.",
-        "Discovery and Prototype are capacity limited — approving something new means stopping something current, decided in the room." ] },
-    ],
-  },
-  discovery: {
-    chips: ["Timebox: four weeks", "Exit on time with what you have"],
-    sections: [
-      { h: "What it is", items: [
-        "Intake numbers were estimates. Discovery replaces them with evidence.",
-        "Approval to experiment is not approval to build." ] },
-      { h: "What gets validated — asserted to evidenced", items: [
-        "Value — a baseline measured today, a target, and the measurement method. Signed off by the business sponsor, not the product team.",
-        "Feasibility — a technical approach, integration points, and a sizing range from the team that would build it.",
-        "Data readiness — named sources, access confirmed, quality assessed. The data has been pulled and inspected, not located on a diagram.",
-        "Process fit — where this sits in the business routine and what changes. The people doing the work have seen it.",
-        "Risk and controls — designation, classification, and required controls confirmed with Risk or MRM, not assumed." ] },
-      { h: "The discovery package — two pages", items: [
-        "If it needs more than two pages, the use case is not understood yet.",
-        "Problem and current state with the measured baseline; proposed approach and process fit; value case with sponsor sign-off; feasibility and sizing range; data findings; risk designation and open items; a recommendation — and what would make us stop." ] },
-      { h: "Exit — four outcomes", items: [
-        "Build — evidence holds; moves on with capacity.",
-        "Reshape — value is real, the approach is wrong. One reshaped pass, not an open loop.",
-        "Park — blocked by something external; state the trigger that brings it back.",
-        "Stop — evidence did not hold. Normal and expected: it cost four weeks instead of two quarters." ] },
+        "Rapid Prototype — two weeks, capped, to buy evidence.",
+        "More Discovery — one written question, one cycle.",
+        "Partner — warm handoff; closes as Transferred.",
+        "Decline — a normal outcome, with a stated reason." ] },
     ],
   },
   prioritization: {
-    chips: ["Method: WSJF", "Fibonacci 1–20", "Rescored quarterly"],
+    chips: ["WSJF", "Fibonacci 1–20"],
     sections: [
-      { h: "What it is", items: [
-        "WSJF — Weighted Shortest Job First. Cost of Delay divided by job size; the highest score goes first.",
-        "Only use cases with a completed discovery package are scored. An estimate cannot be ranked against evidence." ] },
-      { h: "The four components", items: [
-        "Business value — dollar impact, capacity created, or risk reduced, from the discovery baseline.",
-        "Time criticality — does the value decay if we wait? If nothing changes in six months, this is a 1.",
-        "Risk reduction / opportunity enablement — what this unlocks beyond itself: a reusable pattern, a platform capability, a control improvement.",
-        "Job size — effort to first production value, not the full roadmap. Sized by technology; the business does not size the work." ] },
-      { h: "How we score", items: [
-        "One column at a time across all use cases — never one use case at a time.",
-        "Anchor each column: find the smallest, call it 1, score everything relative to it.",
-        "Fifteen minutes per column. Debate the outliers, not the middle. Score the whole set in one sitting or the anchors drift.",
-        "Sponsors present the case but do not score their own use case. The AI product lead breaks ties, on the record." ] },
-      { h: "Standing rules", items: [
-        "WSJF ranks, it does not schedule — capacity decides how far down the list we get.",
-        "A high score does not jump an unstarted item over work in flight. Finish or stop, do not swarm.",
-        "Score changes are logged. An unexplained jump in rank is how a portfolio loses credibility." ] },
-    ],
-  },
-  portfolio: {
-    chips: ["Monthly council"],
-    sections: [
-      { h: "What it decides", items: [
-        "Advance, defer, or reject — against the ranked backlog and available capacity.",
-        "Rank is the default order of execution. Deviating from rank is an exception with a stated reason, recorded.",
-        "The ranked backlog is visible to anyone without asking — score, components, owner, size, and status." ] },
-    ],
-  },
-  governance: {
-    chips: ["Engages early, by tier"],
-    sections: [
-      { h: "What it confirms", items: [
-        "Model risk designation, data classification, and required controls — recorded in Archer.",
-        "Risk, Legal, and MRM engage early and by tier, so controls are the reason we can move, not the reason we can't." ] },
-      { h: "Where I'd take it", items: [
-        "Governance moves left: BLR expertise embedded in Discovery & Sizing turns governance into a continuous check running alongside the work, not a downstream queue." ] },
-    ],
-  },
-  delivery: {
-    chips: ["Funded at quarterly planning"],
-    sections: [
-      { h: "What it means", items: [
-        "Funding and execution approved at quarterly planning; capacity committed against the ranked backlog.",
-        "Finished, not launched: a use case is done when it sits in a business routine with a named owner and measured value — not when it ships." ] },
-    ],
-  },
-  value: {
-    chips: ["Quarterly benefits review"],
-    sections: [
-      { h: "What it measures", items: [
-        "Benefits measured and reported against the baseline captured in discovery, on the benefits dashboard.",
-        "The business owner — not the delivery team — answers whether expected outcomes are being achieved." ] },
-      { h: "Where I'd take it", items: [
-        "Feed adoption and cost data back after every release, so WSJF recalibrates in near real time instead of quarterly." ] },
+      { h: "How it works", items: [
+        "WSJF = Cost of Delay ÷ job size. Highest score goes first.",
+        "Only use cases with a completed discovery package are scored — an estimate cannot be ranked against evidence.",
+        "Cost of Delay = business value + time criticality + risk reduction / enablement. Technology owns job size.",
+        "WSJF ranks, it does not schedule — capacity decides how far down the list we get." ] },
     ],
   },
 };
@@ -1256,8 +1124,6 @@ function openStage(stageId) {
     chips.append(el("span", "chip", c));
   const body = document.getElementById("pb-body");
   body.replaceChildren();
-  body.append(el("h3", null, "Primary outcome"));
-  const outUl = el("ul"); outUl.append(el("li", null, s.outcome)); body.append(outUl);
   for (const sec of d.sections) {
     body.append(el("h3", null, sec.h));
     const ul = el("ul");
@@ -1283,6 +1149,7 @@ function openStage(stageId) {
 }
 
 function stageLink(stageId, text, cls) {
+  if (!STAGE_DETAILS[stageId]) return el("span", cls || null, text);
   const b = el("button", "linky" + (cls ? " " + cls : ""), text);
   b.type = "button";
   b.title = "View the " + stageById[stageId].name + " playbook";
@@ -1613,11 +1480,11 @@ function renderStatic() {
     tb.append(tr);
   }
 
-  // lifecycle grid (operating model tab) — each card opens its playbook
+  // lifecycle grid (operating model tab) — cards with a playbook open it
   const lg = document.getElementById("lifegrid");
   STAGES.forEach((s, i) => {
-    const card = el("button", "lstage");
-    card.type = "button";
+    const hasPlaybook = !!STAGE_DETAILS[s.id];
+    const card = el(hasPlaybook ? "button" : "div", "lstage");
     const top = el("div", "top");
     top.append(el("span", "stepnum", String(i + 1)), el("h3", null, s.name));
     card.append(top, el("p", "out", s.outcome));
@@ -1627,8 +1494,12 @@ function renderStatic() {
     const recLine = el("div");
     recLine.append(el("b", null, "Record: "), document.createTextNode(s.record));
     meta.append(ownerLine, recLine);
-    card.append(meta, el("div", "more", "Playbook →"));
-    card.addEventListener("click", () => openStage(s.id));
+    card.append(meta);
+    if (hasPlaybook) {
+      card.type = "button";
+      card.append(el("div", "more", "Playbook →"));
+      card.addEventListener("click", () => openStage(s.id));
+    }
     lg.append(card);
   });
 
