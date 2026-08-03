@@ -444,6 +444,17 @@
   .field textarea { min-height: 72px; resize: vertical; }
   .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-wash-2); }
 
+  .coach {
+    display: flex; gap: 9px; align-items: flex-start;
+    margin-top: 7px; padding: 9px 11px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 9px;
+    font-size: 12.5px; line-height: 1.45;
+  }
+  .coach[hidden] { display: none; }
+  .coach .dot { margin-top: 1px; }
+  .coach .cr { font-weight: 650; }
+  .coach .ct { color: var(--text-secondary); }
+
   .optgrid { display: grid; gap: 8px; }
   .optgrid.cols2 { grid-template-columns: 1fr 1fr; }
   @media (max-width: 720px) { .optgrid.cols2 { grid-template-columns: 1fr; } }
@@ -719,6 +730,7 @@
     <p>Deliberately lightweight: decide whether a use case is worth building, not fully specify it. Detailed benefit, effort, and risk work happens after experimentation.</p>
     <div class="headchips">
       <span class="chip">⏱ Target: 15 minutes</span>
+      <span class="chip">✍ Live answer coaching</span>
       <span class="chip">Reviewed weekly</span>
       <span class="chip">Jira is the system of record</span>
       <span class="chip">Routed, not queued</span>
@@ -1532,6 +1544,77 @@ function renderStatic() {
     cwrap.append(row);
   });
 }
+
+/* ---------- intake coach: rates narrative answers as they're written ----------
+   Rules-based for this preview; in production the same hook would call an
+   LLM with the stage playbook as the rubric. */
+const COACH_LEVELS = {
+  good:    { label: "Strong",        glyph: "✓" },
+  warning: { label: "Getting there", glyph: "!" },
+  serious: { label: "Needs more",    glyph: "…" },
+};
+const wordsIn = s => s.split(/\s+/).filter(Boolean).length;
+const hasNumber = s => /[\d%$]/.test(s);
+
+function coachFor(id, evaluate) {
+  const ta = document.getElementById(id);
+  const box = el("div", "coach");
+  box.hidden = true;
+  box.setAttribute("role", "status");
+  ta.insertAdjacentElement("afterend", box);
+  let timer;
+  const run = () => {
+    const text = ta.value.trim();
+    if (!text) { box.hidden = true; return; }
+    const { level, tips, praise } = evaluate(text);
+    box.hidden = false;
+    box.replaceChildren();
+    const d = el("span", "dot " + level, COACH_LEVELS[level].glyph);
+    d.setAttribute("aria-hidden", "true");
+    const wrap = el("div");
+    wrap.append(el("span", "cr", COACH_LEVELS[level].label + " — "),
+                el("span", "ct", tips.length ? tips.slice(0, 2).join(" ") : praise));
+    box.append(d, wrap);
+  };
+  ta.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(run, 500); });
+  ta.addEventListener("blur", () => { clearTimeout(timer); run(); });
+}
+
+coachFor("uc-problem", text => {
+  const tips = [];
+  if (/^\s*(we\s+)?(want|would like|plan|propose|need)?\s*(to\s+)?(use|build|implement|deploy|create|add)\s+(an?\s+)?(ai|llm|gen\s?ai|chatbot|chat\s?bot|copilot|bot|model|automation)/i.test(text))
+    tips.push("Lead with the business problem, not the technology — what breaks, drags, or costs money today?");
+  if (wordsIn(text) < 12)
+    tips.push("A sentence on the problem and a sentence on why it matters is enough — give both.");
+  if (!/\b(now|today|this (year|quarter|month)|q[1-4]\b|deadline|regulat|audit|exam|grow|rising|increas|doubl|backlog|volume|spike|since|new (rule|policy|product|vendor)|contract|renewal|attrition|turnover)/i.test(text))
+    tips.push("Answer the “why now”: what changed — volume, cost, a deadline, a regulator?");
+  if (!hasNumber(text) && wordsIn(text) >= 12)
+    tips.push("One number — volume, hours, or dollars — helps triage size the pain.");
+  return { level: tips.length === 0 ? "good" : tips.length === 1 ? "warning" : "serious",
+    tips, praise: "Clear problem and a reason to act now. Triage can work with this." };
+});
+
+coachFor("uc-process", text => {
+  const tips = [];
+  if (!/(today|currently|right now|at present|manual|by hand|spreadsheet|email|each (day|week|month)|every (day|week|month|morning)|daily|weekly|monthly)/i.test(text))
+    tips.push("Describe today's process first — who does the work and how often.");
+  if (!/(chang|becom|will |would |instead|replac|automat|reduc|eliminat|remov|free(s|ing)? up|shift|streamlin)/i.test(text))
+    tips.push("Then say what actually changes — which step gets automated, faster, or removed.");
+  if (!hasNumber(text))
+    tips.push("Add a volume — items per week, hours per case — so the delta can be sized.");
+  return { level: tips.length === 0 ? "good" : tips.length === 1 ? "warning" : "serious",
+    tips, praise: "Good before-and-after. Discovery can validate process fit from this." };
+});
+
+coachFor("uc-metric", text => {
+  const tips = [];
+  if (!/(%|percent|hour|day|minute|second|week|cost|\$|dollar|nps|csat|rate|volume|count|error|defect|rework|cycle|time|score|fte|call|case|ticket|complaint|dispute)/i.test(text))
+    tips.push("Name the metric in units — hours per case, % rejected, $ per month.");
+  if (!hasNumber(text))
+    tips.push("State today's value. A target without a measured baseline is not evidence.");
+  return { level: tips.length === 0 ? "good" : tips.length === 1 ? "warning" : "serious",
+    tips, praise: "A named metric with today's baseline — exactly what discovery needs to verify." };
+});
 
 /* ---------- intake form mock behavior ---------- */
 const riskNone = document.getElementById("risk-none");
