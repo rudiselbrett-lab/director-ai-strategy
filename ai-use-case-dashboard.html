@@ -16,13 +16,16 @@
     --grid:           #e1e0d9;
     --baseline:       #c3c2b7;
     --border:         rgba(11,11,11,0.10);
+    --accent:         #2a78d6;
+    --accent-text:    #1c5cab;
+    --accent-wash:    rgba(42,120,214,0.08);
     /* status palette — fixed, never themed */
     --status-good:     #0ca30c;
     --status-warning:  #fab219;
     --status-critical: #d03b3b;
     --status-serious:  #ec835a;
-    --good-text:       #006300;
     --wash:            rgba(11,11,11,0.04);
+    --shadow: 0 1px 2px rgba(11,11,11,0.04), 0 8px 24px rgba(11,11,11,0.05);
   }
   @media (prefers-color-scheme: dark) {
     :root:where(:not([data-theme="light"])) {
@@ -35,8 +38,11 @@
       --grid:           #2c2c2a;
       --baseline:       #383835;
       --border:         rgba(255,255,255,0.10);
-      --good-text:      #0ca30c;
+      --accent:         #3987e5;
+      --accent-text:    #86b6ef;
+      --accent-wash:    rgba(57,135,229,0.14);
       --wash:           rgba(255,255,255,0.06);
+      --shadow: none;
     }
   }
   :root[data-theme="dark"] {
@@ -49,65 +55,89 @@
     --grid:           #2c2c2a;
     --baseline:       #383835;
     --border:         rgba(255,255,255,0.10);
-    --good-text:      #0ca30c;
+    --accent:         #3987e5;
+    --accent-text:    #86b6ef;
+    --accent-wash:    rgba(57,135,229,0.14);
     --wash:           rgba(255,255,255,0.06);
+    --shadow: none;
   }
 
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--page);
     color: var(--text-primary);
-    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
   }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 48px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
-  /* ---------- header ---------- */
-  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 6px; }
-  header h1 { font-size: 21px; font-weight: 650; margin: 0; letter-spacing: -0.01em; }
-  .asof { color: var(--text-muted); font-size: 13px; margin-left: auto; }
-  .tagline { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 18px; }
+  /* ---------- top bar & tabs ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 0 20px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  }
+  .brand { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; padding: 14px 0; white-space: nowrap; }
+  .brand .brand-sub { color: var(--text-muted); font-weight: 500; font-size: 13px; margin-left: 8px; }
+  .tabs { display: flex; gap: 4px; align-self: stretch; }
+  .tabs button {
+    font: inherit; font-size: 13.5px; font-weight: 600;
+    color: var(--text-secondary); background: none; border: none; cursor: pointer;
+    padding: 0 14px; position: relative;
+  }
+  .tabs button:hover { color: var(--text-primary); }
+  .tabs button[aria-selected="true"] { color: var(--accent-text); }
+  .tabs button[aria-selected="true"]::after {
+    content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px;
+    height: 2px; background: var(--accent); border-radius: 2px 2px 0 0;
+  }
+  .asof { color: var(--text-muted); font-size: 12.5px; margin-left: auto; white-space: nowrap; }
+  @media (max-width: 720px) { .asof { display: none; } }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 48px; }
+  .tagline { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 18px; max-width: 860px; }
 
   /* ---------- filter row ---------- */
-  .filters {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-    margin-bottom: 16px;
-  }
+  .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 18px; }
   .filters select, .filters input[type="search"] {
-    font: inherit; color: var(--text-primary);
+    font: inherit; font-size: 13.5px; color: var(--text-primary);
     background: var(--surface-1);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 6px 10px;
+    border: 1px solid var(--border); border-radius: 9px;
+    padding: 7px 10px;
   }
-  .filters input[type="search"] { min-width: 200px; flex: 0 1 240px; }
+  .filters select:hover, .filters input[type="search"]:hover { border-color: var(--baseline); }
+  .filters input[type="search"] { min-width: 200px; flex: 0 1 250px; }
   .filters label.chk {
     display: inline-flex; align-items: center; gap: 6px;
     color: var(--text-secondary); font-size: 13px; padding: 6px 4px; cursor: pointer;
   }
+  .filters .chk input { accent-color: var(--accent); }
   .filters .reset {
     font: inherit; font-size: 13px; color: var(--text-secondary);
-    background: none; border: none; cursor: pointer; padding: 6px 8px; border-radius: 8px;
+    background: none; border: none; cursor: pointer; padding: 7px 10px; border-radius: 9px;
   }
-  .filters .reset:hover { background: var(--wash); }
+  .filters .reset:hover { background: var(--wash); color: var(--text-primary); }
 
   /* ---------- KPI row ---------- */
-  .kpis {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
-    margin-bottom: 16px;
-  }
+  .kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
   @media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
   .tile {
     background: var(--surface-1); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 16px 12px;
+    border-radius: 14px; padding: 15px 16px 13px; box-shadow: var(--shadow);
   }
-  .tile .label { color: var(--text-secondary); font-size: 12.5px; display: flex; align-items: center; gap: 6px; }
-  .tile .value { font-size: 30px; font-weight: 600; margin-top: 2px; }
+  .tile .label { color: var(--text-secondary); font-size: 12.5px; font-weight: 550; display: flex; align-items: center; gap: 7px; }
+  .tile .value { font-size: 32px; font-weight: 650; letter-spacing: -0.02em; margin-top: 3px; }
   .tile .sub { color: var(--text-muted); font-size: 12px; margin-top: 1px; }
 
   /* status glyph dot: color + icon, never color alone */
   .dot {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 14px; height: 14px; border-radius: 4px; flex: none;
+    width: 15px; height: 15px; border-radius: 5px; flex: none;
     font-size: 10px; font-weight: 700; line-height: 1;
   }
   .dot.good     { background: var(--status-good);     color: #fff; }
@@ -121,10 +151,10 @@
   @media (max-width: 860px) { .row2 { grid-template-columns: 1fr; } }
   .card {
     background: var(--surface-1); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px;
+    border-radius: 14px; padding: 18px; box-shadow: var(--shadow);
   }
-  .card h2 { font-size: 14px; font-weight: 650; margin: 0; }
-  .card .cardhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-bottom: 12px; }
+  .card h2 { font-size: 14px; font-weight: 650; margin: 0; letter-spacing: -0.005em; }
+  .card .cardhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-bottom: 14px; }
   .legend { display: flex; gap: 12px; margin-left: auto; flex-wrap: wrap; }
   .legend .key { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
 
@@ -141,43 +171,41 @@
   .pipeline .seg.good     { background: var(--status-good); }
   .pipeline .seg.warning  { background: var(--status-warning); }
   .pipeline .seg.critical { background: var(--status-critical); }
-  .pipeline .seg.first { border-radius: 0; }
   .pipeline .seg.last  { border-radius: 0 4px 4px 0; }
-  .pipeline .seg.first.last { border-radius: 0 4px 4px 0; }
   .pipeline .ptotal { font-size: 12.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
   .pipeline .zero { color: var(--text-muted); font-size: 12px; line-height: 24px; }
   .axisline { border-left: 1px solid var(--baseline); }
 
   /* needs attention list */
   .attn ul { list-style: none; margin: 0; padding: 0; }
-  .attn li { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--grid); align-items: flex-start; }
+  .attn li { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid var(--grid); align-items: flex-start; }
   .attn li:first-child { border-top: none; }
   .attn .who { min-width: 0; flex: 1; }
   .attn .nm { font-weight: 600; font-size: 13.5px; }
   .attn .st { color: var(--text-muted); font-size: 12px; }
-  .attn .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+  .attn .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
   .chip {
     font-size: 11.5px; color: var(--text-secondary);
     border: 1px solid var(--border); border-radius: 999px;
-    padding: 2px 8px; white-space: nowrap;
+    padding: 2px 8px; white-space: nowrap; background: var(--wash);
   }
   .attn .empty { color: var(--text-muted); padding: 12px 0; }
 
   /* ---------- table ---------- */
   .tablecard { padding: 6px 0 0; overflow: hidden; }
-  .tablecard .cardhead { padding: 10px 16px 8px; margin-bottom: 0; }
+  .tablecard .cardhead { padding: 12px 18px 8px; margin-bottom: 0; }
   .tscroll { overflow-x: auto; }
   table.port { border-collapse: collapse; width: 100%; min-width: 880px; }
-  .port th, .port td { text-align: left; padding: 9px 12px; }
-  .port th:first-child, .port td:first-child { padding-left: 16px; }
-  .port th:last-child, .port td:last-child { padding-right: 16px; }
+  .port th, .port td { text-align: left; padding: 10px 12px; }
+  .port th:first-child, .port td:first-child { padding-left: 18px; }
+  .port th:last-child, .port td:last-child { padding-right: 18px; }
   .port thead th {
-    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em;
-    color: var(--text-muted); font-weight: 600; white-space: nowrap;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-muted); font-weight: 650; white-space: nowrap;
     border-bottom: 1px solid var(--baseline); cursor: pointer; user-select: none;
   }
   .port thead th:hover { color: var(--text-secondary); }
-  .port thead th .arrow { font-size: 9px; margin-left: 3px; }
+  .port thead th .arrow { font-size: 9px; margin-left: 3px; color: var(--accent-text); }
   .port tbody td { border-bottom: 1px solid var(--grid); vertical-align: top; }
   .port tbody tr:last-child td { border-bottom: none; }
   .port tbody tr:hover { background: var(--wash); }
@@ -194,16 +222,16 @@
   .badge .txt { font-weight: 500; }
   .flag {
     display: inline-block; font-size: 10.5px; color: var(--text-secondary);
-    border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; margin: 2px 4px 0 0;
+    border: 1px solid var(--border); border-radius: 5px; padding: 0 5px; margin: 2px 4px 0 0;
   }
-  .empty-table { color: var(--text-muted); padding: 18px 16px 22px; }
+  .empty-table { color: var(--text-muted); padding: 18px 18px 22px; }
 
   /* ---------- tooltip ---------- */
   .tip {
     position: fixed; z-index: 50; max-width: 280px;
     background: var(--surface-1); border: 1px solid var(--border);
-    border-radius: 8px; padding: 8px 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+    border-radius: 10px; padding: 8px 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.16);
     pointer-events: none; display: none; font-size: 12.5px;
   }
   .tip .tt { font-weight: 650; margin-bottom: 4px; }
@@ -212,50 +240,154 @@
   .tip .tl { color: var(--text-secondary); }
   .tip ul { margin: 4px 0 0; padding-left: 16px; color: var(--text-secondary); }
 
-  /* ---------- process reference ---------- */
+  /* ---------- how-to-read reference ---------- */
   details.ref { margin-top: 16px; }
   details.ref > summary {
     cursor: pointer; font-weight: 650; font-size: 14px;
-    padding: 12px 16px; background: var(--surface-1);
-    border: 1px solid var(--border); border-radius: 12px;
-    list-style: none;
+    padding: 13px 18px; background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 14px;
+    list-style: none; box-shadow: var(--shadow);
   }
   details.ref > summary::-webkit-details-marker { display: none; }
-  details.ref > summary::before { content: "▸ "; color: var(--text-muted); }
+  details.ref > summary::before { content: "▸ "; color: var(--accent-text); }
   details.ref[open] > summary::before { content: "▾ "; }
-  details.ref[open] > summary { border-radius: 12px 12px 0 0; }
+  details.ref[open] > summary { border-radius: 14px 14px 0 0; }
   .refbody {
     border: 1px solid var(--border); border-top: none;
-    border-radius: 0 0 12px 12px; background: var(--surface-1);
-    padding: 4px 16px 18px;
+    border-radius: 0 0 14px 14px; background: var(--surface-1);
+    padding: 4px 18px 18px;
   }
   .refbody h3 { font-size: 13px; margin: 18px 0 8px; }
   .refbody p { color: var(--text-secondary); font-size: 13px; margin: 6px 0; }
   table.mini { border-collapse: collapse; width: 100%; font-size: 12.5px; }
-  .mini th, .mini td { text-align: left; padding: 6px 10px 6px 0; vertical-align: top; }
-  .mini thead th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--baseline); }
+  .mini th, .mini td { text-align: left; padding: 7px 10px 7px 0; vertical-align: top; }
+  .mini thead th { color: var(--text-muted); font-weight: 650; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--baseline); }
   .mini tbody td { border-bottom: 1px solid var(--grid); color: var(--text-secondary); }
   .mini tbody td:first-child { color: var(--text-primary); font-weight: 500; white-space: nowrap; }
   .mini tbody tr:last-child td { border-bottom: none; }
-  .stagechips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0 2px; }
-  .stagechip {
-    font-size: 12px; color: var(--text-secondary);
-    border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px;
-    background: var(--wash);
-  }
-  .stagechips .arr { color: var(--text-muted); font-size: 11px; }
 
-  footer { color: var(--text-muted); font-size: 12px; margin-top: 20px; }
+  /* ---------- operating model tab ---------- */
+  .kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-text);
+  }
+  .mission { padding: 26px 0 8px; max-width: 780px; }
+  .mission .statement {
+    font-size: 27px; line-height: 1.3; font-weight: 650; letter-spacing: -0.015em;
+    margin: 10px 0 12px;
+  }
+  @media (max-width: 720px) { .mission .statement { font-size: 22px; } }
+  .mission .statement em { font-style: normal; color: var(--accent-text); }
+  .mission .statement-sub { color: var(--text-secondary); font-size: 15px; margin: 0; }
+
+  .sect { margin-top: 40px; }
+  .secthead { display: flex; align-items: baseline; gap: 12px; margin: 0 0 4px; }
+  .secthead h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+  .sectsub { color: var(--text-secondary); font-size: 13.5px; margin: 2px 0 16px; max-width: 760px; }
+
+  .tenets { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .tenet {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px; box-shadow: var(--shadow);
+  }
+  .tenet .no { font-size: 11.5px; font-weight: 700; color: var(--accent-text); letter-spacing: 0.06em; }
+  .tenet h3 { font-size: 14.5px; font-weight: 650; margin: 6px 0 6px; letter-spacing: -0.005em; }
+  .tenet p { color: var(--text-secondary); font-size: 12.5px; line-height: 1.5; margin: 0; }
+
+  .principles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .principle {
+    background: var(--accent-wash); border-radius: 999px;
+    padding: 7px 14px; font-size: 12.5px; color: var(--text-primary);
+  }
+  .principle strong { font-weight: 650; }
+  .principle span { color: var(--text-secondary); }
+
+  .lifegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 980px) { .lifegrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .lifegrid { grid-template-columns: 1fr; } }
+  .lstage {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 15px; box-shadow: var(--shadow);
+  }
+  .lstage .top { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+  .stepnum {
+    width: 24px; height: 24px; border-radius: 8px; flex: none;
+    background: var(--accent-wash); color: var(--accent-text);
+    display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  }
+  .lstage h3 { font-size: 13.5px; font-weight: 650; margin: 0; }
+  .lstage .out { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 8px; }
+  .lstage .meta { font-size: 11.5px; color: var(--text-muted); }
+  .lstage .meta b { color: var(--text-secondary); font-weight: 550; }
+  .gatenote { color: var(--text-muted); font-size: 12.5px; margin-top: 12px; }
+
+  .fivedec { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 14px; }
+  .dec {
+    border: 1px solid var(--border); border-radius: 12px; padding: 12px 13px;
+    background: var(--surface-1);
+  }
+  .dec h4 { font-size: 12.5px; font-weight: 700; margin: 0 0 4px; }
+  .dec p { font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.45; }
+
+  .quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .quote {
+    border-left: 3px solid var(--accent); border-radius: 3px;
+    padding: 4px 0 4px 16px;
+    font-size: 15px; line-height: 1.45; font-weight: 550; letter-spacing: -0.005em;
+  }
+  .quote .src { display: block; margin-top: 8px; font-size: 11.5px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .opps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .opp {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px; box-shadow: var(--shadow);
+  }
+  .opp .tag {
+    display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent-text); background: var(--accent-wash);
+    border-radius: 6px; padding: 3px 8px; margin-bottom: 9px;
+  }
+  .opp h3 { font-size: 14.5px; font-weight: 650; margin: 0 0 6px; }
+  .opp p { font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.55; }
+
+  ol.steps { list-style: none; margin: 0; padding: 0; max-width: 720px; counter-reset: step; }
+  ol.steps li {
+    counter-increment: step;
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 11px 0; border-top: 1px solid var(--grid);
+  }
+  ol.steps li:first-child { border-top: none; }
+  ol.steps li::before {
+    content: counter(step);
+    width: 24px; height: 24px; border-radius: 8px; flex: none;
+    background: var(--accent-wash); color: var(--accent-text);
+    display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  }
+  ol.steps .stitle { font-weight: 600; font-size: 13.5px; }
+  ol.steps .sdesc { color: var(--text-secondary); font-size: 12.5px; }
+
+  footer { color: var(--text-muted); font-size: 12px; margin-top: 28px; max-width: 1180px; padding: 0 20px 40px; margin-left: auto; margin-right: auto; }
   footer code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <header>
-    <h1>AI Use Case Portfolio</h1>
+<nav class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">AI Use Case Portfolio<span class="brand-sub">Consumer Bank</span></div>
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="true" aria-controls="tab-portfolio">Portfolio</button>
+      <button type="button" role="tab" id="tabbtn-thinking" aria-selected="false" aria-controls="tab-thinking">How I Think About This</button>
+    </div>
     <span class="asof" id="asof"></span>
-  </header>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ================= PORTFOLIO TAB ================= -->
+<section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio">
+
   <p class="tagline">One view, always current — what's in flight, what it's worth, who owns it, and what it's waiting on. Jira is the system of record; this page is the view.</p>
 
   <!-- filter row: scopes every number, chart, and table row below it -->
@@ -285,7 +417,7 @@
     <section class="card pipeline" aria-label="Pipeline by stage">
       <div class="cardhead">
         <h2>Pipeline by stage</h2>
-        <div class="legend" aria-hidden="false">
+        <div class="legend">
           <span class="key"><span class="dot good">✓</span> On track</span>
           <span class="key"><span class="dot warning">!</span> At risk</span>
           <span class="key"><span class="dot critical">✕</span> Overdue</span>
@@ -315,19 +447,15 @@
   </section>
 
   <details class="ref">
-    <summary>How to read this dashboard &amp; process reference</summary>
+    <summary>How health and staleness are computed</summary>
     <div class="refbody">
-
-      <h3>The lifecycle</h3>
-      <div class="stagechips" id="stagestrip"></div>
-      <p>No initiative advances without satisfying the decision criteria for its current stage. Closed outcomes (Declined, Transferred) are portfolio data too — toggle “Show closed” above.</p>
 
       <h3>Health — red / yellow / green against the expected completion date</h3>
       <table class="mini">
         <thead><tr><th>Health</th><th>Rule</th></tr></thead>
         <tbody>
           <tr><td><span class="badge"><span class="dot good">✓</span><span class="txt">On track</span></span></td><td>Target date is beyond the stage's at-risk window.</td></tr>
-          <tr><td><span class="badge"><span class="dot warning">!</span><span class="txt">At risk</span></span></td><td>Target date is inside the at-risk window (see per-stage thresholds below).</td></tr>
+          <tr><td><span class="badge"><span class="dot warning">!</span><span class="txt">At risk</span></span></td><td>Target date is inside the at-risk window (per-stage thresholds below).</td></tr>
           <tr><td><span class="badge"><span class="dot critical">✕</span><span class="txt">Overdue</span></span></td><td>Target date has passed without an exit decision.</td></tr>
         </tbody>
       </table>
@@ -335,28 +463,77 @@
       <h3>Staleness — based on last update, by stage cadence</h3>
       <p>A use case is <strong>aging</strong> when it has gone longer than one review cycle without an update, and <strong>stale</strong> at more than two cycles. Thresholds per stage:</p>
       <table class="mini" id="staletable">
-        <thead><tr><th>Stage</th><th>Aging after</th><th>Stale after</th><th>Cadence source</th></tr></thead>
+        <thead><tr><th>Stage</th><th>At-risk window</th><th>Aging after</th><th>Stale after</th><th>Cadence source</th></tr></thead>
         <tbody></tbody>
       </table>
 
-      <h3>Stage ownership and decisions</h3>
-      <table class="mini">
-        <thead><tr><th>Stage</th><th>Primary outcome</th><th>Owner</th><th>System of record</th></tr></thead>
-        <tbody>
-          <tr><td>Intake</td><td>Problem statement captured</td><td>Business sponsor</td><td>Intake form / Jira</td></tr>
-          <tr><td>Triage</td><td>Reuse and initial risk review</td><td>Portfolio team</td><td>Jira backlog</td></tr>
-          <tr><td>Discovery &amp; Sizing</td><td>Value, feasibility, data readiness validated</td><td>Product, business, technology</td><td>Discovery package</td></tr>
-          <tr><td>Prioritization</td><td>WSJF score assigned</td><td>AI portfolio team</td><td>Portfolio backlog</td></tr>
-          <tr><td>Portfolio Decision</td><td>Advance, defer, or reject</td><td>AI Portfolio Council</td><td>AI roadmap</td></tr>
-          <tr><td>Governance</td><td>Risk and control requirements confirmed</td><td>Risk, compliance, model governance</td><td>Archer</td></tr>
-          <tr><td>Delivery &amp; Scale</td><td>Funding and execution approved</td><td>Product and technology</td><td>Quarterly plan</td></tr>
-          <tr><td>Value Realization</td><td>Benefits measured and reported</td><td>Business owner, portfolio team</td><td>Benefits dashboard</td></tr>
-        </tbody>
-      </table>
+      <p>Stage ownership, operating forums, and triage decisions live on the <strong>How I Think About This</strong> tab.</p>
+    </div>
+  </details>
+</section>
 
-      <h3>Operating routines</h3>
+<!-- ================= OPERATING MODEL TAB ================= -->
+<section id="tab-thinking" role="tabpanel" aria-labelledby="tabbtn-thinking" hidden>
+
+  <div class="mission">
+    <div class="kicker">Mission</div>
+    <p class="statement">We turn Consumer Bank's AI capacity into a small number of capabilities that <em>measurably change</em> how customers bank with us and how the business runs.</p>
+    <p class="statement-sub">Clarity and prioritization are how we get there. One process for every AI idea, so capacity goes to what's worth building — and everything else stops early, cheaply, and on purpose.</p>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">01</span><h2>How we operate</h2></div>
+    <p class="sectsub">Five commitments that shape every decision in the portfolio.</p>
+    <div class="tenets">
+      <div class="tenet"><div class="no">01</div><h3>Bets, not projects</h3><p>Every use case is a hypothesis with a stated expected value and a kill condition. If we can't say what would make us stop, we don't start.</p></div>
+      <div class="tenet"><div class="no">02</div><h3>Evidence before scale</h3><p>Pilots exist to answer a question, not to prove we were right. We instrument for the answer up front.</p></div>
+      <div class="tenet"><div class="no">03</div><h3>Finished, not launched</h3><p>A use case is done when it sits in a business routine with a named owner and measured value — not when it ships.</p></div>
+      <div class="tenet"><div class="no">04</div><h3>One view, always current</h3><p>Anyone can see what's in flight, what it's worth, who owns it, and what it's waiting on — without asking us.</p></div>
+      <div class="tenet"><div class="no">05</div><h3>Speed is a governance outcome</h3><p>Risk, Legal, and Model Risk Management engage early and by tier, so controls are the reason we can move — not the reason we can't.</p></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">02</span><h2>Core principles</h2></div>
+    <div class="principles">
+      <span class="principle"><strong>Value and feasibility together</strong> <span>— neither one alone gets a use case funded</span></span>
+      <span class="principle"><strong>Clarity and consistency</strong> <span>— same questions, same scoring, every time</span></span>
+      <span class="principle"><strong>Connected data</strong> <span>— value comes from what the model can reach, not the model</span></span>
+      <span class="principle"><strong>Hypothesis first</strong> <span>— start with what we believe and what would disprove it</span></span>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">03</span><h2>The lifecycle</h2></div>
+    <p class="sectsub">Eight stages, each with one primary outcome, one accountable owner, and one system of record. No initiative advances without satisfying the decision criteria for its current stage.</p>
+    <div class="lifegrid" id="lifegrid"></div>
+    <p class="gatenote">Declining early is part of the process — the cost of a bad idea is lowest before anyone builds it. Declined and Transferred outcomes stay in the portfolio as data.</p>
+
+    <h3 style="font-size:13.5px; margin:22px 0 2px;">Triage: every use case leaves with a decision, an owner, and a date</h3>
+    <div class="fivedec">
+      <div class="dec"><h4>Approve</h4><p>Value is credible; committing capacity now. Needs a named sponsor, no open risk flag, and an agreed value measure.</p></div>
+      <div class="dec"><h4>Rapid Prototype</h4><p>Value plausible but unproven — two weeks, capped, to buy evidence. Returns to triage once, then Approve or Decline.</p></div>
+      <div class="dec"><h4>More Discovery</h4><p>One specific written question blocks the decision. One cycle; a second return forces Approve or Decline.</p></div>
+      <div class="dec"><h4>Partner</h4><p>The capability belongs elsewhere. Warm handoff to a contacted — not assumed — receiving team; closes as Transferred.</p></div>
+      <div class="dec"><h4>Decline</h4><p>Not proceeding — a normal outcome, with a stated reason. The requester hears it directly, not via the portfolio view.</p></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">04</span><h2>What I hold the process to</h2></div>
+    <div class="quotes">
+      <blockquote class="quote">"If intake takes longer than fifteen minutes, we're asking for detail we haven't earned yet."<span class="src">Intake</span></blockquote>
+      <blockquote class="quote">"Stop is a successful discovery. It cost four weeks instead of two quarters."<span class="src">Discovery &amp; Sizing</span></blockquote>
+      <blockquote class="quote">"WSJF ranks, it does not schedule. Capacity decides how far down the list we get."<span class="src">Prioritization</span></blockquote>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">05</span><h2>Operating routines</h2></div>
+    <p class="sectsub">Standing forums, each owning one decision, at a fixed cadence — so a use case is never waiting on a meeting that doesn't exist.</p>
+    <div class="card" style="padding: 6px 18px;">
       <table class="mini">
-        <thead><tr><th>Forum</th><th>Cadence</th><th>Decision</th></tr></thead>
+        <thead><tr><th>Forum</th><th>Cadence</th><th>The one decision it owns</th></tr></thead>
         <tbody>
           <tr><td>AI Intake Review</td><td>Weekly</td><td>Ready for discovery?</td></tr>
           <tr><td>Triage</td><td>Weekly, 30 min</td><td>Approve / Rapid Prototype / More Discovery / Partner / Decline</td></tr>
@@ -367,27 +544,39 @@
           <tr><td>Benefits Review</td><td>Quarterly</td><td>Are expected outcomes being achieved?</td></tr>
         </tbody>
       </table>
-
-      <h3>Triage outcomes</h3>
-      <table class="mini">
-        <thead><tr><th>Decision</th><th>Meaning</th></tr></thead>
-        <tbody>
-          <tr><td>Approve</td><td>Value is credible; committing capacity now. Needs a named sponsor, no open risk flag, and an agreed value measure.</td></tr>
-          <tr><td>Rapid Prototype</td><td>Value plausible but unproven — two weeks, capped, to buy evidence. Returns to triage once.</td></tr>
-          <tr><td>More Discovery</td><td>One specific written question blocks the decision. One cycle; a second return forces Approve or Decline.</td></tr>
-          <tr><td>Partner</td><td>The capability belongs elsewhere. Warm handoff; closes as Transferred.</td></tr>
-          <tr><td>Decline</td><td>Not proceeding — a normal outcome. Requester hears it directly, with the reason.</td></tr>
-        </tbody>
-      </table>
-
     </div>
-  </details>
+  </div>
 
-  <footer>
-    Data lives in the <code>USE_CASES</code> array at the top of this file's script — edit it by hand or regenerate it from a Jira export.
-    Health and staleness are computed against today's date every time the page loads.
-  </footer>
-</div>
+  <div class="sect">
+    <div class="secthead"><span class="kicker">06</span><h2>Where I'd push it next</h2></div>
+    <p class="sectsub">The stage-gate creates clarity; agile keeps it honest. Five deliberate moves to make the process faster without giving up control.</p>
+    <div class="opps">
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Handle risk up front, prototype fast</h3><p>Product, UX, and Engineering review ideas together to separate high-potential opportunities from the rest quickly. Every experiment carries success metrics and exit criteria defined up front, so scale / iterate / pivot / stop is an informed call, not a debate.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>A fast lane for small, low-risk use cases</h3><p>Full WSJF scoring and full governance for a small, low-risk pilot is the overhead agile exists to cut. With Business Line Risk able to make a fast risk call at the line, work below a defined size/risk threshold skips from Triage straight to Delivery — no waiting on the monthly Council.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Governance moves left</h3><p>As BLR takes on risk ownership at the line of business, Governance stops being a downstream handoff. BLR expertise embedded in Discovery &amp; Sizing turns governance into a continuous check running alongside the work — not a queue a use case waits in after it's already been prioritized.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Pull instead of push</h3><p>Today a use case only moves on the calendar: weekly triage, monthly council, quarterly planning. A WIP-limited Portfolio Kanban — the model SAFe itself uses — lets anything that clears its bar move the moment it's ready instead of waiting for the next scheduled forum.</p></div>
+      <div class="opp"><span class="tag">Agile opportunity</span><h3>Feed value back continuously</h3><p>Benefits Review runs quarterly, so WSJF inputs recalibrate four times a year. Feeding actual adoption and cost data back after every release keeps the scoring model honest in near real time instead of on a lag.</p></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">07</span><h2>Next steps</h2></div>
+    <ol class="steps">
+      <li><div><div class="stitle">Socialize the intake process</div><div class="sdesc">Walk sponsors and business lines through how ideas enter and what a good submission looks like.</div></div></li>
+      <li><div><div class="stitle">Educate the Bank organization on the process</div><div class="sdesc">Same questions, same scoring, every time — everyone should know the path and the bar.</div></div></li>
+      <li><div><div class="stitle">Bank D&amp;A builds the MS intake form</div><div class="sdesc">A fifteen-minute capture surface; every submission becomes a Jira issue from that point forward.</div></div></li>
+      <li><div><div class="stitle">Use case owners populate intake for top-ranked use cases</div><div class="sdesc">Owners answer only what they can: problem, current process, benefit, data readiness, effort, risk flags.</div></div></li>
+      <li><div><div class="stitle">Bank D&amp;A Tech reviews and prioritizes for experiment</div><div class="sdesc">Context, not gatekeeping — route each submission to Discovery, Rapid Prototype, Partner, or Decline.</div></div></li>
+    </ol>
+  </div>
+
+</section>
+</main>
+
+<footer>
+  Data lives in the <code>USE_CASES</code> array at the top of this file's script — edit it by hand or regenerate it from a Jira export.
+  Health and staleness are computed against today's date every time the page loads.
+</footer>
 
 <div class="tip" id="tip" role="status"></div>
 
@@ -402,14 +591,22 @@
    ===================================================================== */
 
 const STAGES = [
-  { id: "intake",         name: "Intake",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly intake review" },
-  { id: "triage",         name: "Triage",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly triage — one cycle max" },
-  { id: "discovery",      name: "Discovery & Sizing", staleDays: 10, riskWindow: 5,  cadence: "Four-week timebox" },
-  { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,  cadence: "Monthly scoring session" },
-  { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,  cadence: "Monthly Portfolio Council" },
-  { id: "governance",     name: "Governance",         staleDays: 14, riskWindow: 7,  cadence: "Governance review, as needed" },
-  { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14, cadence: "Quarterly plan / sprint cadence" },
-  { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly benefits review" },
+  { id: "intake",         name: "Intake",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly intake review",
+    outcome: "Problem statement captured", owner: "Business sponsor", record: "Intake form / Jira" },
+  { id: "triage",         name: "Triage",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly triage — one cycle max",
+    outcome: "Reuse and initial risk review", owner: "Portfolio team", record: "Jira backlog" },
+  { id: "discovery",      name: "Discovery & Sizing", staleDays: 10, riskWindow: 5,  cadence: "Four-week timebox",
+    outcome: "Value, feasibility, data readiness validated", owner: "Product, business, technology", record: "Discovery package" },
+  { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,  cadence: "Monthly scoring session",
+    outcome: "WSJF score assigned", owner: "AI portfolio team", record: "Portfolio backlog" },
+  { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,  cadence: "Monthly Portfolio Council",
+    outcome: "Advance, defer, or reject", owner: "AI Portfolio Council", record: "AI roadmap" },
+  { id: "governance",     name: "Governance",         staleDays: 14, riskWindow: 7,  cadence: "Governance review, as needed",
+    outcome: "Risk and control requirements confirmed", owner: "Risk, compliance, model governance", record: "Archer" },
+  { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14, cadence: "Quarterly plan / sprint cadence",
+    outcome: "Funding and execution approved", owner: "Product and technology", record: "Quarterly plan" },
+  { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly benefits review",
+    outcome: "Benefits measured and reported", owner: "Business owner, portfolio team", record: "Benefits dashboard" },
 ];
 
 const USE_CASES = [
@@ -555,6 +752,20 @@ function healthBadge(h) {
   return b;
 }
 
+/* ---------- tabs ---------- */
+const tabButtons = [document.getElementById("tabbtn-portfolio"), document.getElementById("tabbtn-thinking")];
+function selectTab(which) {
+  for (const btn of tabButtons) {
+    const on = btn.id === "tabbtn-" + which;
+    btn.setAttribute("aria-selected", String(on));
+    document.getElementById(btn.getAttribute("aria-controls")).hidden = !on;
+  }
+  history.replaceState(null, "", "#" + which);
+}
+for (const btn of tabButtons)
+  btn.addEventListener("click", () => selectTab(btn.id.replace("tabbtn-", "")));
+if (location.hash === "#thinking") selectTab("thinking");
+
 /* ---------- filters ---------- */
 const fStage = document.getElementById("f-stage");
 const fHealth = document.getElementById("f-health");
@@ -650,7 +861,7 @@ function render() {
   renderPipeline(active);
   renderAttention(active);
   renderTable(visible);
-  renderRef();
+  renderStatic();
 }
 
 function renderKpis(active) {
@@ -696,7 +907,7 @@ function renderPipeline(active) {
       const bar = el("div", "bar");
       bar.style.width = (r.items.length / max * 100) + "%";
       r.groups.forEach((g, i) => {
-        const seg = el("div", "seg " + g.h + (i === 0 ? " first" : "") + (i === r.groups.length - 1 ? " last" : ""));
+        const seg = el("div", "seg " + g.h + (i === r.groups.length - 1 ? " last" : ""));
         seg.style.flexGrow = String(g.items.length);
         seg.style.flexBasis = "0";
         seg.style.minWidth = "10px";
@@ -840,24 +1051,39 @@ function renderTable(visible) {
   }
 }
 
-let refRendered = false;
-function renderRef() {
-  if (refRendered) return;
-  refRendered = true;
-  const strip = document.getElementById("stagestrip");
-  STAGES.forEach((s, i) => {
-    if (i) strip.append(el("span", "arr", "▸"));
-    strip.append(el("span", "stagechip", s.name));
-  });
+let staticRendered = false;
+function renderStatic() {
+  if (staticRendered) return;
+  staticRendered = true;
+
+  // staleness threshold table (portfolio tab reference)
   const tb = document.querySelector("#staletable tbody");
   for (const s of STAGES) {
     const tr = el("tr");
     tr.append(el("td", null, s.name),
+      el("td", null, s.riskWindow + " days"),
       el("td", null, "> " + s.staleDays + " days"),
       el("td", null, "> " + s.staleDays * 2 + " days"),
       el("td", null, s.cadence));
     tb.append(tr);
   }
+
+  // lifecycle grid (operating model tab)
+  const lg = document.getElementById("lifegrid");
+  STAGES.forEach((s, i) => {
+    const card = el("div", "lstage");
+    const top = el("div", "top");
+    top.append(el("span", "stepnum", String(i + 1)), el("h3", null, s.name));
+    card.append(top, el("p", "out", s.outcome));
+    const meta = el("div", "meta");
+    const ownerLine = el("div");
+    ownerLine.append(el("b", null, "Owner: "), document.createTextNode(s.owner));
+    const recLine = el("div");
+    recLine.append(el("b", null, "Record: "), document.createTextNode(s.record));
+    meta.append(ownerLine, recLine);
+    card.append(meta);
+    lg.append(card);
+  });
 }
 
 render();
