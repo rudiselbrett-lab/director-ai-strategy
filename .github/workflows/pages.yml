@@ -26,7 +26,9 @@ jobs:
         run: |
           mkdir -p _site
           cp ai-use-case-dashboard.html _site/index.html
+          cp ai-use-case-dashboard.html _site/ai-use-case-dashboard.html
           cp 404.html _site/404.html
+          touch _site/.nojekyll
       - uses: actions/configure-pages@v5
         with:
           enablement: true
