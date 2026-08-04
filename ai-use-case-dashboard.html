@@ -223,8 +223,36 @@
   }
   .backlog .bbar:hover, .backlog .bbar:focus-visible { filter: brightness(1.15); }
   .backlog .bscore { font: 700 12px var(--sans); font-variant-numeric: tabular-nums; }
-  .backlog .bnote { color: var(--ink-3); font-size: 11.5px; margin-top: 10px; }
-  .backlog .empty { color: var(--ink-3); padding: 8px 0; }
+  .bnote { color: var(--ink-3); font-size: 11.5px; margin-top: 10px; }
+  .backlog .empty, .mix .empty { color: var(--ink-3); padding: 8px 0; }
+  .backlog .bsub { color: var(--ink-2); font-size: 11.5px; margin: -4px 0 12px; }
+  .backlog .bsub b { color: var(--ink); font-weight: 700; }
+
+  /* capacity line — a threshold, deliberately distinct from the grid */
+  .cutline { display: flex; align-items: center; gap: 9px; margin: 8px 0 6px; }
+  .cutline .cl-lab {
+    font: 700 9.5px var(--sans); letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); white-space: nowrap;
+  }
+  .cutline .cl-rule { flex: 1; border-top: 1px solid var(--gold); }
+  .backlog .brow.below .bbar { background: var(--rule); }
+  .backlog .brow.below .bname,
+  .backlog .brow.below .bscore { color: var(--ink-3); }
+
+  /* impact mix & risk concentration */
+  .mrow {
+    display: grid; grid-template-columns: 148px 1fr 26px;
+    align-items: center; gap: 10px; padding: 4px 0;
+  }
+  .mlab { font-size: 12px; color: var(--ink-2); text-align: right; }
+  .mtrack { position: relative; height: 14px; }
+  .mbar {
+    height: 14px; background: var(--link); border-radius: 0 2px 2px 0;
+    border: none; padding: 0; appearance: none; display: block; cursor: default;
+  }
+  .mbar:hover, .mbar:focus-visible { filter: brightness(1.15); }
+  .mbar.none { background: var(--rule); }
+  .mval { font: 700 12px var(--sans); font-variant-numeric: tabular-nums; }
 
   /* trend panels */
   .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
@@ -670,12 +698,28 @@
       <div id="pipeline"></div>
     </section>
 
-    <section class="card backlog" aria-label="Ranked backlog">
+    <section class="card backlog" aria-label="Ranked backlog and capacity">
       <div class="cardhead">
-        <h2>Ranked backlog — WSJF <button class="infobtn" id="wsjf-info" type="button" title="How WSJF scoring works">i</button></h2>
+        <h2>What starts next — WSJF <button class="infobtn" id="wsjf-info" type="button" title="How WSJF scoring works">i</button></h2>
       </div>
+      <div class="bsub" id="backlog-sub"></div>
       <div id="backlogrows"></div>
-      <div class="bnote">Rank is the default order of execution; deviations are recorded with a rationale.</div>
+      <div class="bnote" id="backlog-note"></div>
+    </section>
+  </div>
+
+  <!-- what kind of portfolio is this: reported from the fields intake collects -->
+  <div class="row2">
+    <section class="card mix" aria-label="Impact mix">
+      <div class="cardhead"><h2>Impact mix</h2></div>
+      <div id="impactmix"></div>
+      <div class="bnote" id="impact-note"></div>
+    </section>
+
+    <section class="card mix" aria-label="Risk flags in flight">
+      <div class="cardhead"><h2>Risk flags in flight</h2></div>
+      <div id="riskmix"></div>
+      <div class="bnote" id="risk-note"></div>
     </section>
   </div>
 
@@ -1071,85 +1115,121 @@ const TRENDS = {
   ],
 };
 
+/* Delivery capacity for the current quarter, in job-size points. Work already
+   in delivery or realization consumes it; what's left decides how far down the
+   ranked backlog we get. */
+const CAPACITY = { points: 24 };
+
+/* Impact categories mirror the intake form's "Impact" question. */
+const IMPACTS = [
+  { key: "cost",    label: "Cost / productivity" },
+  { key: "cycle",   label: "Cycle time" },
+  { key: "risk",    label: "Risk / control" },
+  { key: "insight", label: "Decision / insight" },
+];
+
+/* Risk flags mirror the intake form's routing question. */
+const RISK_FLAGS = [
+  { key: "NPI",             label: "Customer / NPI data" },
+  { key: "Reg report",      label: "Regulatory reporting" },
+  { key: "No human review", label: "No human review" },
+];
+
 const USE_CASES = [
   { id: "AI-001", name: "Contact center call summarization", func: "Contact Center",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Contact Center Ops", wsjf: 4.2, est: 850,
+    size: 8, impact: ["cost", "cycle"],
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-30", target: "2026-09-30", next: "Benefits baseline capture" },
 
   { id: "AI-002", name: "Complaint triage and routing", func: "Customer Care",
     stage: "discovery", owner: "J. Whitfield", sponsor: "Head of Customer Care", wsjf: null, est: null,
+    size: 5, impact: ["cycle", "risk"],
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-31", target: "2026-08-07", next: "Discovery Review Aug 5" },
 
   { id: "AI-003", name: "Fraud alert prioritization", func: "Fraud Operations",
     stage: "governance", owner: "S. Okafor", sponsor: "Fraud Ops Director", wsjf: 6.8, est: 1200,
+    size: 8, impact: ["risk", "insight"],
     risk: ["NPI"], waitingOn: "MRM model designation",
     lastUpdate: "2026-07-17", target: "2026-07-27", next: "Governance Review" },
 
   { id: "AI-004", name: "KYC document extraction", func: "Onboarding",
     stage: "discovery", owner: "R. Patel", sponsor: "Deposits Operations", wsjf: null, est: null,
+    size: 13, impact: ["cost", "cycle", "risk"],
     risk: ["NPI", "Reg report"], waitingOn: "Data access approval for KYC repository",
     lastUpdate: "2026-07-10", target: "2026-08-03", next: "Discovery Review Aug 5" },
 
   { id: "AI-005", name: "Collections outreach timing", func: "Collections",
     stage: "prioritization", owner: "D. Kim", sponsor: "Collections VP", wsjf: 7.5, est: 950,
+    size: 5, impact: ["insight", "cost"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-08-01", target: "2026-08-21", next: "Portfolio Council Aug 20" },
 
   { id: "AI-006", name: "Branch staffing forecast", func: "Branch Network",
     stage: "portfolio", owner: "L. Nguyen", sponsor: "Retail Distribution", wsjf: 5.1, est: 400,
+    size: 8, impact: ["cost", "insight"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-22", target: "2026-08-20", next: "Portfolio Council Aug 20" },
 
   { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
     stage: "triage", owner: "Intake team", sponsor: "Consumer Marketing", wsjf: null, est: null,
+    size: 2, impact: ["cost"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-08-01", target: "2026-08-06", next: "Triage Aug 6 — fast-lane candidate" },
 
   { id: "AI-008", name: "Chat deflection FAQ assistant", func: "Digital Banking",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Digital Channels", wsjf: 5.9, est: 600,
+    size: 5, impact: ["cost", "cycle"],
     risk: ["No human review"], waitingOn: null,
     lastUpdate: "2026-07-24", target: "2026-08-14", next: "Pilot exit review" },
 
   { id: "AI-009", name: "Wire fraud anomaly detection", func: "Payments",
     stage: "intake", owner: "Intake team", sponsor: "Payments Risk", wsjf: null, est: null,
+    size: 8, impact: ["risk", "insight"],
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-31", target: "2026-08-07", next: "Intake Review Aug 7" },
 
   { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
     stage: "intake", owner: "Intake team", sponsor: "— (sponsor not named)", wsjf: null, est: null,
+    size: 3, impact: ["insight"],
     risk: [], waitingOn: "Named business sponsor",
     lastUpdate: "2026-07-17", target: "2026-07-24", next: "Blocked at intake — awaiting a named sponsor" },
 
   { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
     stage: "value", owner: "T. Brooks", sponsor: "Lending Operations", wsjf: 8.9, est: 1400,
+    size: 3, impact: ["cycle", "cost"],
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-06", target: "2026-09-30", next: "Benefits Review (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
     stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null, est: null,
+    size: 3, impact: ["cost"],
     risk: [], waitingOn: "Prep incomplete — deferred one cycle",
     lastUpdate: "2026-07-22", target: "2026-07-29", next: "Second triage return — decision due this cycle" },
 
   { id: "AI-013", name: "ATM cash forecasting", func: "Branch Network",
     stage: "discovery", owner: "R. Patel", sponsor: "Treasury Services", wsjf: null, est: null,
+    size: 5, impact: ["cost", "insight"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-30", target: "2026-08-24", next: "Discovery Review Aug 26" },
 
   { id: "AI-014", name: "Dispute intake summarizer", func: "Customer Care",
     stage: "prioritization", owner: "D. Kim", sponsor: "Card Services", wsjf: 3.4, est: 300,
+    size: 8, impact: ["cycle", "cost"],
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-15", target: "2026-08-21", next: "Portfolio Council Aug 20" },
 
   { id: "AI-015", name: "RM email auto-drafting", func: "Small Business",
     stage: "triage", owner: "Intake team", sponsor: "Small Business Banking", wsjf: null, est: null,
+    size: 2, impact: ["cost"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-22", target: "2026-07-22", next: "—",
     closed: { outcome: "Declined", reason: "Low quantifiable value; duplicates enterprise CRM assistant", date: "2026-07-22" } },
 
   { id: "AI-016", name: "HR policy chatbot", func: "Human Resources",
     stage: "triage", owner: "Intake team", sponsor: "HR Shared Services", wsjf: null, est: null,
+    size: 3, impact: ["cost"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-15", target: "2026-07-15", next: "—",
     closed: { outcome: "Transferred", reason: "Employee-facing chat belongs to the Enterprise AI team", date: "2026-07-15" } },
@@ -1329,14 +1409,15 @@ function segTip(stageName, h, items) {
   tip.append(ul);
 }
 
-function backlogTip(u) {
+function backlogTip(u, isBelow) {
   tip.replaceChildren();
   tip.append(el("div", "tt", u.id + " · " + u.name));
   const rows = [
     ["WSJF " + u.wsjf.toFixed(1), "score"],
+    [u.size + " pts", "job size"],
     [fmtMoney(u.est), "est. annual value"],
     [u.stageName, "stage"],
-    [u.owner, "owner"],
+    [isBelow ? "Below the line" : "Fits this quarter", "capacity"],
   ];
   for (const [v, l] of rows) {
     const r = el("div", "tr");
@@ -1399,7 +1480,8 @@ function render() {
   renderBrief(allActive);
   renderStats(active);
   renderPipeline(active);
-  renderBacklog(active);
+  renderBacklog(allActive); // capacity is a portfolio fact, not a slice fact
+  renderMix(active);
   renderAttention(active);
   renderTable(visible);
   renderStatic();
@@ -1421,6 +1503,19 @@ function renderBrief(allActive) {
     t(scored.length + " carry WSJF scores representing "), b(fmtMoney(totalEst) + " in estimated annual value"),
     t(", of which "), b(fmtMoney(inDelivery)), t(" is in delivery or realization."));
   ul.append(li1);
+
+  const plan = capacityPlan(allActive);
+  const liCap = el("li");
+  liCap.append(b(plan.committed + " of " + CAPACITY.points + " delivery points"),
+    t(" are committed to work in flight. "));
+  if (plan.fits.length)
+    liCap.append(b(plan.fits.map(u => u.id).join(", ")),
+      t((plan.fits.length === 1 ? " fits" : " fit") + " the " + plan.open + " that remain"));
+  else
+    liCap.append(t("Nothing fits the " + plan.open + " that remain"));
+  liCap.append(t("; "), b(plan.below.length + " scored use case" + (plan.below.length === 1 ? "" : "s")),
+    t(" sit" + (plan.below.length === 1 ? "s" : "") + " below the capacity line."));
+  ul.append(liCap);
 
   const over = allActive.filter(u => u.health === "critical");
   if (over.length) {
@@ -1526,17 +1621,56 @@ function renderPipeline(active) {
   }
 }
 
+/* Capacity model: committed points, open points, and where the ranked
+   candidate list runs past what's left. Shared by the brief and the chart. */
+function capacityPlan(active) {
+  const committed = active
+    .filter(u => u.stage === "delivery" || u.stage === "value")
+    .reduce((s, u) => s + (u.size || 0), 0);
+  const open = Math.max(0, CAPACITY.points - committed);
+  const candidates = active
+    .filter(u => u.wsjf != null && u.stage !== "delivery" && u.stage !== "value")
+    .sort((a, b) => b.wsjf - a.wsjf);
+
+  // Strict cut: once one doesn't fit, everything below it waits. Rank is the
+  // order of execution, so we don't cherry-pick a smaller item past the line.
+  const fits = [];
+  let used = 0, cutReached = false;
+  for (const u of candidates) {
+    if (!cutReached && used + (u.size || 0) <= open) { used += u.size || 0; fits.push(u); }
+    else cutReached = true;
+  }
+  const below = candidates.slice(fits.length);
+  return { committed, open, used, candidates, fits, below };
+}
+
 function renderBacklog(active) {
   const wrap = document.getElementById("backlogrows");
+  const sub = document.getElementById("backlog-sub");
+  const note = document.getElementById("backlog-note");
   wrap.replaceChildren();
-  const scored = active.filter(u => u.wsjf != null).sort((a, b) => b.wsjf - a.wsjf);
-  if (!scored.length) {
-    wrap.append(el("div", "empty", "No scored use cases in this slice."));
+
+  const plan = capacityPlan(active);
+  sub.replaceChildren(
+    el("b", null, plan.committed + " of " + CAPACITY.points + " delivery points"),
+    document.createTextNode(" committed across the portfolio · "),
+    el("b", null, plan.open + " open"));
+
+  if (!plan.candidates.length) {
+    wrap.append(el("div", "empty", "No scored candidates in this slice."));
+    note.textContent = "";
     return;
   }
-  const max = Math.max(...scored.map(u => u.wsjf));
-  for (const u of scored) {
-    const row = el("div", "brow");
+
+  const max = Math.max(...plan.candidates.map(u => u.wsjf));
+  plan.candidates.forEach((u, i) => {
+    if (i === plan.fits.length) {
+      const line = el("div", "cutline");
+      line.append(el("span", "cl-lab", "Capacity line"), el("span", "cl-rule"));
+      wrap.append(line);
+    }
+    const isBelow = i >= plan.fits.length;
+    const row = el("div", "brow" + (isBelow ? " below" : ""));
     const name = el("div", "bname");
     name.title = u.id + " · " + u.name;
     name.textContent = u.name;
@@ -1545,9 +1679,11 @@ function renderBacklog(active) {
     const bar = el("button", "bbar");
     bar.type = "button";
     bar.style.width = (u.wsjf / max * 100) + "%";
-    bar.setAttribute("aria-label", u.id + " " + u.name + ": WSJF " + u.wsjf.toFixed(1) + ", estimated annual value " + fmtMoney(u.est));
+    bar.setAttribute("aria-label", u.id + " " + u.name + ": WSJF " + u.wsjf.toFixed(1) +
+      ", job size " + u.size + " points, estimated annual value " + fmtMoney(u.est) +
+      (isBelow ? " — below the capacity line" : " — fits this quarter"));
     const enter = ev => {
-      backlogTip(u);
+      backlogTip(u, isBelow);
       if (ev.clientX !== undefined && ev.type !== "focus") showTipAt(ev.clientX, ev.clientY);
       else { const b = bar.getBoundingClientRect(); showTipAt(b.left + b.width / 2, b.bottom); }
     };
@@ -1558,7 +1694,83 @@ function renderBacklog(active) {
     track.append(bar);
     row.append(track, el("div", "bscore num", u.wsjf.toFixed(1)));
     wrap.append(row);
+  });
+
+  const parts = [];
+  parts.push(plan.fits.length
+    ? plan.fits.map(u => u.id).join(", ") + (plan.fits.length === 1 ? " fits" : " fit") +
+      " the " + plan.open + " open points."
+    : "Nothing fits the " + plan.open + " points that remain.");
+  if (plan.below.length)
+    parts.push("Next by rank (" + plan.below[0].id + ") needs " + plan.below[0].size + ".");
+  parts.push("Deviating from rank is recorded with a rationale.");
+  note.textContent = parts.join(" ");
+}
+
+/* Impact mix and risk concentration — reported from the fields intake collects. */
+function mixRow(wrap, label, items, max, tipTitle, muted) {
+  const row = el("div", "mrow");
+  row.append(el("div", "mlab", label));
+  const track = el("div", "mtrack axisline");
+  const bar = el("button", "mbar" + (muted ? " none" : ""));
+  bar.type = "button";
+  bar.style.width = (items.length / max * 100) + "%";
+  bar.setAttribute("aria-label", label + ": " + items.length + " use cases — " +
+    (items.map(u => u.id).join(", ") || "none"));
+  const enter = ev => {
+    tip.replaceChildren();
+    tip.append(el("div", "tt", tipTitle));
+    const r = el("div", "tr");
+    r.append(el("span", "tv", String(items.length)), el("span", "tl", "in flight"));
+    tip.append(r);
+    const ul = el("ul");
+    for (const it of items.slice(0, 5)) ul.append(el("li", null, it.id + " · " + it.name));
+    if (items.length > 5) ul.append(el("li", null, "+" + (items.length - 5) + " more"));
+    tip.append(ul);
+    if (ev.clientX !== undefined && ev.type !== "focus") showTipAt(ev.clientX, ev.clientY);
+    else { const b = bar.getBoundingClientRect(); showTipAt(b.left + b.width / 2, b.bottom); }
+  };
+  bar.addEventListener("pointermove", enter);
+  bar.addEventListener("pointerleave", hideTip);
+  bar.addEventListener("focus", enter);
+  bar.addEventListener("blur", hideTip);
+  track.append(bar);
+  row.append(track, el("div", "mval num", String(items.length)));
+  wrap.append(row);
+}
+
+function renderMix(active) {
+  // Impact mix
+  const iwrap = document.getElementById("impactmix");
+  const inote = document.getElementById("impact-note");
+  iwrap.replaceChildren();
+  const groups = IMPACTS.map(c => ({ ...c, items: active.filter(u => (u.impact || []).includes(c.key)) }));
+  const imax = Math.max(1, ...groups.map(g => g.items.length));
+  for (const g of groups) mixRow(iwrap, g.label, g.items, imax, g.label);
+
+  if (!active.length) { inote.textContent = "No use cases in this slice."; }
+  else {
+    const ranked = [...groups].sort((a, b) => b.items.length - a.items.length);
+    const top = ranked[0], bottom = ranked[ranked.length - 1];
+    inote.textContent = top.label + " leads at " + top.items.length + " of " + active.length +
+      " in flight; " + bottom.label.toLowerCase() + " is thinnest at " + bottom.items.length +
+      ". A use case can carry more than one impact type.";
   }
+
+  // Risk concentration
+  const rwrap = document.getElementById("riskmix");
+  const rnote = document.getElementById("risk-note");
+  rwrap.replaceChildren();
+  const rgroups = RISK_FLAGS.map(f => ({ ...f, items: active.filter(u => u.risk.includes(f.key)) }));
+  const clean = active.filter(u => !u.risk.length);
+  const rmax = Math.max(1, ...rgroups.map(g => g.items.length), clean.length);
+  for (const g of rgroups) mixRow(rwrap, g.label, g.items, rmax, g.label);
+  mixRow(rwrap, "No flags", clean, rmax, "No risk flags", true);
+
+  const flagged = active.filter(u => u.risk.length).length;
+  rnote.textContent = active.length
+    ? flagged + " of " + active.length + " in flight carry at least one flag; each routes to Risk or MRM before approval."
+    : "No use cases in this slice.";
 }
 
 function renderAttention(active) {
