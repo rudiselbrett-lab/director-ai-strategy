@@ -881,6 +881,7 @@
         <div class="field">
           <label>Impact <span class="opt-note">(select all that apply)</span></label>
           <div class="optgrid cols2">
+            <label class="opt"><input type="checkbox" name="impact" value="revenue"><span class="ot">Revenue / growth</span></label>
             <label class="opt"><input type="checkbox" name="impact" value="cost"><span class="ot">Cost / productivity improvement</span></label>
             <label class="opt"><input type="checkbox" name="impact" value="cycle"><span class="ot">Cycle time reduction</span></label>
             <label class="opt"><input type="checkbox" name="impact" value="risk"><span class="ot">Risk / control improvement</span></label>
@@ -1122,6 +1123,7 @@ const CAPACITY = { points: 24 };
 
 /* Impact categories mirror the intake form's "Impact" question. */
 const IMPACTS = [
+  { key: "revenue", label: "Revenue / growth" },
   { key: "cost",    label: "Cost / productivity" },
   { key: "cycle",   label: "Cycle time" },
   { key: "risk",    label: "Risk / control" },
@@ -1162,7 +1164,7 @@ const USE_CASES = [
 
   { id: "AI-005", name: "Collections outreach timing", func: "Collections",
     stage: "prioritization", owner: "D. Kim", sponsor: "Collections VP", wsjf: 7.5, est: 950,
-    size: 5, impact: ["insight", "cost"],
+    size: 5, impact: ["revenue", "insight", "cost"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-08-01", target: "2026-08-21", next: "Portfolio Council Aug 20" },
 
@@ -1174,7 +1176,7 @@ const USE_CASES = [
 
   { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
     stage: "triage", owner: "Intake team", sponsor: "Consumer Marketing", wsjf: null, est: null,
-    size: 2, impact: ["cost"],
+    size: 2, impact: ["revenue", "cost"],
     risk: [], waitingOn: null,
     lastUpdate: "2026-08-01", target: "2026-08-06", next: "Triage Aug 6 — fast-lane candidate" },
 
@@ -1198,7 +1200,7 @@ const USE_CASES = [
 
   { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
     stage: "value", owner: "T. Brooks", sponsor: "Lending Operations", wsjf: 8.9, est: 1400,
-    size: 3, impact: ["cycle", "cost"],
+    size: 3, impact: ["revenue", "cycle", "cost"],
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-06", target: "2026-09-30", next: "Benefits Review (Q3)" },
 
