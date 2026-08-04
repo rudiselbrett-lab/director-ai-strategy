@@ -350,6 +350,7 @@
   /* ---------- table ---------- */
   .tablecard { padding: 0; overflow: hidden; }
   .tablecard .cardhead { padding: var(--s4) var(--s5) var(--s3); margin-bottom: 0; }
+  .cardhead .hint { color: var(--ink-3); font-size: var(--fs-caption); }
   .tablecount { margin-left: auto; color: var(--ink-3); font-size: var(--fs-small); }
   .tscroll { overflow-x: auto; }
   table.port { border-collapse: collapse; width: 100%; min-width: 1080px; }
@@ -369,6 +370,12 @@
   .port tbody tr { transition: background var(--t); }
   .port tbody tr:hover { background: var(--wash); }
   .port .name { font-weight: 700; font-size: var(--fs-body); }
+  .port .namebtn {
+    background: none; border: none; padding: 0; text-align: left; cursor: pointer;
+    color: var(--ink); transition: color var(--t);
+  }
+  .port .namebtn:hover { color: var(--link); text-decoration: underline; }
+  .port tr.closedrow .namebtn { color: var(--ink-2); }
   .port .sub { color: var(--ink-3); font-size: var(--fs-caption); margin-top: 1px; }
   .port .num { font-variant-numeric: tabular-nums; }
   .port .waiting { color: var(--ink-2); font-size: var(--fs-caption); margin-top: 2px; }
@@ -728,6 +735,7 @@
   <section class="card tablecard" aria-label="All use cases">
     <div class="cardhead">
       <h2>All use cases</h2>
+      <span class="hint">Select a use case for its detail</span>
       <span class="tablecount" id="tablecount"></span>
     </div>
     <div class="tscroll">
@@ -1470,6 +1478,103 @@ function stageLink(stageId, text, cls) {
 
 document.getElementById("wsjf-info").addEventListener("click", () => openStage("prioritization"));
 
+/* ---------- use case detail ----------
+   Reuses the playbook dialog so one modal serves the whole page. Everything
+   shown is derived; nothing about a use case is written twice. */
+const days = n => n === 1 ? " day" : " days";
+
+function detailLine(label, value) {
+  const li = el("li");
+  li.append(el("b", null, label), document.createTextNode(" — " + value));
+  return li;
+}
+
+function openUseCase(u) {
+  document.getElementById("pb-kicker").textContent =
+    u.closed ? "Closed use case" : "Use case · " + u.stageName;
+  document.getElementById("pb-title").textContent = u.id + " · " + u.name;
+
+  const chips = document.getElementById("pb-chips");
+  chips.replaceChildren();
+  for (const c of [u.func, "Owner: " + u.owner, "Sponsor: " + u.sponsor])
+    chips.append(el("span", "chip", c));
+
+  const body = document.getElementById("pb-body");
+  body.replaceChildren();
+
+  // Where it stands
+  body.append(el("h3", null, "Status"));
+  const st = el("ul");
+  if (u.closed) {
+    st.append(detailLine(u.closed.outcome, "closed " + fmtDate(u.closed.date) + " — " + u.closed.reason));
+    st.append(detailLine("Kept in the portfolio", "declined and transferred outcomes stay on the record as portfolio data."));
+  } else {
+    const od = Math.abs(u.daysTo);
+    st.append(detailLine(HEALTH[u.health].label,
+      u.daysTo < 0 ? od + days(od) + " past its " + fmtDate(u.target) + " target"
+      : u.daysTo === 0 ? "due today (" + fmtDate(u.target) + ")"
+      : "due " + fmtDate(u.target) + ", in " + u.daysTo + days(u.daysTo)));
+    st.append(detailLine("Last update", u.sinceUpdate + days(u.sinceUpdate) + " ago" +
+      (u.fresh === "fresh" ? "" : ", " + FRESH[u.fresh].label.toLowerCase() +
+        " for this stage's cadence (" + stageById[u.stage].cadence.toLowerCase() + ")")));
+    if (u.next) st.append(detailLine("Next", u.next));
+    if (u.waitingOn) st.append(detailLine("Waiting on", u.waitingOn));
+  }
+  body.append(st);
+
+  // What it is worth and what it costs
+  body.append(el("h3", null, "Value and size"));
+  const vs = el("ul");
+  vs.append(detailLine("WSJF", u.wsjf != null ? u.wsjf.toFixed(1)
+    : u.closed ? "never scored"
+    : "not yet scored — scoring needs a completed discovery package"));
+  vs.append(detailLine("Estimated annual value", u.est == null ? "not yet estimated" : fmtMoney(u.est)));
+  vs.append(detailLine("Job size", u.size == null ? "not yet sized" : u.size + " points"));
+  if (!u.closed) {
+    const active = USE_CASES.map(x => enrich(x, todayUTC())).filter(x => !x.closed);
+    const plan = capacityPlan(active);
+    if (u.stage === "delivery" || u.stage === "value")
+      vs.append(detailLine("Capacity", "committed — already in flight, so it consumes the budget rather than competing for it"));
+    else if (u.wsjf != null)
+      vs.append(detailLine("Capacity", plan.fits.some(x => x.id === u.id)
+        ? "fits the " + plan.open + " points open this quarter"
+        : "below the capacity line — " + (plan.open - plan.used) +
+          " of the " + plan.open + " open points remain after higher-ranked work, and this needs " + u.size));
+  }
+  body.append(vs);
+
+  // What is actually on file
+  const c = u.complete;
+  body.append(el("h3", null, "Record completeness — " + c.pct + "%"));
+  const cp = el("ul");
+  const req = REQUIRED[u.stage] || REQUIRED.intake;
+  cp.append(detailLine("On file", req.filter(f => hasField(u, f)).map(f => FIELD_LABEL[f]).join(", ") || "nothing yet"));
+  cp.append(detailLine("Missing", c.missing.length
+    ? c.missing.map(f => FIELD_LABEL[f]).join(", ")
+    : "nothing — everything this stage asks for is recorded"));
+  body.append(cp);
+
+  // Risk and impact
+  body.append(el("h3", null, "Risk and impact"));
+  const ri = el("ul");
+  ri.append(detailLine("Risk flags", u.risk.length
+    ? u.risk.join(", ") + " — routes to Risk or MRM before approval"
+    : "none recorded"));
+  const imp = (u.impact || []).map(k => (IMPACTS.find(i => i.key === k) || {}).label).filter(Boolean);
+  ri.append(detailLine("Impact", imp.join(", ") || "not tagged"));
+  body.append(ri);
+
+  const foot = document.getElementById("pb-foot");
+  foot.replaceChildren();
+  if (STAGE_DETAILS[u.stage]) {
+    const go = el("button", "golink", "Open the " + stageById[u.stage].name + " playbook →");
+    go.type = "button";
+    go.addEventListener("click", () => { playbook.close(); openStage(u.stage); });
+    foot.append(go);
+  }
+  playbook.showModal();
+}
+
 /* ---------- filters ---------- */
 const fStage = document.getElementById("f-stage");
 const fHealth = document.getElementById("f-health");
@@ -2065,7 +2170,11 @@ function renderTable(visible) {
     const tr = el("tr", u.closed ? "closedrow" : null);
 
     const tdName = el("td");
-    tdName.append(el("div", "name", u.id + " · " + u.name));
+    const nameBtn = el("button", "name namebtn", u.id + " · " + u.name);
+    nameBtn.type = "button";
+    nameBtn.title = "Open " + u.id + " detail";
+    nameBtn.addEventListener("click", () => openUseCase(u));
+    tdName.append(nameBtn);
     tdName.append(el("div", "sub", u.func));
     if (u.risk.length) {
       const fl = el("div");
