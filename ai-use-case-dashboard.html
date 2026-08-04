@@ -363,6 +363,12 @@
   }
   .refbody h3 { font: 600 11px/1.2 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-2); margin: 18px 0 8px; }
   .refbody p { color: var(--ink-2); font-size: 12.5px; margin: 6px 0; }
+  /* analysis lives behind a disclosure so the default view stays a demo, not a report */
+  .analysis .refbody { padding: 16px 20px 20px; }
+  .analysis .refbody .row3 { margin-bottom: 14px; }
+  .analysis .refbody .row2 { margin-bottom: 0; }
+  .analysis .refbody .card { box-shadow: none; }
+
   table.mini { border-collapse: collapse; width: 100%; font-size: 12px; }
   .mini th, .mini td { text-align: left; padding: 6px 10px 6px 0; vertical-align: top; }
   .mini thead th { color: var(--ink-3); font: 600 10px/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.09em; border-bottom: 1px solid var(--rule); padding-bottom: 7px; }
@@ -587,7 +593,9 @@
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .topbar { position: static; }
-    .tabs, .filters, footer, details.ref { display: none; }
+    .tabs, .filters, footer, details.ref:not(.analysis) { display: none; }
+    details.analysis > summary { display: none; }
+    details.analysis > .refbody { border: none; padding: 0; }
     .asof { display: inline; color: rgba(255,255,255,0.75); }
     .rail { position: static; }
     .card, .stat, .tenet, .lstage, .opp, .brief, fieldset, .qrow { break-inside: avoid; }
@@ -658,33 +666,6 @@
   <!-- stat band -->
   <div class="statband" id="kpis"></div>
 
-  <!-- trend row: the "is it getting better" view; portfolio history, not filtered -->
-  <div class="row3">
-    <section class="card trend" aria-label="Value realized versus projected by quarter">
-      <div class="cardhead">
-        <h2>Value — realized vs. projected</h2>
-        <div class="legend">
-          <span class="key"><span class="sw real"></span> Realized</span>
-          <span class="key"><span class="sw proj"></span> Projected</span>
-        </div>
-      </div>
-      <div id="trend-value"></div>
-      <div class="takeaway" id="tv-note"></div>
-    </section>
-    <section class="card trend" aria-label="Triage decisions per month">
-      <div class="cardhead"><h2>Triage decisions per month</h2></div>
-      <div class="cols" id="trend-decisions"></div>
-      <div class="collabs" id="trend-decisions-labels"></div>
-      <div class="takeaway" id="td-note"></div>
-    </section>
-    <section class="card trend" aria-label="Cycle time from intake to decision">
-      <div class="cardhead"><h2>Cycle time — intake to decision</h2></div>
-      <div id="trend-cycle"></div>
-      <div class="linemonths" id="trend-cycle-labels"></div>
-      <div class="takeaway" id="tc-note"></div>
-    </section>
-  </div>
-
   <div class="row2">
     <section class="card pipeline" aria-label="Pipeline by stage">
       <div class="cardhead">
@@ -708,21 +689,6 @@
     </section>
   </div>
 
-  <!-- what kind of portfolio is this: reported from the fields intake collects -->
-  <div class="row2">
-    <section class="card mix" aria-label="Impact mix">
-      <div class="cardhead"><h2>Impact mix</h2></div>
-      <div id="impactmix"></div>
-      <div class="bnote" id="impact-note"></div>
-    </section>
-
-    <section class="card mix" aria-label="Risk flags in flight">
-      <div class="cardhead"><h2>Risk flags in flight</h2></div>
-      <div id="riskmix"></div>
-      <div class="bnote" id="risk-note"></div>
-    </section>
-  </div>
-
   <section class="card attn" aria-label="Needs attention">
     <div class="cardhead"><h2>Needs attention</h2></div>
     <ul id="attn"></ul>
@@ -741,6 +707,52 @@
     </div>
     <div class="empty-table" id="emptytable" hidden>No use cases match the current filters.</div>
   </section>
+
+  <details class="ref analysis">
+    <summary>Trends and portfolio mix</summary>
+    <div class="refbody">
+      <!-- trend row: the "is it getting better" view; portfolio history, not filtered -->
+      <div class="row3">
+        <section class="card trend" aria-label="Value realized versus projected by quarter">
+          <div class="cardhead">
+            <h2>Value — realized vs. projected</h2>
+            <div class="legend">
+              <span class="key"><span class="sw real"></span> Realized</span>
+              <span class="key"><span class="sw proj"></span> Projected</span>
+            </div>
+          </div>
+          <div id="trend-value"></div>
+          <div class="takeaway" id="tv-note"></div>
+        </section>
+        <section class="card trend" aria-label="Triage decisions per month">
+          <div class="cardhead"><h2>Triage decisions per month</h2></div>
+          <div class="cols" id="trend-decisions"></div>
+          <div class="collabs" id="trend-decisions-labels"></div>
+          <div class="takeaway" id="td-note"></div>
+        </section>
+        <section class="card trend" aria-label="Cycle time from intake to decision">
+          <div class="cardhead"><h2>Cycle time — intake to decision</h2></div>
+          <div id="trend-cycle"></div>
+          <div class="linemonths" id="trend-cycle-labels"></div>
+          <div class="takeaway" id="tc-note"></div>
+        </section>
+      </div>
+      <!-- what kind of portfolio is this: reported from the fields intake collects -->
+      <div class="row2">
+        <section class="card mix" aria-label="Impact mix">
+          <div class="cardhead"><h2>Impact mix</h2></div>
+          <div id="impactmix"></div>
+          <div class="bnote" id="impact-note"></div>
+        </section>
+
+        <section class="card mix" aria-label="Risk flags in flight">
+          <div class="cardhead"><h2>Risk flags in flight</h2></div>
+          <div id="riskmix"></div>
+          <div class="bnote" id="risk-note"></div>
+        </section>
+      </div>
+    </div>
+  </details>
 
   <details class="ref">
     <summary>How health and staleness are computed</summary>
@@ -1527,13 +1539,13 @@ function renderBrief(allActive) {
     ul.append(li2);
   }
 
-  const dueSoon = allActive.filter(u => u.daysTo >= 0 && u.daysTo <= 7).length;
-  const council = allActive.filter(u => (u.next || "").includes("Portfolio Council")).length;
   const staleC = allActive.filter(u => u.fresh !== "fresh").length;
+  const cyc = TRENDS.cycle, cFirst = cyc[0], cLast = cyc[cyc.length - 1];
   const li3 = el("li");
-  li3.append(b(dueSoon + " come due within seven days"), t("; "),
-    b(council + " candidates"), t(" are queued for the next Portfolio Council. "),
-    b(staleC + " initiatives"), t(" have gone more than one review cycle without an update."));
+  li3.append(t("Median time from intake to decision is now "), b(cLast.days + " days"),
+    t(", down from " + cFirst.days + " in " + cFirst.m + ". "),
+    b(staleC + " initiatives"),
+    t(" have gone more than one review cycle without an update."));
   ul.append(li3);
 }
 
@@ -2185,6 +2197,11 @@ document.getElementById("iform").addEventListener("submit", e => {
   body.append(ul);
   document.getElementById("pb-foot").replaceChildren();
   playbook.showModal();
+});
+
+// The analysis section is collapsed by default but belongs in a printed pack.
+window.addEventListener("beforeprint", () => {
+  document.querySelectorAll("details.analysis").forEach(d => d.open = true);
 });
 
 render();
