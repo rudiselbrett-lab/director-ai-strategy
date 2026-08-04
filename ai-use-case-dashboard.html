@@ -304,6 +304,13 @@
   .lineplot { width: 100%; height: auto; display: block; }
   .lineplot text { fill: var(--ink-2); font: 600 var(--fs-caption) var(--sans); }
 
+  /* completeness meter — single hue, fill on a lighter step of its own ramp */
+  .cmeter { display: flex; align-items: center; gap: var(--s2); }
+  .ctrack { width: 46px; height: 6px; background: #cde2fb; border-radius: var(--r); flex: none; overflow: hidden; }
+  .cfill { height: 100%; background: var(--link); border-radius: var(--r); }
+  .cpct { font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
+  .port .ccell { white-space: nowrap; }
+
   /* suggested actions */
   .actions { margin-top: var(--s4); }
   .actions .actnote { margin-left: auto; color: var(--ink-3); font-size: var(--fs-caption); }
@@ -313,9 +320,9 @@
     padding: var(--s3) 0; border-top: 1px solid var(--hairline);
   }
   .actions li:first-child { border-top: none; padding-top: 0; }
-  .actions .body { flex: 1; min-width: 0; }
-  .actions .do { font-weight: 700; font-size: var(--fs-body); }
-  .actions .why { color: var(--ink-2); font-size: var(--fs-small); margin-top: 2px; }
+  .actions .line { flex: 1; min-width: 0; font-size: var(--fs-body); line-height: 1.5; }
+  .actions .do { font-weight: 700; }
+  .actions .why { color: var(--ink-2); }
   .actions .where { flex: none; align-self: center; }
   @media (max-width: 720px) {
     .actions li { flex-wrap: wrap; }
@@ -345,7 +352,7 @@
   .tablecard .cardhead { padding: var(--s4) var(--s5) var(--s3); margin-bottom: 0; }
   .tablecount { margin-left: auto; color: var(--ink-3); font-size: var(--fs-small); }
   .tscroll { overflow-x: auto; }
-  table.port { border-collapse: collapse; width: 100%; min-width: 880px; }
+  table.port { border-collapse: collapse; width: 100%; min-width: 1080px; }
   .port th, .port td { text-align: left; padding: var(--s2) var(--s3); }
   .port th:first-child, .port td:first-child { padding-left: var(--s5); }
   .port th:last-child, .port td:last-child { padding-right: var(--s5); }
@@ -1186,90 +1193,105 @@ const USE_CASES = [
   { id: "AI-001", name: "Contact center call summarization", func: "Contact Center",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Contact Center Ops", wsjf: 4.2, est: 850,
     size: 8, impact: ["cost", "cycle"],
+    metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-30", target: "2026-09-30", next: "Benefits baseline capture" },
 
   { id: "AI-002", name: "Complaint triage and routing", func: "Customer Care",
     stage: "discovery", owner: "J. Whitfield", sponsor: "Head of Customer Care", wsjf: null, est: null,
     size: 5, impact: ["cycle", "risk"],
+    metric: true, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-31", target: "2026-08-07", next: "Discovery Review Aug 5" },
 
   { id: "AI-003", name: "Fraud alert prioritization", func: "Fraud Operations",
     stage: "governance", owner: "S. Okafor", sponsor: "Fraud Ops Director", wsjf: 6.8, est: 1200,
     size: 8, impact: ["risk", "insight"],
+    metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: "MRM model designation",
     lastUpdate: "2026-07-17", target: "2026-07-27", next: "Governance Review" },
 
   { id: "AI-004", name: "KYC document extraction", func: "Onboarding",
     stage: "discovery", owner: "R. Patel", sponsor: "Deposits Operations", wsjf: null, est: null,
     size: 13, impact: ["cost", "cycle", "risk"],
+    metric: true, dataReady: null, baseline: false,
     risk: ["NPI", "Reg report"], waitingOn: "Data access approval for KYC repository",
     lastUpdate: "2026-07-10", target: "2026-08-03", next: "Discovery Review Aug 5" },
 
   { id: "AI-005", name: "Collections outreach timing", func: "Collections",
     stage: "prioritization", owner: "D. Kim", sponsor: "Collections VP", wsjf: 7.5, est: 950,
     size: 5, impact: ["revenue", "insight", "cost"],
+    metric: true, dataReady: "ready", baseline: true,
     risk: [], waitingOn: null,
     lastUpdate: "2026-08-01", target: "2026-08-21", next: "Portfolio Council Aug 20" },
 
   { id: "AI-006", name: "Branch staffing forecast", func: "Branch Network",
     stage: "portfolio", owner: "L. Nguyen", sponsor: "Retail Distribution", wsjf: 5.1, est: 400,
     size: 8, impact: ["cost", "insight"],
+    metric: true, dataReady: "partial", baseline: true,
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-22", target: "2026-08-20", next: "Portfolio Council Aug 20" },
 
   { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
     stage: "triage", owner: "Intake team", sponsor: "Consumer Marketing", wsjf: null, est: null,
     size: 2, impact: ["revenue", "cost"],
+    metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
     lastUpdate: "2026-08-01", target: "2026-08-06", next: "Triage Aug 6 — fast-lane candidate" },
 
   { id: "AI-008", name: "Chat deflection FAQ assistant", func: "Digital Banking",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Digital Channels", wsjf: 5.9, est: 600,
     size: 5, impact: ["cost", "cycle"],
+    metric: true, dataReady: "ready", baseline: true,
     risk: ["No human review"], waitingOn: null,
     lastUpdate: "2026-07-24", target: "2026-08-14", next: "Pilot exit review" },
 
   { id: "AI-009", name: "Wire fraud anomaly detection", func: "Payments",
     stage: "intake", owner: "Intake team", sponsor: "Payments Risk", wsjf: null, est: null,
     size: 8, impact: ["risk", "insight"],
+    metric: false, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-31", target: "2026-08-07", next: "Intake Review Aug 7" },
 
   { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
     stage: "intake", owner: "Intake team", sponsor: "— (sponsor not named)", wsjf: null, est: null,
     size: 3, impact: ["insight"],
+    metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Named business sponsor",
     lastUpdate: "2026-07-17", target: "2026-07-24", next: "Blocked at intake — awaiting a named sponsor" },
 
   { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
     stage: "value", owner: "T. Brooks", sponsor: "Lending Operations", wsjf: 8.9, est: 1400,
     size: 3, impact: ["revenue", "cycle", "cost"],
+    metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-06", target: "2026-09-30", next: "Benefits Review (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
     stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null, est: null,
     size: 3, impact: ["cost"],
+    metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Prep incomplete — deferred one cycle",
     lastUpdate: "2026-07-22", target: "2026-07-29", next: "Second triage return — decision due this cycle" },
 
   { id: "AI-013", name: "ATM cash forecasting", func: "Branch Network",
     stage: "discovery", owner: "R. Patel", sponsor: "Treasury Services", wsjf: null, est: null,
     size: 5, impact: ["cost", "insight"],
+    metric: true, dataReady: "partial", baseline: false,
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-30", target: "2026-08-24", next: "Discovery Review Aug 26" },
 
   { id: "AI-014", name: "Dispute intake summarizer", func: "Customer Care",
     stage: "prioritization", owner: "D. Kim", sponsor: "Card Services", wsjf: 3.4, est: 300,
     size: 8, impact: ["cycle", "cost"],
+    metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
     lastUpdate: "2026-07-15", target: "2026-08-21", next: "Portfolio Council Aug 20" },
 
   { id: "AI-015", name: "RM email auto-drafting", func: "Small Business",
     stage: "triage", owner: "Intake team", sponsor: "Small Business Banking", wsjf: null, est: null,
     size: 2, impact: ["cost"],
+    metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-22", target: "2026-07-22", next: "—",
     closed: { outcome: "Declined", reason: "Low quantifiable value; duplicates enterprise CRM assistant", date: "2026-07-22" } },
@@ -1277,6 +1299,7 @@ const USE_CASES = [
   { id: "AI-016", name: "HR policy chatbot", func: "Human Resources",
     stage: "triage", owner: "Intake team", sponsor: "HR Shared Services", wsjf: null, est: null,
     size: 3, impact: ["cost"],
+    metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
     lastUpdate: "2026-07-15", target: "2026-07-15", next: "—",
     closed: { outcome: "Transferred", reason: "Employee-facing chat belongs to the Enterprise AI team", date: "2026-07-15" } },
@@ -1312,6 +1335,40 @@ const FRESH = {
   stale: { label: "Stale", rank: 2 },
 };
 
+/* Completeness measures a use case against what its CURRENT stage requires,
+   so an intake item isn't penalised for lacking evidence discovery produces.
+   Requirements are cumulative down the lifecycle. */
+const REQUIRED = {
+  intake:         ["sponsor", "impact", "metric"],
+  triage:         ["sponsor", "impact", "metric", "size", "dataReady"],
+  discovery:      ["sponsor", "impact", "metric", "size", "dataReady", "est", "baseline"],
+  prioritization: ["sponsor", "impact", "metric", "size", "dataReady", "est", "baseline", "wsjf"],
+};
+REQUIRED.portfolio = REQUIRED.governance = REQUIRED.delivery = REQUIRED.value = REQUIRED.prioritization;
+
+const FIELD_LABEL = {
+  sponsor: "named sponsor", impact: "impact type", metric: "success metric",
+  size: "job size", dataReady: "data readiness", est: "value estimate",
+  baseline: "measured baseline", wsjf: "WSJF score",
+};
+
+function hasField(u, f) {
+  switch (f) {
+    case "sponsor":   return !!u.sponsor && !/not named/i.test(u.sponsor);
+    case "impact":    return (u.impact || []).length > 0;
+    case "metric":    return u.metric === true;
+    case "baseline":  return u.baseline === true;
+    case "dataReady": return u.dataReady != null;
+    default:          return u[f] != null;
+  }
+}
+
+function completeness(uc) {
+  const req = REQUIRED[uc.stage] || REQUIRED.intake;
+  const missing = req.filter(f => !hasField(uc, f));
+  return { pct: Math.round((req.length - missing.length) / req.length * 100), missing, req: req.length };
+}
+
 function enrich(uc, today) {
   const st = stageById[uc.stage];
   const daysTo = Math.round((utc(uc.target) - today) / DAY);
@@ -1326,7 +1383,7 @@ function enrich(uc, today) {
     if (sinceUpdate > st.staleDays * 2) fresh = "stale";
     else if (sinceUpdate > st.staleDays) fresh = "aging";
   }
-  return { ...uc, stageName: st.name, daysTo, sinceUpdate, health, fresh };
+  return { ...uc, stageName: st.name, daysTo, sinceUpdate, health, fresh, complete: completeness(uc) };
 }
 
 /* ---------- tiny DOM helper (textContent only — data is untrusted) ---------- */
@@ -1480,6 +1537,7 @@ const COLS = [
   { key: "owner",  label: "Owner",     cmp: (a, b) => a.owner.localeCompare(b.owner) },
   { key: "wsjf",   label: "WSJF",      cmp: (a, b) => (b.wsjf ?? -1) - (a.wsjf ?? -1) },
   { key: "est",    label: "Est. value", cmp: (a, b) => (b.est ?? -1) - (a.est ?? -1) },
+  { key: "complete", label: "Complete", cmp: (a, b) => a.complete.pct - b.complete.pct },
   { key: "target", label: "Target",    cmp: (a, b) => a.daysTo - b.daysTo },
   { key: "health", label: "Health",    cmp: (a, b) => HEALTH[b.health].rank - HEALTH[a.health].rank || a.daysTo - b.daysTo },
   { key: "fresh",  label: "Last update", cmp: (a, b) => b.sinceUpdate - a.sinceUpdate },
@@ -1833,6 +1891,11 @@ const FORUM_BY_STAGE = {
 const SEV_RANK = { critical: 0, warning: 1, opportunity: 2 };
 const SEV_DOT = { critical: ["critical", "✕"], warning: ["warning", "!"], opportunity: ["neutral", "\u2192"] };
 
+// lowercase a fragment for mid-sentence use, but never mangle a leading acronym
+function softLower(t) {
+  return /^[A-Z]{2,}/.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1);
+}
+
 function listIds(items, max) {
   const ids = items.slice(0, max || 3).map(u => u.id);
   const rest = items.length - ids.length;
@@ -1843,6 +1906,7 @@ function suggestedActions(allActive) {
   const out = [], claimed = new Set();
   const take = us => { us.forEach(u => claimed.add(u.id)); return us; };
   const free = us => us.filter(u => !claimed.has(u.id));
+  const plural = (n, one, many) => n === 1 ? one : many;
 
   // A use case without a named sponsor cannot be approved — name one or decline.
   const noSponsor = free(allActive.filter(u => /sponsor/i.test(u.waitingOn || "")));
@@ -1850,9 +1914,9 @@ function suggestedActions(allActive) {
     take(noSponsor);
     const u = noSponsor[0];
     out.push({ sev: "critical",
-      act: "Name a sponsor for " + u.id + ", or decline it",
-      why: u.name + " is " + Math.abs(u.daysTo) + " days past its " + u.stageName.toLowerCase() +
-           " target. Value accountability sits with the business sponsor, and declining early is a normal outcome.",
+      act: "Name a sponsor for " + u.id + " or decline it",
+      why: Math.abs(u.daysTo) + " days past its " + u.stageName.toLowerCase() +
+           " target with no one accountable for the value.",
       where: FORUM_BY_STAGE[u.stage] });
   }
 
@@ -1863,7 +1927,7 @@ function suggestedActions(allActive) {
     const u = due[0];
     out.push({ sev: "warning",
       act: "Settle " + u.id + " at the next triage",
-      why: u.name + " is on its second return; the process calls for Approve or Decline, not a third cycle.",
+      why: "it is on its second return and owes an Approve or Decline.",
       where: FORUM_BY_STAGE[u.stage] });
   }
 
@@ -1872,11 +1936,12 @@ function suggestedActions(allActive) {
     .sort((a, b) => a.daysTo - b.daysTo);
   if (blocked.length) {
     take(blocked);
+    const w = blocked[0];
     out.push({ sev: "critical",
-      act: "Clear the blocker on " + listIds(blocked),
-      why: (blocked.length === 1 ? "It is" : "Each is") + " past its stage target waiting on a named dependency — the longest, " +
-           blocked[0].id + ", by " + Math.abs(blocked[0].daysTo) + " days — " + blocked[0].waitingOn + ".",
-      where: blocked.length === 1 ? FORUM_BY_STAGE[blocked[0].stage] : "Stage owners" });
+      act: "Clear the " + plural(blocked.length, "blocker", "blockers") + " on " + listIds(blocked),
+      why: plural(blocked.length, "it is ", "the longest, " + w.id + ", is ") +
+           Math.abs(w.daysTo) + " days past target on " + softLower(w.waitingOn) + ".",
+      where: blocked.length === 1 ? FORUM_BY_STAGE[w.stage] : "Stage owners" });
   }
 
   // Quietly stale — no movement and nothing recorded about why.
@@ -1885,7 +1950,7 @@ function suggestedActions(allActive) {
     take(stale);
     out.push({ sev: "warning",
       act: "Ask for an update on " + listIds(stale),
-      why: "No movement in more than two review cycles, and no blocker recorded.",
+      why: "nothing has moved in more than two review cycles and no blocker is recorded.",
       where: "Stage owners" });
   }
 
@@ -1893,9 +1958,10 @@ function suggestedActions(allActive) {
   const plan = capacityPlan(allActive);
   if (plan.below.length) {
     out.push({ sev: "warning",
-      act: "Record an explicit defer for " + plan.below.length + " use case" + (plan.below.length === 1 ? "" : "s") + " below the capacity line",
-      why: plan.open + " of " + CAPACITY.points + " points are open and the next by rank (" + plan.below[0].id +
-           ") needs " + plan.below[0].size + ". Either finish or stop something in flight, or defer these on the record.",
+      act: "Defer the " + plan.below.length + " " + plural(plan.below.length, "use case", "use cases") +
+           " below the capacity line on the record",
+      why: "only " + plan.open + " of " + CAPACITY.points + " points are open and the next by rank needs " +
+           plan.below[0].size + ".",
       where: "AI Portfolio Council" });
   }
 
@@ -1905,7 +1971,7 @@ function suggestedActions(allActive) {
   if (fast.length) {
     out.push({ sev: "opportunity",
       act: "Route " + listIds(fast) + " through the fast lane",
-      why: "No risk flags and small scope — a lightweight path avoids waiting on the monthly Council.",
+      why: "no risk flags and small scope, so it need not wait on the monthly Council.",
       where: "Triage" });
   }
 
@@ -1914,7 +1980,7 @@ function suggestedActions(allActive) {
   if (allActive.length && rev / allActive.length < 0.3) {
     out.push({ sev: "opportunity",
       act: "Seed growth-side use cases at intake",
-      why: "Only " + rev + " of " + allActive.length + " in flight target revenue or growth; the portfolio leans to cost takeout.",
+      why: "only " + rev + " of " + allActive.length + " in flight target revenue or growth.",
       where: "AI Intake Review" });
   }
 
@@ -1934,9 +2000,9 @@ function renderActions(allActive) {
     const [cls, glyph] = SEV_DOT[a.sev];
     const d = el("span", "dot " + cls, glyph);
     d.setAttribute("aria-hidden", "true");
-    const body = el("div", "body");
-    body.append(el("div", "do", a.act), el("div", "why", a.why));
-    li.append(d, body, el("span", "chip where", a.where));
+    const line = el("div", "line");
+    line.append(el("span", "do", a.act), document.createTextNode(" — "), el("span", "why", a.why));
+    li.append(d, line, el("span", "chip where", a.where));
     ol.append(li);
   }
 }
@@ -2029,6 +2095,23 @@ function renderTable(visible) {
 
     const tdE = el("td", "num", u.est == null ? "—" : fmtMoney(u.est));
     tr.append(tdE);
+
+    const c = u.complete;
+    const tdC = el("td", "ccell");
+    const meter = el("div", "cmeter");
+    const track = el("div", "ctrack");
+    const fill = el("div", "cfill");
+    fill.style.width = c.pct + "%";
+    track.append(fill);
+    meter.append(track, el("span", "cpct num", c.pct + "%"));
+    meter.title = c.missing.length
+      ? "Missing: " + c.missing.map(f => FIELD_LABEL[f]).join(", ")
+      : "All fields required at this stage are on file";
+    tdC.append(meter);
+    if (c.missing.length)
+      tdC.append(el("div", "sub", "missing " + FIELD_LABEL[c.missing[0]] +
+        (c.missing.length > 1 ? " +" + (c.missing.length - 1) : "")));
+    tr.append(tdC);
 
     const tdT = el("td", "num");
     if (u.closed) tdT.append(el("div", null, "—"));
