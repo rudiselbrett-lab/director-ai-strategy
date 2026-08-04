@@ -20,9 +20,10 @@
     --panel:     #f5f6f7;
     --ink:       #16181d;
     --ink-2:     #4a5160;
-    --ink-3:     #878d99;
+    --ink-3:     #646c7a;
     --hairline:  #e2e4e8;
-    --rule:      #c9cdd4;
+    --rule:      #c9cdd4;   /* structural + decorative lines */
+    --field:     #8a91a0;   /* interactive control borders — 3:1 per WCAG 1.4.11 */
     --wash:      rgba(22,24,29,0.03);
 
     /* brand */
@@ -144,7 +145,7 @@
   .infobtn {
     display: inline-grid; place-items: center;
     width: var(--s4); height: var(--s4); border-radius: 50%;
-    border: 1px solid var(--rule); background: none; cursor: pointer;
+    border: 1px solid var(--field); background: none; cursor: pointer;
     font: 700 var(--fs-nano) var(--sans); color: var(--ink-3);
     vertical-align: 1px; transition: color var(--t), border-color var(--t), background var(--t);
   }
@@ -164,7 +165,7 @@
   .filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-bottom: var(--s4); }
   .filters select, .filters input[type="search"] {
     font: var(--fs-body) var(--sans); color: var(--ink);
-    background: #fff; border: 1px solid var(--rule); border-radius: var(--r);
+    background: #fff; border: 1px solid var(--field); border-radius: var(--r);
     padding: 6px var(--s2); transition: border-color var(--t);
   }
   .filters select:hover, .filters input[type="search"]:hover { border-color: var(--ink-3); }
@@ -470,7 +471,7 @@
   .pbhead h2 { font: 400 var(--fs-h2)/1.2 var(--serif); margin: 0 0 var(--s2); }
   .pbchips { display: flex; flex-wrap: wrap; gap: 6px; }
   .pbclose {
-    border: 1px solid var(--rule); background: none; cursor: pointer;
+    border: 1px solid var(--field); background: none; cursor: pointer;
     width: 28px; height: 28px; font-size: var(--fs-body); color: var(--ink-2); flex: none;
     transition: background var(--t), color var(--t);
   }
@@ -513,7 +514,7 @@
   .field label .opt-note { color: var(--ink-3); font-weight: 400; }
   .field input[type="text"], .field input[type="date"], .field textarea {
     width: 100%; font: var(--fs-body) var(--sans); color: var(--ink);
-    border: 1px solid var(--rule); border-radius: var(--r); padding: var(--s2) var(--s3);
+    border: 1px solid var(--field); border-radius: var(--r); padding: var(--s2) var(--s3);
     background: #fff; transition: border-color var(--t), box-shadow var(--t);
   }
   .field textarea { min-height: 70px; resize: vertical; }
@@ -570,9 +571,9 @@
   @media (max-width: 720px) { .criteria { grid-template-columns: 1fr; } }
   .crit { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
   .crit .cl { font-size: var(--fs-small); font-weight: 500; }
-  .seg { display: inline-flex; border: 1px solid var(--rule); background: #fff; }
+  .seg { display: inline-flex; border: 1px solid var(--field); background: #fff; }
   .seg label { position: relative; cursor: pointer; }
-  .seg label + label { border-left: 1px solid var(--rule); }
+  .seg label + label { border-left: 1px solid var(--field); }
   .seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
   .seg span { display: block; padding: var(--s1) var(--s3); font-size: var(--fs-caption); color: var(--ink-2); transition: background var(--t); }
   .seg label:has(input:checked) span { background: var(--navy); color: #fff; font-weight: 600; }
@@ -581,7 +582,7 @@
   .recsteps label { position: relative; cursor: pointer; }
   .recsteps input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
   .recsteps span {
-    display: block; border: 1px solid var(--rule); background: #fff;
+    display: block; border: 1px solid var(--field); background: #fff;
     padding: 6px var(--s3); font-size: var(--fs-small); color: var(--ink-2); transition: background var(--t);
   }
   .recsteps label:has(input:checked) span { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 600; }
