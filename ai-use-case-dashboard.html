@@ -214,7 +214,7 @@
   .dot.warning  { background: var(--status-warning);  color: var(--ink); }
   .dot.critical { background: var(--status-critical); color: #fff; }
   .dot.serious  { background: var(--status-serious);  color: var(--ink); }
-  .dot.neutral  { background: var(--rule);            color: #fff; }
+  .dot.neutral  { background: var(--ink-3);          color: #fff; }
 
   /* ---------- panels ---------- */
   .row2 { display: grid; grid-template-columns: 1.15fr 1fr; gap: var(--s4); margin-bottom: var(--s4); }
@@ -270,7 +270,7 @@
   .mbar:hover, .mbar:focus-visible,
   .colbar:hover, .colbar:focus-visible { filter: brightness(1.14); }
   .bnote { color: var(--ink-3); font-size: var(--fs-caption); margin-top: var(--s3); }
-  .backlog .empty, .mix .empty { color: var(--ink-3); padding: var(--s2) 0; }
+  .backlog .empty, .mix .empty, .actions .empty { color: var(--ink-3); padding: var(--s2) 0; }
   .backlog .bsub { color: var(--ink-2); font-size: var(--fs-caption); margin: -4px 0 var(--s3); }
   .backlog .bsub b { color: var(--ink); font-weight: 700; }
 
@@ -303,6 +303,24 @@
   .collabs span, .linemonths span { flex: 1; text-align: center; font-size: var(--fs-micro); color: var(--ink-3); }
   .lineplot { width: 100%; height: auto; display: block; }
   .lineplot text { fill: var(--ink-2); font: 600 var(--fs-caption) var(--sans); }
+
+  /* suggested actions */
+  .actions { margin-top: var(--s4); }
+  .actions .actnote { margin-left: auto; color: var(--ink-3); font-size: var(--fs-caption); }
+  .actions ol { list-style: none; margin: 0; padding: 0; }
+  .actions li {
+    display: flex; gap: var(--s3); align-items: flex-start;
+    padding: var(--s3) 0; border-top: 1px solid var(--hairline);
+  }
+  .actions li:first-child { border-top: none; padding-top: 0; }
+  .actions .body { flex: 1; min-width: 0; }
+  .actions .do { font-weight: 700; font-size: var(--fs-body); }
+  .actions .why { color: var(--ink-2); font-size: var(--fs-small); margin-top: 2px; }
+  .actions .where { flex: none; align-self: center; }
+  @media (max-width: 720px) {
+    .actions li { flex-wrap: wrap; }
+    .actions .where { align-self: flex-start; margin-left: calc(14px + var(--s3)); }
+  }
 
   /* needs attention */
   .attn { margin-bottom: var(--s4); }
@@ -712,6 +730,15 @@
       </table>
     </div>
     <div class="empty-table" id="emptytable" hidden>No use cases match the current filters.</div>
+  </section>
+
+  <!-- closing recommendation: computed from the portfolio, not authored -->
+  <section class="card actions" aria-label="Suggested actions">
+    <div class="cardhead">
+      <h2>Suggested actions</h2>
+      <span class="actnote">Derived from the portfolio above — recomputed on every load</span>
+    </div>
+    <ol id="actions"></ol>
   </section>
 
   <details class="ref analysis">
@@ -1502,6 +1529,7 @@ function render() {
   renderPipeline(active);
   renderBacklog(allActive); // capacity is a portfolio fact, not a slice fact
   renderMix(active);
+  renderActions(allActive); // recommendations are about the portfolio, not the slice
   renderAttention(active);
   renderTable(visible);
   renderStatic();
@@ -1791,6 +1819,126 @@ function renderMix(active) {
   rnote.textContent = active.length
     ? flagged + " of " + active.length + " in flight carry at least one flag; each routes to Risk or MRM before approval."
     : "No use cases in this slice.";
+}
+
+/* ---------- suggested actions ----------
+   A small rules engine over the live portfolio. Rules run in priority order
+   and claim use cases as they go, so one initiative never drives two
+   competing recommendations. Portfolio-wide, like the brief. */
+const FORUM_BY_STAGE = {
+  intake: "AI Intake Review", triage: "Triage", discovery: "Discovery Review",
+  prioritization: "AI Portfolio Council", portfolio: "AI Portfolio Council",
+  governance: "Governance Review", delivery: "Quarterly Planning", value: "Benefits Review",
+};
+const SEV_RANK = { critical: 0, warning: 1, opportunity: 2 };
+const SEV_DOT = { critical: ["critical", "✕"], warning: ["warning", "!"], opportunity: ["neutral", "\u2192"] };
+
+function listIds(items, max) {
+  const ids = items.slice(0, max || 3).map(u => u.id);
+  const rest = items.length - ids.length;
+  return ids.join(", ") + (rest > 0 ? " and " + rest + " more" : "");
+}
+
+function suggestedActions(allActive) {
+  const out = [], claimed = new Set();
+  const take = us => { us.forEach(u => claimed.add(u.id)); return us; };
+  const free = us => us.filter(u => !claimed.has(u.id));
+
+  // A use case without a named sponsor cannot be approved — name one or decline.
+  const noSponsor = free(allActive.filter(u => /sponsor/i.test(u.waitingOn || "")));
+  if (noSponsor.length) {
+    take(noSponsor);
+    const u = noSponsor[0];
+    out.push({ sev: "critical",
+      act: "Name a sponsor for " + u.id + ", or decline it",
+      why: u.name + " is " + Math.abs(u.daysTo) + " days past its " + u.stageName.toLowerCase() +
+           " target. Value accountability sits with the business sponsor, and declining early is a normal outcome.",
+      where: FORUM_BY_STAGE[u.stage] });
+  }
+
+  // Anything on a second return owes a decision rather than another cycle.
+  const due = free(allActive.filter(u => /second|decision due/i.test(u.next || "")));
+  if (due.length) {
+    take(due);
+    const u = due[0];
+    out.push({ sev: "warning",
+      act: "Settle " + u.id + " at the next triage",
+      why: u.name + " is on its second return; the process calls for Approve or Decline, not a third cycle.",
+      where: FORUM_BY_STAGE[u.stage] });
+  }
+
+  // Overdue and waiting on a named dependency — escalate together.
+  const blocked = free(allActive.filter(u => u.health === "critical" && u.waitingOn))
+    .sort((a, b) => a.daysTo - b.daysTo);
+  if (blocked.length) {
+    take(blocked);
+    out.push({ sev: "critical",
+      act: "Clear the blocker on " + listIds(blocked),
+      why: (blocked.length === 1 ? "It is" : "Each is") + " past its stage target waiting on a named dependency — the longest, " +
+           blocked[0].id + ", by " + Math.abs(blocked[0].daysTo) + " days — " + blocked[0].waitingOn + ".",
+      where: blocked.length === 1 ? FORUM_BY_STAGE[blocked[0].stage] : "Stage owners" });
+  }
+
+  // Quietly stale — no movement and nothing recorded about why.
+  const stale = free(allActive.filter(u => u.fresh === "stale" && u.health !== "critical"));
+  if (stale.length) {
+    take(stale);
+    out.push({ sev: "warning",
+      act: "Ask for an update on " + listIds(stale),
+      why: "No movement in more than two review cycles, and no blocker recorded.",
+      where: "Stage owners" });
+  }
+
+  // Work below the line should be deferred on the record, not by silence.
+  const plan = capacityPlan(allActive);
+  if (plan.below.length) {
+    out.push({ sev: "warning",
+      act: "Record an explicit defer for " + plan.below.length + " use case" + (plan.below.length === 1 ? "" : "s") + " below the capacity line",
+      why: plan.open + " of " + CAPACITY.points + " points are open and the next by rank (" + plan.below[0].id +
+           ") needs " + plan.below[0].size + ". Either finish or stop something in flight, or defer these on the record.",
+      where: "AI Portfolio Council" });
+  }
+
+  // Small and unflagged — the fast lane exists for exactly this.
+  const fast = free(allActive.filter(u =>
+    u.stage === "triage" && !u.risk.length && !u.waitingOn && (u.size || 99) <= 3));
+  if (fast.length) {
+    out.push({ sev: "opportunity",
+      act: "Route " + listIds(fast) + " through the fast lane",
+      why: "No risk flags and small scope — a lightweight path avoids waiting on the monthly Council.",
+      where: "Triage" });
+  }
+
+  // Portfolio shape: is anything reaching for growth?
+  const rev = allActive.filter(u => (u.impact || []).includes("revenue")).length;
+  if (allActive.length && rev / allActive.length < 0.3) {
+    out.push({ sev: "opportunity",
+      act: "Seed growth-side use cases at intake",
+      why: "Only " + rev + " of " + allActive.length + " in flight target revenue or growth; the portfolio leans to cost takeout.",
+      where: "AI Intake Review" });
+  }
+
+  return out.sort((a, b) => SEV_RANK[a.sev] - SEV_RANK[b.sev]).slice(0, 6);
+}
+
+function renderActions(allActive) {
+  const ol = document.getElementById("actions");
+  ol.replaceChildren();
+  const acts = suggestedActions(allActive);
+  if (!acts.length) {
+    ol.append(el("li", "empty", "Nothing to action — everything is on track and inside its review cadence."));
+    return;
+  }
+  for (const a of acts) {
+    const li = el("li");
+    const [cls, glyph] = SEV_DOT[a.sev];
+    const d = el("span", "dot " + cls, glyph);
+    d.setAttribute("aria-hidden", "true");
+    const body = el("div", "body");
+    body.append(el("div", "do", a.act), el("div", "why", a.why));
+    li.append(d, body, el("span", "chip where", a.where));
+    ol.append(li);
+  }
 }
 
 function renderAttention(active) {
