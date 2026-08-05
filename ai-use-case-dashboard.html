@@ -121,7 +121,9 @@
     color: rgba(255,255,255,0.5); font-size: var(--fs-caption);
     margin-left: auto; white-space: nowrap; align-self: center;
   }
-  @media (max-width: 880px) { .asof { display: none; } }
+  /* Drops before the masthead would wrap. The longer tab labels need the room,
+     and an orphaned date on its own line reads as broken rather than responsive. */
+  @media (max-width: 1100px) { .asof { display: none; } }
 
   /* Page note. Its own tokens, not the status palette — amber here means
      "read this first", never "at risk". The rule carries the boundary because
@@ -858,10 +860,10 @@
       <span class="t">AI Use Case Portfolio</span>
     </div>
     <div class="tabs" role="tablist" aria-label="Views">
-      <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="true" aria-controls="tab-portfolio">Portfolio</button>
+      <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="true" aria-controls="tab-portfolio">Portfolio Dashboard</button>
       <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
       <button type="button" role="tab" id="tabbtn-thinking" aria-selected="false" aria-controls="tab-thinking">Operating Model</button>
-      <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake</button>
+      <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake Form</button>
       <button type="button" role="tab" id="tabbtn-jira" aria-selected="false" aria-controls="tab-jira">Jira</button>
     </div>
     <span class="asof" id="asof"></span>
@@ -874,7 +876,7 @@
 <section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio">
 
   <div class="pagehead">
-    <div class="kicker">Portfolio</div>
+    <div class="kicker">Portfolio dashboard</div>
     <h1>Where every use case stands</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
@@ -1158,8 +1160,8 @@
 <section id="tab-intake" role="tabpanel" aria-labelledby="tabbtn-intake" hidden>
 
   <div class="pagehead">
-    <div class="kicker">Intake</div>
-    <h1>The fifteen-minute intake form</h1>
+    <div class="kicker">Intake form</div>
+    <h1>Fifteen minutes, not a specification</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
       <p>The form a requester fills in. Deliberately lightweight &mdash; enough to decide whether a use case is worth building, not to specify it. Try typing into the narrative boxes to see the live answer coaching respond. This is a mock-up: nothing submits anywhere.</p>

@@ -5,18 +5,19 @@
 A working demonstration of one process for every AI idea — so capacity goes to
 what's worth building. Built as a single self-contained HTML page with five views:
 
-- **Portfolio** — health and staleness tracking, a WSJF-ranked backlog against a
-  capacity line, per-use-case suggested actions, and a filterable use case table.
+- **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog
+  against a capacity line, per-use-case suggested actions, and a filterable use
+  case table.
 - **Weekly Status** — RAG for the portfolio and its three elements, what changed
   since last week, which use cases and forums the coming week turns on, and the
   portfolio-level risks. Previous weeks are kept as issued.
 - **Operating Model** — the mission, core principles, eight-stage lifecycle with
   accountable roles, five standing forums with decision rights, and next steps.
-- **Intake** — a mock of the fifteen-minute use case intake form with live
-  answer coaching.
-- **In Jira** — the same use cases as Jira issues: the backlog view, one issue
-  opened with its fields and comment stream, and a map from every dashboard
-  column to the field behind it, who sets it, and at which stage.
+- **Intake Form** — a mock of the fifteen-minute use case intake form with
+  live answer coaching.
+- **Jira** — the same use cases as Jira issues, styled as Jira: the backlog view
+  with workflow statuses and flagged rows, and one issue opened with its full
+  field set and comment stream.
 
 All data is illustrative and this is not an Ally system of record. In production
 Jira is the system of record and this page is the view; health, staleness,
