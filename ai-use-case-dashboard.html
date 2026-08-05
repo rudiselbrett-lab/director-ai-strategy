@@ -339,6 +339,18 @@
   .ragcard .rmetric { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin: var(--s2) 0 2px; }
   .ragcard .rnote { color: var(--ink-2); font-size: var(--fs-small); }
 
+  .meetings, .risks { list-style: none; margin: 0; padding: 0; }
+  .meetings li, .risks li { padding: var(--s2) 0; border-top: 1px solid var(--hairline); }
+  .meetings li:first-child, .risks li:first-child { border-top: none; }
+  .meetings .m1 { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s2); }
+  .meetings .mname { font-weight: 700; font-size: var(--fs-body); }
+  .meetings .mwhen { color: var(--ink); font-size: var(--fs-small); }
+  .meetings .mcad { color: var(--ink-3); font-size: var(--fs-caption); }
+  .meetings .magenda { color: var(--ink-2); font-size: var(--fs-small); margin-top: 2px; }
+  .risks li { display: flex; gap: var(--s3); align-items: flex-start; }
+  .risks .rt { font-weight: 700; font-size: var(--fs-small); }
+  .risks .rx { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; }
+
   .changed { list-style: none; margin: 0; padding: 0; }
   .changed li { display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s2) 0; border-top: 1px solid var(--hairline); font-size: var(--fs-small); line-height: 1.5; }
   .changed li:first-child { border-top: none; }
@@ -897,10 +909,24 @@
       <div class="bnote">Sample entries. In production these are the week's Jira comments on each issue, so the report writes itself from the work.</div>
     </section>
 
-    <section class="card" aria-label="Focus for the coming week">
-      <div class="cardhead"><h2>Focus for the coming week</h2></div>
+    <section class="card" aria-label="Use cases to focus on">
+      <div class="cardhead"><h2>Use cases to focus on</h2></div>
       <ol class="focus" id="focus"></ol>
-      <div class="bnote">Taken from the highest-severity suggested actions across the portfolio, so the report and the board never disagree.</div>
+      <div class="bnote">The highest-severity suggested action on each initiative, so the report and the board never disagree.</div>
+    </section>
+  </div>
+
+  <div class="row2">
+    <section class="card" aria-label="Upcoming meetings">
+      <div class="cardhead"><h2>Upcoming meetings</h2></div>
+      <ul class="meetings" id="meetings"></ul>
+      <div class="bnote">Agendas are the initiatives sitting at the stages each forum reviews.</div>
+    </section>
+
+    <section class="card" aria-label="Risks">
+      <div class="cardhead"><h2>Risks</h2></div>
+      <ul class="risks" id="risks"></ul>
+      <div class="bnote">Portfolio-level risks, as distinct from the per-use-case flags that drive routing.</div>
     </section>
   </div>
 </section>
@@ -1310,10 +1336,24 @@ const STATUS_HISTORY = [
       { dir: "neutral",  text: "Median intake-to-decision held at 23 days." },
     ],
     focus: [
-      { act: "Chase the MRM designation", id: "AI-003", where: "AI Risk & Controls" },
-      { act: "Find a sponsor or decline it", id: "AI-010", where: "AI Intake & Triage" },
-      { act: "Prepare for a forced decision", id: "AI-012", where: "AI Intake & Triage" },
-      { act: "Confirm KYC repository access", id: "AI-004", where: "Discovery Review" },
+      { id: "AI-003", name: "Fraud alert prioritization", act: "Chase the MRM designation", why: "requested three weeks ago and still outstanding" },
+      { id: "AI-010", name: "Statement insight summaries", act: "Find a sponsor or decline it", why: "five days past its intake target" },
+      { id: "AI-012", name: "Teller balancing assistant", act: "Prepare for a forced decision", why: "returns to triage a second time" },
+      { id: "AI-004", name: "KYC document extraction", act: "Confirm repository access", why: "the discovery timebox closes next week" },
+    ],
+    meetings: [
+      { name: "Discovery Review", when: "Wed, Jul 29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
+      { name: "AI Intake & Triage", when: "Thu, Jul 30", cadence: "Weekly", agenda: "3 on the agenda — AI-010, AI-012, AI-007" },
+      { name: "AI Risk & Controls", when: "Tue, Aug 11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "Thu, Aug 20", cadence: "Monthly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
+    ],
+    risks: [
+      { sev: "warning", title: "Approvals we do not control",
+        text: "MRM designation for AI-003 was requested three weeks ago and has not returned. KYC repository access for AI-004 is still unapproved." },
+      { sev: "warning", title: "Value concentrated in two bets",
+        text: "46% of scored value sits in AI-011 and AI-003." },
+      { sev: "warning", title: "Intake arriving without evidence",
+        text: "Three of the last four submissions arrived with no success metric, which pushes the work into discovery to find one." },
     ],
   },
   {
@@ -1333,10 +1373,22 @@ const STATUS_HISTORY = [
       { dir: "neutral", text: "AI-013 ATM cash forecasting entered discovery." },
     ],
     focus: [
-      { act: "Submit the MRM designation request", id: "AI-003", where: "AI Risk & Controls" },
-      { act: "Complete the discovery package", id: "AI-004", where: "Discovery Review" },
-      { act: "Size the work with technology", id: "AI-006", where: "AI Portfolio Council" },
-      { act: "Re-prep for triage", id: "AI-012", where: "AI Intake & Triage" },
+      { id: "AI-003", name: "Fraud alert prioritization", act: "Submit the MRM designation request", why: "governance target falls in two weeks" },
+      { id: "AI-004", name: "KYC document extraction", act: "Complete the discovery package", why: "half the timebox is gone" },
+      { id: "AI-006", name: "Branch staffing forecast", act: "Size the work with technology", why: "it cannot be ranked without a size" },
+      { id: "AI-012", name: "Teller balancing assistant", act: "Re-prep for triage", why: "deferred a cycle for incomplete prep" },
+    ],
+    meetings: [
+      { name: "AI Intake & Triage", when: "Thu, Jul 23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
+      { name: "Discovery Review", when: "Wed, Jul 29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-002, AI-004, AI-013" },
+      { name: "AI Risk & Controls", when: "Tue, Aug 11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "Thu, Aug 20", cadence: "Monthly", agenda: "2 on the agenda — AI-005, AI-014" },
+    ],
+    risks: [
+      { sev: "warning", title: "Q2 closed below projection",
+        text: "$3.4M realised against $4.2M projected. The gap sits in the estimate rather than the delivery, so WSJF inputs were recalibrated." },
+      { sev: "warning", title: "Prep quality at triage",
+        text: "A second submission this month arrived without prep and cost a cycle." },
     ],
   },
   {
@@ -1356,9 +1408,21 @@ const STATUS_HISTORY = [
       { dir: "neutral", text: "Two ideas arrived at intake; one routed to another team." },
     ],
     focus: [
-      { act: "Close the Q2 benefits measurement", where: "Portfolio Increment Review" },
-      { act: "Start the discovery timebox", id: "AI-004", where: "Discovery Review" },
-      { act: "Confirm the value baseline with the sponsor", id: "AI-001", where: "Discovery Review" },
+      { id: "Q2 close", act: "Close the benefits measurement", why: "the increment review needs actuals, not projections" },
+      { id: "AI-004", name: "KYC document extraction", act: "Start the discovery timebox", why: "four weeks from today" },
+      { id: "AI-001", name: "Contact center call summarization", act: "Confirm the value baseline with the sponsor", why: "benefits reporting starts next quarter" },
+    ],
+    meetings: [
+      { name: "AI Intake & Triage", when: "Thu, Jul 16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
+      { name: "Discovery Review", when: "Wed, Jul 15", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-002, AI-004" },
+      { name: "AI Risk & Controls", when: "Tue, Jul 14", cadence: "Monthly", agenda: "2 on the agenda — AI-008, AI-011" },
+      { name: "AI Portfolio Council", when: "Thu, Jul 16", cadence: "Monthly", agenda: "2 on the agenda — AI-006, AI-014" },
+    ],
+    risks: [
+      { sev: "warning", title: "Q2 tracking below projection",
+        text: "Realisation is running at 80% with two weeks to close." },
+      { sev: "warning", title: "Discovery capacity",
+        text: "Three timeboxes run concurrently against a team that comfortably carries two." },
     ],
   },
 ];
@@ -2233,6 +2297,93 @@ function actionsFor(u, plan) {
 /* ---------- weekly status ----------
    Ratings are computed so the report can never drift from the portfolio it
    describes. Each carries the rule that produced it. */
+/* The standing calendar. Next sittings are computed rather than dated, so
+   the report stays plausible whenever it is opened, and each forum knows
+   which stages it reviews — that is what produces the agenda. */
+const FORUMS = [
+  { name: "AI Intake & Triage",        cadence: "Weekly",    stages: ["intake", "triage"],              next: () => nextWeekly(4) },
+  { name: "Discovery Review",          cadence: "Bi-weekly", stages: ["discovery"],                     next: () => nextBiweekly(3, "2026-01-07") },
+  { name: "AI Risk & Controls",        cadence: "Monthly",   stages: ["governance"],                    next: () => nextMonthly(2, 2) },
+  { name: "AI Portfolio Council",      cadence: "Monthly",   stages: ["prioritization", "portfolio"],   next: () => nextMonthly(4, 3) },
+  { name: "Portfolio Increment Review",cadence: "Quarterly", stages: ["delivery", "value"],             next: () => nextQuarterly(4, 3) },
+];
+
+function nextWeekly(dow) {
+  const d = new Date(todayUTC());
+  d.setUTCDate(d.getUTCDate() + ((dow - d.getUTCDay() + 7) % 7));
+  return d;
+}
+function nextBiweekly(dow, anchorIso) {
+  const anchor = utc(anchorIso);
+  const d = nextWeekly(dow);
+  while (Math.round((d.getTime() - anchor) / DAY) % 14 !== 0) d.setUTCDate(d.getUTCDate() + 7);
+  return d;
+}
+function nthDow(y, m, dow, nth) {
+  const first = new Date(Date.UTC(y, m, 1));
+  return new Date(Date.UTC(y, m, 1 + ((dow - first.getUTCDay() + 7) % 7) + (nth - 1) * 7));
+}
+function nextMonthly(dow, nth) {
+  const t = new Date(todayUTC());
+  let d = nthDow(t.getUTCFullYear(), t.getUTCMonth(), dow, nth);
+  if (d.getTime() < t.getTime()) d = nthDow(t.getUTCFullYear(), t.getUTCMonth() + 1, dow, nth);
+  return d;
+}
+function nextQuarterly(dow, nth) {
+  const t = new Date(todayUTC());
+  const q = Math.floor(t.getUTCMonth() / 3) * 3 + 2;
+  let d = nthDow(t.getUTCFullYear(), q, dow, nth);
+  if (d.getTime() < t.getTime()) d = nthDow(t.getUTCFullYear(), q + 3, dow, nth);
+  return d;
+}
+const fmtDay = d => d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+
+function upcomingMeetings(active, n) {
+  return FORUMS.map(f => {
+    const d = f.next();
+    const agenda = active.filter(u => f.stages.includes(u.stage))
+      .sort((a, b) => HEALTH[b.health].rank - HEALTH[a.health].rank || a.daysTo - b.daysTo);
+    return { name: f.name, cadence: f.cadence, when: fmtDay(d), sort: d.getTime(),
+      agenda: agenda.length ? agenda.length + " on the agenda — " + agenda.map(u => u.id).join(", ")
+                            : "Nothing at this stage — the sitting can be released." };
+  }).sort((a, b) => a.sort - b.sort).slice(0, n);
+}
+
+/* Portfolio-level risks: what could derail the plan, as distinct from the
+   per-use-case risk flags that drive routing. */
+function portfolioRisks(active, plan) {
+  const out = [];
+
+  const ext = active.filter(u => /approval|designation|access/i.test(u.waitingOn || ""));
+  if (ext.length) out.push({ sev: ext.some(u => u.health === "critical") ? "critical" : "warning",
+    title: "Approvals we do not control",
+    text: ext.length + (ext.length === 1 ? " initiative is" : " initiatives are") +
+      " held on a decision owned elsewhere — " + ext.map(u => u.id + " (" + softLower(u.waitingOn) + ")").join("; ") +
+      ". Nothing moves until those return." });
+
+  if (plan.below.length) out.push({ sev: "warning",
+    title: "No room to start",
+    text: (plan.open - plan.used) + " points remain and the next item by rank needs " + plan.below[0].size +
+      ", so " + plan.below.length + " scored " + (plan.below.length === 1 ? "use case waits" : "use cases wait") +
+      " on something finishing or stopping." });
+
+  const scored = active.filter(u => u.est).sort((a, b) => b.est - a.est);
+  if (scored.length >= 2) {
+    const total = scored.reduce((a, u) => a + u.est, 0);
+    const share = Math.round((scored[0].est + scored[1].est) / total * 100);
+    if (share >= 40) out.push({ sev: "warning", title: "Value concentrated in two bets",
+      text: share + "% of scored value sits in " + scored[0].id + " and " + scored[1].id +
+        ". If either slips, the quarter's number goes with it." });
+  }
+
+  const noData = active.filter(u => u.dataReady == null);
+  if (noData.length >= 3) out.push({ sev: "warning", title: "Data readiness unassessed",
+    text: noData.length + " initiatives have no data readiness on file (" + noData.map(u => u.id).join(", ") +
+      "), which is where value estimates usually break." });
+
+  return out.slice(0, 4);
+}
+
 const RAG = { good: "Green", warning: "Amber", critical: "Red" };
 
 function ragFor(active) {
@@ -2310,7 +2461,9 @@ function currentReport(active) {
   return {
     week: iso, current: true,
     overall: rag.overall, parts: rag.parts, log: STATUS_LOG,
-    focus: weeklyFocus(active, plan).map(f => ({ act: f.act, id: f.u.id, where: f.where })),
+    focus: weeklyFocus(active, plan).map(f => ({ id: f.u.id, name: f.u.name, act: f.act, why: f.why })),
+    meetings: upcomingMeetings(active, 4),
+    risks: portfolioRisks(active, plan),
   };
 }
 
@@ -2386,10 +2539,37 @@ function paintReport(r) {
     for (const f of r.focus) {
       const li = el("li");
       const body = el("div");
-      body.append(el("span", "do", f.act), document.createTextNode(" — "),
-        el("span", "who", (f.id ? f.id + " · " : "") + f.where));
+      const tail = f.act.charAt(0).toLowerCase() + f.act.slice(1) + (f.why ? ", " + f.why.replace(/\.$/, "") : "");
+      body.append(el("span", "do", f.id + (f.name ? " · " + f.name : "")),
+        document.createTextNode(" — "), el("span", "why", tail + "."));
       li.append(body);
       fo.append(li);
+    }
+  }
+
+  const mt = document.getElementById("meetings");
+  mt.replaceChildren();
+  for (const m of r.meetings || []) {
+    const li = el("li");
+    const head = el("div", "m1");
+    head.append(el("span", "mname", m.name), el("span", "mwhen", m.when), el("span", "mcad", m.cadence));
+    li.append(head, el("div", "magenda", m.agenda));
+    mt.append(li);
+  }
+
+  const rk = document.getElementById("risks");
+  rk.replaceChildren();
+  if (!(r.risks || []).length) {
+    rk.append(el("li", null, el("span", "rx", "No portfolio-level risks recorded this week.")));
+  } else {
+    for (const k of r.risks) {
+      const li = el("li");
+      const d2 = el("span", "dot " + k.sev, HEALTH[k.sev].glyph);
+      d2.setAttribute("aria-hidden", "true");
+      const body = el("div");
+      body.append(el("div", "rt", k.title), el("div", "rx", k.text));
+      li.append(d2, body);
+      rk.append(li);
     }
   }
 }
