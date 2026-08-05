@@ -312,6 +312,13 @@
   .port .ccell { white-space: nowrap; }
 
   /* weekly status */
+  .weekpick { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; margin-bottom: var(--s4); }
+  .weekpick label { font: 600 var(--fs-micro)/1.2 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+  .weekpick select {
+    font: var(--fs-body) var(--sans); color: var(--ink); background: #fff;
+    border: 1px solid var(--field); border-radius: var(--r); padding: 6px var(--s2);
+  }
+  .weekpick .issued { color: var(--ink-3); font-size: var(--fs-caption); }
   .ragmain {
     background: #fff; border: 1px solid var(--hairline); border-top: 3px solid var(--rule);
     padding: var(--s5); margin-bottom: var(--s4);
@@ -868,10 +875,16 @@
     <h1 id="status-week">Weekly portfolio status</h1>
     <p>One page for the standing report: where the portfolio stands, what moved since last week, and what the coming week turns on.</p>
     <div class="metaline">
-      <span>Ratings computed from the portfolio</span><span class="msep" aria-hidden="true">·</span>
+      <span>Ratings from portfolio data</span><span class="msep" aria-hidden="true">·</span>
       <span>Narrative from Jira comments</span><span class="msep" aria-hidden="true">·</span>
       <span>Issued weekly</span>
     </div>
+  </div>
+
+  <div class="weekpick">
+    <label for="status-week-select">Report</label>
+    <select id="status-week-select"></select>
+    <span class="issued" id="status-issued"></span>
   </div>
 
   <div id="rag-overall"></div>
@@ -1272,6 +1285,82 @@ const STATUS_LOG = [
   { dir: "good",     text: "AI-016 HR policy chatbot was transferred to the Enterprise AI team and closed, with the rationale recorded." },
   { dir: "good",     text: "Median intake-to-decision fell to 21 days, from 23 the week before." },
   { dir: "neutral",  text: "AI-007 Marketing copy assistant arrived at intake — small, unflagged, and a candidate for the fast lane." },
+];
+
+/* Issued reports, kept as issued. A status report is a point-in-time
+   artefact — last week's rating is not recomputed from this week's data,
+   because that would rewrite history. The current week is computed; every
+   entry below was published on its date. */
+const STATUS_HISTORY = [
+  {
+    week: "2026-07-27", overall: "warning",
+    parts: [
+      { name: "Flow", status: "warning", metric: "2 overdue",
+        note: "AI-010 passed its intake target without a sponsor, and AI-012 returns to triage a second time." },
+      { name: "Value", status: "warning", metric: "81%",
+        note: "of projected value realised. Q2 closed at $3.4M of $4.2M; Q3 is early." },
+      { name: "Risk and controls", status: "warning", metric: "8 of 14",
+        note: "in flight carry a risk flag. MRM designation requested for AI-003; nothing returned yet." },
+    ],
+    log: [
+      { dir: "warning",  text: "AI-003 Fraud alert prioritization reached its governance target with MRM designation still outstanding." },
+      { dir: "critical", text: "AI-010 Statement insight summaries passed its intake target with no named sponsor." },
+      { dir: "good",     text: "AI-015 RM email auto-drafting declined — low quantifiable value, duplicates the enterprise CRM assistant." },
+      { dir: "good",     text: "AI-009 Wire fraud anomaly detection arrived at intake from Payments Risk." },
+      { dir: "neutral",  text: "Median intake-to-decision held at 23 days." },
+    ],
+    focus: [
+      { act: "Chase the MRM designation", id: "AI-003", where: "AI Risk & Controls" },
+      { act: "Find a sponsor or decline it", id: "AI-010", where: "AI Intake & Triage" },
+      { act: "Prepare for a forced decision", id: "AI-012", where: "AI Intake & Triage" },
+      { act: "Confirm KYC repository access", id: "AI-004", where: "Discovery Review" },
+    ],
+  },
+  {
+    week: "2026-07-20", overall: "warning",
+    parts: [
+      { name: "Flow", status: "warning", metric: "1 overdue",
+        note: "AI-012 was deferred a cycle for incomplete prep; everything else sits inside its window." },
+      { name: "Value", status: "warning", metric: "80%",
+        note: "of projected value realised. Q2 closed at $3.4M against $4.2M projected." },
+      { name: "Risk and controls", status: "good", metric: "7 of 13",
+        note: "in flight carry a risk flag. Nothing held at the gate." },
+    ],
+    log: [
+      { dir: "good",    text: "Q2 closed at $3.4M realised against $4.2M projected; WSJF inputs recalibrated from actuals." },
+      { dir: "good",    text: "AI-011 Loan document pre-fill moved into value realisation." },
+      { dir: "warning", text: "AI-012 Teller balancing assistant deferred one cycle — arrived at triage without prep." },
+      { dir: "neutral", text: "AI-013 ATM cash forecasting entered discovery." },
+    ],
+    focus: [
+      { act: "Submit the MRM designation request", id: "AI-003", where: "AI Risk & Controls" },
+      { act: "Complete the discovery package", id: "AI-004", where: "Discovery Review" },
+      { act: "Size the work with technology", id: "AI-006", where: "AI Portfolio Council" },
+      { act: "Re-prep for triage", id: "AI-012", where: "AI Intake & Triage" },
+    ],
+  },
+  {
+    week: "2026-07-13", overall: "warning",
+    parts: [
+      { name: "Flow", status: "good", metric: "0 overdue",
+        note: "Everything sits inside its stage window." },
+      { name: "Value", status: "warning", metric: "80%",
+        note: "of projected value realised. Tracking to close Q2 below projection." },
+      { name: "Risk and controls", status: "good", metric: "6 of 12",
+        note: "in flight carry a risk flag. Nothing held at the gate." },
+    ],
+    log: [
+      { dir: "good",    text: "AI-008 Chat deflection FAQ assistant entered delivery." },
+      { dir: "good",    text: "AI-014 Dispute intake summarizer scored at WSJF 3.4 and entered the ranked backlog." },
+      { dir: "good",    text: "Median intake-to-decision improved to 24 days, from 26." },
+      { dir: "neutral", text: "Two ideas arrived at intake; one routed to another team." },
+    ],
+    focus: [
+      { act: "Close the Q2 benefits measurement", where: "Portfolio Increment Review" },
+      { act: "Start the discovery timebox", id: "AI-004", where: "Discovery Review" },
+      { act: "Confirm the value baseline with the sponsor", id: "AI-001", where: "Discovery Review" },
+    ],
+  },
 ];
 
 const USE_CASES = [
@@ -2206,27 +2295,69 @@ function weeklyFocus(active, plan) {
   return all.filter(a => !seen.has(a.u.id) && seen.add(a.u.id)).slice(0, 5);
 }
 
-function renderStatus(active) {
+function fmtWeek(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d))
+    .toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+}
+
+function currentReport(active) {
   const monday = new Date();
   monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-  document.getElementById("status-week").textContent = "Week of " +
-    monday.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
-
+  const iso = monday.toISOString().slice(0, 10);
   const rag = ragFor(active);
+  const plan = capacityPlan(active);
+  return {
+    week: iso, current: true,
+    overall: rag.overall, parts: rag.parts, log: STATUS_LOG,
+    focus: weeklyFocus(active, plan).map(f => ({ act: f.act, id: f.u.id, where: f.where })),
+  };
+}
+
+let statusIndex = 0; // 0 = this week, then back through the issued reports
+
+function renderStatus(active) {
+  const reports = [currentReport(active), ...STATUS_HISTORY];
+  const sel = document.getElementById("status-week-select");
+  if (sel.options.length !== reports.length) {
+    sel.replaceChildren();
+    reports.forEach((r, i) => {
+      const o = el("option", null, "Week of " + fmtWeek(r.week) + (r.current ? " — current" : ""));
+      o.value = String(i);
+      sel.append(o);
+    });
+    sel.addEventListener("change", () => {
+      statusIndex = Number(sel.value);
+      paintReport(reports[statusIndex] || reports[0]);
+    });
+  }
+  if (statusIndex >= reports.length) statusIndex = 0;
+  sel.value = String(statusIndex);
+  paintReport(reports[statusIndex]);
+}
+
+function paintReport(r) {
+  document.getElementById("status-week").textContent = "Week of " + fmtWeek(r.week);
+  document.getElementById("status-issued").textContent = r.current
+    ? "Computed from the portfolio as it stands today."
+    : "Shown as issued on " + fmtWeek(r.week) + " — not recomputed from today's data.";
+
+  const overallStatus = r.overall.status || r.overall;
+  const overallNote = r.overall.note || (r.parts.find(p => p.status === overallStatus) || {}).note || "";
 
   const main = document.getElementById("rag-overall");
   main.replaceChildren();
-  const card = el("div", "ragmain " + rag.overall.status);
+  const card = el("div", "ragmain " + overallStatus);
   const lab = el("div", "rlabel");
-  const d = el("span", "dot " + rag.overall.status, HEALTH[rag.overall.status].glyph);
+  const d = el("span", "dot " + overallStatus, HEALTH[overallStatus].glyph);
   d.setAttribute("aria-hidden", "true");
-  lab.append(d, document.createTextNode("Overall — " + RAG[rag.overall.status]));
-  card.append(lab, el("div", "rnote", rag.overall.note));
+  lab.append(d, document.createTextNode("Overall — " + RAG[overallStatus]));
+  card.append(lab, el("div", "rnote", overallNote));
   main.append(card);
 
   const parts = document.getElementById("rag-parts");
   parts.replaceChildren();
-  for (const p of rag.parts) {
+  for (const p of r.parts) {
     const c = el("div", "ragcard " + p.status);
     const nm = el("div", "rname");
     const pd = el("span", "dot " + p.status, HEALTH[p.status].glyph);
@@ -2238,7 +2369,7 @@ function renderStatus(active) {
 
   const ch = document.getElementById("changed");
   ch.replaceChildren();
-  for (const e of STATUS_LOG) {
+  for (const e of r.log) {
     const li = el("li");
     const dot = el("span", "dot " + (e.dir === "neutral" ? "neutral" : e.dir),
       e.dir === "neutral" ? "\u2192" : HEALTH[e.dir].glyph);
@@ -2249,16 +2380,14 @@ function renderStatus(active) {
 
   const fo = document.getElementById("focus");
   fo.replaceChildren();
-  const plan = capacityPlan(active);
-  const focus = weeklyFocus(active, plan);
-  if (!focus.length) {
+  if (!r.focus.length) {
     fo.append(el("li", null, "Nothing outstanding — hold the cadence."));
   } else {
-    for (const f of focus) {
+    for (const f of r.focus) {
       const li = el("li");
       const body = el("div");
       body.append(el("span", "do", f.act), document.createTextNode(" — "),
-        el("span", "who", f.u.id + " · " + f.where));
+        el("span", "who", (f.id ? f.id + " · " : "") + f.where));
       li.append(body);
       fo.append(li);
     }
