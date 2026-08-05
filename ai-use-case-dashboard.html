@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Use Case Portfolio</title>
+<title>Ally Consumer Bank — AI Use Case Portfolio</title>
 <style>
   /* ============================================================
      DESIGN SYSTEM
      Type: one serif for editorial voice, one sans for interface.
      Scale: 9 steps, no off-scale sizes.
      Space: 4px base. Radius: 2px everywhere. Two card paddings.
-     Two uppercase treatments only — a neutral Label and a gold Eyebrow.
+     Two uppercase treatments only — a neutral Label and a berry Eyebrow.
      ============================================================ */
   :root {
     color-scheme: light;
@@ -26,13 +26,14 @@
     --field:     #8a91a0;   /* interactive control borders — 3:1 per WCAG 1.4.11 */
     --wash:      rgba(22,24,29,0.03);
 
-    /* brand */
-    --navy:       #10294a;
-    --navy-2:     #1c3f70;
-    --link:       #0f56a5;
-    --link-wash:  rgba(15,86,165,0.07);
-    --gold:       #8a6a20;   /* accent on light surfaces */
-    --gold-bright:#c9a84c;   /* accent on the navy masthead */
+    /* brand — Ally. Approximated from the public identity; swap the four
+       values here and the whole page follows. */
+    --brand:        #6b2c91;   /* purple: masthead, primary, stage chips */
+    --brand-2:      #83409f;   /* lifted, for hover on filled controls */
+    --brand-wash:   rgba(107,44,145,0.08);
+    --accent:       #a81e7c;   /* berry: eyebrows on light surfaces */
+    --accent-bright:#f3b9de;   /* accent on the purple masthead */
+    --link:         #0f56a5;   /* links stay blue — distinct from brand and status */
 
     /* status — fixed, never themed */
     --status-good:     #0ca30c;
@@ -86,14 +87,14 @@
     letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--ink-2); margin: 0;
   }
-  .eyebrow, .kicker, .mission .pillar, .tenet .no, .cutline .cl-lab {
+  .eyebrow, .kicker, .mission .pillar, .tenet .no {
     font: 700 var(--fs-micro)/1.2 var(--sans);
     letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--gold);
+    color: var(--accent);
   }
 
   /* ---------- masthead ---------- */
-  .topbar { position: sticky; top: 0; z-index: 40; background: var(--navy); }
+  .topbar { position: sticky; top: 0; z-index: 40; background: var(--brand); }
   .topbar-inner {
     max-width: 1180px; margin: 0 auto; padding: 0 var(--s5);
     display: flex; align-items: stretch; gap: var(--s6); flex-wrap: wrap;
@@ -101,7 +102,7 @@
   .brand { display: flex; align-items: baseline; gap: var(--s3); padding: var(--s4) 0; white-space: nowrap; }
   .brand .org {
     font: 700 11px/1 var(--sans); letter-spacing: 0.18em; text-transform: uppercase;
-    color: rgba(255,255,255,0.62);
+    color: rgba(255,255,255,0.72);
   }
   .brand .div { color: rgba(255,255,255,0.28); }
   .brand .t { font: 400 16px/1 var(--serif); color: #fff; letter-spacing: 0.01em; }
@@ -114,7 +115,7 @@
   .tabs button:hover, .tabs button[aria-selected="true"] { color: #fff; }
   .tabs button[aria-selected="true"]::after {
     content: ""; position: absolute; left: var(--s3); right: var(--s3); bottom: 0;
-    height: 3px; background: var(--gold-bright);
+    height: 3px; background: var(--accent-bright);
   }
   .asof {
     color: rgba(255,255,255,0.5); font-size: var(--fs-caption);
@@ -123,7 +124,7 @@
   @media (max-width: 880px) { .asof { display: none; } }
 
   .demobar { background: var(--panel); border-bottom: 1px solid var(--hairline); }
-  .demobar .label { color: var(--gold); }
+  .demobar .label { color: var(--accent); }
   .demobar-inner {
     max-width: 1180px; margin: 0 auto; padding: var(--s2) var(--s5);
     font-size: var(--fs-caption); color: var(--ink-2);
@@ -149,7 +150,7 @@
     font: 700 var(--fs-nano) var(--sans); color: var(--ink-3);
     vertical-align: 1px; transition: color var(--t), border-color var(--t), background var(--t);
   }
-  .infobtn:hover { border-color: var(--link); color: var(--link); background: var(--link-wash); }
+  .infobtn:hover { border-color: var(--link); color: var(--link); background: var(--brand-wash); }
 
 
   /* ---------- filter row ---------- */
@@ -165,7 +166,7 @@
     display: inline-flex; align-items: center; gap: 6px;
     color: var(--ink-2); font-size: var(--fs-small); padding: 6px var(--s1); cursor: pointer;
   }
-  .filters .chk input { accent-color: var(--navy); }
+  .filters .chk input { accent-color: var(--brand); }
   .filters .reset {
     font: var(--fs-small) var(--sans); color: var(--ink-2);
     background: none; border: none; cursor: pointer; padding: 6px var(--s2);
@@ -189,8 +190,8 @@
   }
   .stat:first-child { border-left: none; }
   button.stat { cursor: pointer; }
-  button.stat:hover { background: var(--link-wash); }
-  .stat.active { box-shadow: inset 0 -3px 0 var(--gold); background: var(--link-wash); }
+  button.stat:hover { background: var(--brand-wash); }
+  .stat.active { box-shadow: inset 0 -3px 0 var(--accent); background: var(--brand-wash); }
   .stat .slabel { color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
   .stat .svalue { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin-top: 6px; }
   .stat .ssub { color: var(--ink-3); font-size: var(--fs-caption); margin-top: 2px; }
@@ -266,9 +267,17 @@
   .backlog .bsub b { color: var(--ink); font-weight: 700; }
 
   /* capacity line — a threshold, deliberately distinct from the grid */
+  /* The cut line sits inside a chart of red/amber/green bars, so it takes the
+     brand hue rather than the berry accent — a structural boundary must not
+     read as one more status signal. */
   .cutline { display: flex; align-items: center; gap: var(--s2); margin: var(--s2) 0 6px; }
-  .cutline .cl-lab { white-space: nowrap; }
-  .cutline .cl-rule { flex: 1; border-top: 1px solid var(--gold); }
+  .cutline .cl-lab {
+    white-space: nowrap;
+    font: 700 var(--fs-micro)/1.2 var(--sans);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--brand);
+  }
+  .cutline .cl-rule { flex: 1; border-top: 1px solid var(--brand); }
 
   /* trend panels */
   .trend .takeaway {
@@ -353,7 +362,7 @@
   .focus li:first-child { border-top: none; }
   .focus li::before {
     content: counter(f); width: 20px; height: 20px; flex: none; margin-top: 1px;
-    background: var(--navy); color: #fff; display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
+    background: var(--brand); color: #fff; display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
   }
   .focus .who { color: var(--ink-3); }
 
@@ -410,7 +419,7 @@
     transition: color var(--t);
   }
   .port thead th:hover { color: var(--ink); }
-  .port thead th .arrow { font-size: var(--fs-nano); margin-left: 3px; color: var(--gold); }
+  .port thead th .arrow { font-size: var(--fs-nano); margin-left: 3px; color: var(--accent); }
   .port tbody td { border-bottom: 1px solid var(--hairline); vertical-align: top; }
   .port tbody tr:last-child td { border-bottom: none; }
   .port tbody tr { transition: background var(--t); }
@@ -458,7 +467,7 @@
   }
   details.ref > summary:hover { background: var(--wash); }
   details.ref > summary::-webkit-details-marker { display: none; }
-  details.ref > summary::before { content: "▸ "; color: var(--gold); }
+  details.ref > summary::before { content: "▸ "; color: var(--accent); }
   details.ref[open] > summary::before { content: "▾ "; }
   .refbody { border: 1px solid var(--hairline); border-top: none; background: #fff; padding: var(--s1) var(--s5) var(--s5); }
   .refbody h3 { margin: var(--s5) 0 var(--s2); }
@@ -482,7 +491,7 @@
   .mini tbody tr:last-child td { border-bottom: none; }
 
   /* ---------- operating model ---------- */
-  .mission { border-top: 3px solid var(--navy); padding: var(--s6) 0 6px; }
+  .mission { border-top: 3px solid var(--brand); padding: var(--s6) 0 6px; }
   /* 46ch is the tightest measure that still holds the intended three-line rag */
   .mission .statement { font: 400 var(--fs-hero)/1.32 var(--serif); margin: var(--s3) 0; max-width: 46ch; }
   @media (max-width: 720px) { .mission .statement { font-size: var(--fs-h1); } }
@@ -511,10 +520,10 @@
     padding: var(--pad-tight); text-align: left; display: flex; flex-direction: column;
   }
   button.lstage { cursor: pointer; transition: border-color var(--t), background var(--t); }
-  button.lstage:hover { border-color: var(--link); background: var(--link-wash); }
+  button.lstage:hover { border-color: var(--link); background: var(--brand-wash); }
   .lstage .top { display: flex; align-items: center; gap: var(--s2); margin-bottom: var(--s2); }
   .stepnum {
-    width: 22px; height: 22px; flex: none; background: var(--navy); color: #fff;
+    width: 22px; height: 22px; flex: none; background: var(--brand); color: #fff;
     display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
   }
   /* operational card titles are sans; editorial ones (tenets, opportunities) are serif */
@@ -538,7 +547,7 @@
   ol.steps li:first-child { border-top: none; }
   ol.steps li::before {
     content: counter(step); width: 22px; height: 22px; flex: none;
-    background: var(--navy); color: #fff;
+    background: var(--brand); color: #fff;
     display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
   }
   ol.steps .stitle { font-weight: 600; font-size: var(--fs-body); }
@@ -563,7 +572,7 @@
   .pbbody { padding: 6px var(--s6) var(--s5); max-height: 62vh; overflow-y: auto; }
   .pbbody h3 { margin: var(--s4) 0 var(--s2); }
   .pbbody .pbquote {
-    border-left: 2px solid var(--gold); padding: 2px 0 2px var(--s4); margin: var(--s4) 0 2px;
+    border-left: 2px solid var(--accent); padding: 2px 0 2px var(--s4); margin: var(--s4) 0 2px;
     font: italic 400 var(--fs-lead)/1.45 var(--serif); color: var(--ink);
   }
   .pbbody ul { margin: 0; padding-left: var(--s4); }
@@ -571,13 +580,13 @@
   .pbbody li b { color: var(--ink); font-weight: 600; }
   .pbfoot { padding: 0 var(--s6) var(--s5); }
   .pbfoot .golink {
-    display: inline-block; background: var(--navy); color: #fff; border: none; cursor: pointer;
+    display: inline-block; background: var(--brand); color: #fff; border: none; cursor: pointer;
     font: 600 var(--fs-small) var(--sans); padding: var(--s2) var(--s4); transition: background var(--t);
   }
-  .pbfoot .golink:hover { background: var(--navy-2); }
+  .pbfoot .golink:hover { background: var(--brand-2); }
 
   /* ---------- intake ---------- */
-  .pagehead { border-top: 3px solid var(--navy); padding: var(--s6) 0 6px; margin-bottom: var(--s5); }
+  .pagehead { border-top: 3px solid var(--brand); padding: var(--s6) 0 6px; margin-bottom: var(--s5); }
   .pagehead h1 { font: 400 var(--fs-h1)/1.25 var(--serif); margin: var(--s3) 0; }
   .pagehead p { color: var(--ink-2); font-size: var(--fs-body); margin: 0 0 var(--s3); max-width: 66ch; }
   .metaline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--s3); }
@@ -602,7 +611,7 @@
     background: #fff; transition: border-color var(--t), box-shadow var(--t);
   }
   .field textarea { min-height: 70px; resize: vertical; }
-  .field input:focus, .field textarea:focus { outline: none; border-color: var(--link); box-shadow: 0 0 0 2px var(--link-wash); }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--link); box-shadow: 0 0 0 2px var(--brand-wash); }
 
   .coach {
     display: flex; gap: var(--s2); align-items: flex-start;
@@ -624,17 +633,17 @@
     cursor: pointer; background: #fff; transition: border-color var(--t), background var(--t);
   }
   label.opt:hover { border-color: var(--ink-3); }
-  label.opt:has(input:checked) { border-color: var(--navy); background: var(--link-wash); }
-  label.opt input { accent-color: var(--navy); margin-top: 2px; flex: none; }
+  label.opt:has(input:checked) { border-color: var(--brand); background: var(--brand-wash); }
+  label.opt input { accent-color: var(--brand); margin-top: 2px; flex: none; }
   label.opt .ot { font-size: var(--fs-small); font-weight: 600; }
   label.opt .od { font-size: var(--fs-caption); color: var(--ink-2); }
 
   .submitrow { display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; margin-top: var(--s1); }
   .primarybtn {
-    background: var(--navy); color: #fff; border: none; cursor: pointer;
+    background: var(--brand); color: #fff; border: none; cursor: pointer;
     font: 600 var(--fs-body) var(--sans); padding: var(--s3) var(--s6); transition: background var(--t);
   }
-  .primarybtn:hover { background: var(--navy-2); }
+  .primarybtn:hover { background: var(--brand-2); }
   .submitrow .mocknote { color: var(--ink-3); font-size: var(--fs-caption); }
 
   .rail { position: sticky; top: 64px; display: grid; gap: var(--s3); }
@@ -660,7 +669,7 @@
   .seg label + label { border-left: 1px solid var(--field); }
   .seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
   .seg span { display: block; padding: var(--s1) var(--s3); font-size: var(--fs-caption); color: var(--ink-2); transition: background var(--t); }
-  .seg label:has(input:checked) span { background: var(--navy); color: #fff; font-weight: 600; }
+  .seg label:has(input:checked) span { background: var(--brand); color: #fff; font-weight: 600; }
   .seg label:has(input:focus-visible) { outline: 2px solid var(--link); outline-offset: -2px; }
   .recsteps { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s4); }
   .recsteps label { position: relative; cursor: pointer; }
@@ -669,7 +678,7 @@
     display: block; border: 1px solid var(--field); background: #fff;
     padding: 6px var(--s3); font-size: var(--fs-small); color: var(--ink-2); transition: background var(--t);
   }
-  .recsteps label:has(input:checked) span { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 600; }
+  .recsteps label:has(input:checked) span { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 600; }
   .recsteps label:has(input:focus-visible) span { outline: 2px solid var(--link); outline-offset: 2px; }
 
   footer {
@@ -702,7 +711,7 @@
 <nav class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <span class="org">Consumer Bank</span>
+      <span class="org">Ally Consumer Bank</span>
       <span class="div" aria-hidden="true">|</span>
       <span class="t">AI Use Case Portfolio</span>
     </div>
@@ -719,7 +728,7 @@
 <div class="demobar">
   <div class="demobar-inner">
     <span class="label">Working demo</span>
-    <span>Illustrative data for discussion — in production this view reads live from Jira. Health, staleness, and capacity recompute on every load.</span>
+    <span>Illustrative data for discussion, not an Ally system of record — in production this view reads live from Jira. Health, staleness, and capacity recompute on every load.</span>
   </div>
 </div>
 
@@ -984,10 +993,10 @@
     <div class="secthead"><span class="kicker">05</span><h2>Next steps</h2></div>
     <ol class="steps">
       <li><div class="stitle">Socialize the intake process</div></li>
-      <li><div class="stitle">Educate the Bank organization on the process</div></li>
-      <li><div class="stitle">Bank D&amp;A builds the MS intake form</div></li>
+      <li><div class="stitle">Educate the Consumer Bank organization on the process</div></li>
+      <li><div class="stitle">Consumer Bank D&amp;A builds the MS intake form</div></li>
       <li><div class="stitle">Use case owners populate intake for top-ranked use cases</div></li>
-      <li><div class="stitle">Bank D&amp;A Tech reviews and prioritizes for experiment</div></li>
+      <li><div class="stitle">Consumer Bank D&amp;A Tech reviews and prioritizes for experiment</div></li>
     </ol>
   </div>
 
@@ -1016,7 +1025,7 @@
         <div class="frow3">
           <div class="field"><label for="uc-name">Use case name</label><input type="text" id="uc-name" placeholder="e.g., Complaint triage and routing"></div>
           <div class="field"><label for="uc-sponsor">Business owner / sponsor</label><input type="text" id="uc-sponsor" placeholder="Accountable for value after approval"></div>
-          <div class="field"><label for="uc-func">Bank function</label><input type="text" id="uc-func" placeholder="e.g., Customer Care"></div>
+          <div class="field"><label for="uc-func">Consumer Bank function</label><input type="text" id="uc-func" placeholder="e.g., Customer Care"></div>
         </div>
         <div class="frow">
           <div class="field"><label for="uc-submitter">Submitted by</label><input type="text" id="uc-submitter"></div>
