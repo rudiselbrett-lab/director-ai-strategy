@@ -123,13 +123,25 @@
   }
   @media (max-width: 880px) { .asof { display: none; } }
 
-  .demobar { background: var(--panel); border-bottom: 1px solid var(--hairline); }
-  .demobar .label { color: var(--accent); }
-  .demobar-inner {
-    max-width: 1180px; margin: 0 auto; padding: var(--s2) var(--s5);
-    font-size: var(--fs-caption); color: var(--ink-2);
-    display: flex; gap: var(--s3); align-items: baseline; flex-wrap: wrap;
+  /* Page note. Its own tokens, not the status palette — amber here means
+     "read this first", never "at risk". The rule carries the boundary because
+     the fill alone is only 1.06:1 against the page. */
+  .note {
+    --note-bg:   #fff8e1;
+    --note-line: #b38600;
+    --note-ink:  #5a4300;
+    background: var(--note-bg); border: 1px solid var(--note-line);
+    border-left-width: 3px; border-radius: var(--r);
+    padding: var(--s3) var(--s4); margin: var(--s3) 0;
+    display: grid; grid-template-columns: auto 1fr; gap: var(--s3);
+    align-items: baseline; max-width: 780px;
   }
+  @media (max-width: 560px) { .note { grid-template-columns: 1fr; gap: 4px; } }
+  .note .note-lab {
+    font: 700 var(--fs-micro)/1.6 var(--sans); letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--note-ink); white-space: nowrap;
+  }
+  .note p { margin: 0; font-size: var(--fs-small); line-height: 1.55; color: var(--note-ink); }
 
   .wrap { max-width: 1180px; margin: 0 auto; padding: var(--s6) var(--s5) var(--s8); }
   [role="tabpanel"]:not([hidden]) { animation: fadeup 0.25s ease; }
@@ -716,7 +728,9 @@
   /* ---------- intake ---------- */
   .pagehead { border-top: 3px solid var(--brand); padding: var(--s6) 0 6px; margin-bottom: var(--s5); }
   .pagehead h1 { font: 400 var(--fs-h1)/1.25 var(--serif); margin: var(--s3) 0; }
-  .pagehead p { color: var(--ink-2); font-size: var(--fs-body); margin: 0 0 var(--s3); max-width: 66ch; }
+  /* No lead-paragraph rule here: every page head's description is the .note,
+     which carries its own type. A `.pagehead p` rule would only reach inside
+     that note and override it. */
   .metaline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--s3); }
   .metaline .msep { color: var(--rule); }
 
@@ -848,23 +862,25 @@
       <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
       <button type="button" role="tab" id="tabbtn-thinking" aria-selected="false" aria-controls="tab-thinking">Operating Model</button>
       <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake</button>
-      <button type="button" role="tab" id="tabbtn-jira" aria-selected="false" aria-controls="tab-jira">In Jira</button>
+      <button type="button" role="tab" id="tabbtn-jira" aria-selected="false" aria-controls="tab-jira">Jira</button>
     </div>
     <span class="asof" id="asof"></span>
   </div>
 </nav>
 
-<div class="demobar">
-  <div class="demobar-inner">
-    <span class="label">Working demo</span>
-    <span>Illustrative data for discussion, not an Ally system of record — in production this view reads live from Jira. Health, staleness, and capacity recompute on every load.</span>
-  </div>
-</div>
-
 <main class="wrap">
 
 <!-- ================= PORTFOLIO TAB ================= -->
 <section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio">
+
+  <div class="pagehead">
+    <div class="kicker">Portfolio</div>
+    <h1>Where every use case stands</h1>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>The board: where each use case sits in the process, what has slipped past its stage target, and what fits the capacity we have. Sixteen sample use cases &mdash; the names, numbers, owners and dates are all invented for this demo. Health, staleness and capacity recompute against today&rsquo;s date every time the page loads.</p>
+    </div>
+  </div>
 
   <!-- filter row: scopes every number, chart, and table row below it -->
   <div class="filters" id="filters">
@@ -1007,9 +1023,12 @@
 <section id="tab-status" role="tabpanel" aria-labelledby="tabbtn-status" hidden>
 
   <div class="pagehead">
-    <div class="kicker">Status update</div>
+    <div class="kicker">Weekly status</div>
     <h1 id="status-week">Weekly portfolio status</h1>
-    <p>One page for the standing report: where the portfolio stands, what moved since last week, and what the coming week turns on.</p>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>The standing weekly report: one rating for the portfolio and three for its parts, what moved since last week, what the coming week turns on, and the open risks. Ratings are computed from the sample portfolio; the narrative is written the way a Jira comment stream would read. Sample data throughout.</p>
+    </div>
     <div class="metaline">
       <span>Ratings from portfolio data</span><span class="msep" aria-hidden="true">·</span>
       <span>Narrative from Jira comments</span><span class="msep" aria-hidden="true">·</span>
@@ -1059,7 +1078,7 @@
 <section id="tab-thinking" role="tabpanel" aria-labelledby="tabbtn-thinking" hidden>
 
   <div class="mission">
-    <div class="kicker">Mission</div>
+    <div class="kicker">Operating model</div>
     <p class="statement">We turn Consumer Bank's AI capacity into a small number of capabilities that <em>measurably change</em> how customers bank with us and how the business runs.</p>
     <p class="statement-sub">Clarity and prioritization are how we get there. One process for every AI idea, so capacity goes to what's worth building.</p>
     <div class="pillars" aria-label="How we get there">
@@ -1067,6 +1086,10 @@
       <span class="pillar">Clear accountability</span><span class="psep" aria-hidden="true">·</span>
       <span class="pillar">Consistent measurement</span><span class="psep" aria-hidden="true">·</span>
       <span class="pillar">Full transparency</span>
+    </div>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>How the process works: the mission, the principles, the eight stages with their accountable roles and systems of record, and the five forums that make the decisions. This is a proposal for how the function would run &mdash; not a description of something Ally operates today.</p>
     </div>
   </div>
 
@@ -1135,9 +1158,12 @@
 <section id="tab-intake" role="tabpanel" aria-labelledby="tabbtn-intake" hidden>
 
   <div class="pagehead">
-    <div class="kicker">Capture surface</div>
-    <h1>AI / Automation Use Case Intake</h1>
-    <p>Deliberately lightweight: decide whether a use case is worth building, not fully specify it. Detailed benefit, effort, and risk work happens after experimentation.</p>
+    <div class="kicker">Intake</div>
+    <h1>The fifteen-minute intake form</h1>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>The form a requester fills in. Deliberately lightweight &mdash; enough to decide whether a use case is worth building, not to specify it. Try typing into the narrative boxes to see the live answer coaching respond. This is a mock-up: nothing submits anywhere.</p>
+    </div>
     <div class="metaline">
       <span>Target: 15 minutes</span><span class="msep" aria-hidden="true">·</span>
       <span>Live answer coaching</span><span class="msep" aria-hidden="true">·</span>
@@ -1292,9 +1318,12 @@
 <section id="tab-jira" role="tabpanel" aria-labelledby="tabbtn-jira" hidden>
 
   <div class="pagehead">
-    <div class="kicker">System of record</div>
-    <h1>What this looks like in Jira</h1>
-    <p>The dashboard is a view. Jira is where the work actually lives — one issue per use case, and the fields on that issue are what the portfolio table reads.</p>
+    <div class="kicker">Jira</div>
+    <h1>The system of record</h1>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>The same portfolio as it would appear in Jira, where the work actually lives &mdash; one issue per use case, and the fields on that issue are what the dashboard reads. Styled to match Jira, but this is a picture rather than a live connection, and every issue on it is invented.</p>
+    </div>
     <div class="metaline">
       <span>Project: AI Use Case Capability (AI)</span><span class="msep" aria-hidden="true">·</span>
       <span>One issue per use case</span><span class="msep" aria-hidden="true">·</span>
