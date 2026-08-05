@@ -512,27 +512,63 @@
   .tenet h3 { font: 400 var(--fs-h3)/1.3 var(--serif); margin: var(--s2) 0 6px; }
   .tenet p { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; margin: 0; }
 
-  .lifegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s3); }
-  @media (max-width: 980px) { .lifegrid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .lifegrid { grid-template-columns: 1fr; } }
-  .lstage {
-    background: #fff; border: 1px solid var(--hairline);
-    padding: var(--pad-tight); text-align: left; display: flex; flex-direction: column;
-  }
-  button.lstage { cursor: pointer; transition: border-color var(--t), background var(--t); }
-  button.lstage:hover { border-color: var(--link); background: var(--brand-wash); }
-  .lstage .top { display: flex; align-items: center; gap: var(--s2); margin-bottom: var(--s2); }
   .stepnum {
     width: 22px; height: 22px; flex: none; background: var(--brand); color: #fff;
     display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
   }
+
+  /* ---------- lifecycle decision tree ----------
+     The spine is the advance path. Advance branches take the brand hue and
+     off-ramps a dashed neutral — deliberately not green and red, which stay
+     reserved for health so a route can never be misread as a status. */
+  .tree { list-style: none; margin: 0; padding: 0; }
+  .gate {
+    position: relative; margin-left: 11px;
+    padding: 0 0 var(--s6) var(--s6);
+    border-left: 1px solid var(--rule);
+  }
+  .gate:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .gate > .stepnum { position: absolute; left: -11px; top: 0; }
+  .gate .ghead { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; }
   /* operational card titles are sans; editorial ones (tenets, opportunities) are serif */
-  .lstage h3 { font: 700 var(--fs-body)/1.3 var(--sans); margin: 0; }
-  .lstage .out { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s2); }
-  .lstage .meta { font-size: var(--fs-caption); color: var(--ink-3); }
-  .lstage .meta b { color: var(--ink-2); font-weight: 600; }
-  .lstage .more { margin-top: auto; padding-top: var(--s3); font: 600 var(--fs-caption) var(--sans); color: var(--link); }
-  .gatenote { color: var(--ink-3); font-size: var(--fs-small); margin-top: var(--s3); }
+  .gate h3 { font: 700 var(--fs-body)/1.3 var(--sans); margin: 0; }
+  .gate .pbmini {
+    background: none; border: none; padding: 0; cursor: pointer;
+    font: 600 var(--fs-caption) var(--sans); color: var(--link);
+  }
+  .gate .pbmini:hover { text-decoration: underline; }
+  .gate .gmeta { font-size: var(--fs-caption); color: var(--ink-3); margin: 2px 0 var(--s3); }
+  .gate .gmeta b { color: var(--ink-2); font-weight: 600; }
+  .gate .gq {
+    font: 400 var(--fs-lead)/1.45 var(--serif); color: var(--ink);
+    margin: 0 0 var(--s3); max-width: 62ch;
+  }
+  .branches { display: grid; gap: var(--s2); max-width: 720px; }
+  .branch {
+    display: grid; grid-template-columns: 62px 1fr; gap: var(--s3);
+    align-items: start; text-align: left; width: 100%; font: inherit;
+    background: #fff; border: 1px solid var(--hairline); border-left-width: 3px;
+    padding: var(--s3);
+  }
+  @media (max-width: 560px) { .branch { grid-template-columns: 1fr; gap: 4px; } }
+  .branch .blab {
+    font: 700 var(--fs-micro)/1.7 var(--sans);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .branch .bdest { display: block; font: 600 var(--fs-body) var(--sans); color: var(--link); }
+  .branch .btext { font-size: var(--fs-small); color: var(--ink-2); line-height: 1.5; margin: 0; }
+  /* only nudge the copy down when a destination sits above it */
+  .branch .bdest + .btext { margin-top: 2px; }
+  button.branch { cursor: pointer; transition: background var(--t), border-color var(--t); }
+  .branch.adv { border-left-color: var(--brand); }
+  .branch.adv .blab { color: var(--brand); }
+  button.branch.adv:hover { background: var(--brand-wash); border-color: var(--brand); border-left-color: var(--brand); }
+  .branch.off { border-left-color: var(--rule); border-left-style: dashed; }
+  .branch.off .blab { color: var(--ink-3); }
+  .gate.flash > .branches { animation: gateflash 1.4s ease; }
+  @keyframes gateflash { 0%, 40% { background: var(--brand-wash); } }
+  @media (prefers-reduced-motion: reduce) { .gate.flash > .branches { animation: none; } }
+  .gatenote { color: var(--ink-3); font-size: var(--fs-small); margin-top: var(--s5); }
 
   .opps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s3); }
   .opp { background: #fff; border: 1px solid var(--hairline); padding: var(--pad-card); }
@@ -697,7 +733,7 @@
     details.analysis > .refbody { border: none; padding: 0; }
     .asof { display: inline; color: rgba(255,255,255,0.75); }
     .rail { position: static; }
-    .card, .stat, .tenet, .lstage, .opp, fieldset, .qrow,
+    .card, .stat, .tenet, .gate, .opp, fieldset, .qrow,
     .row2, .row3 { break-inside: avoid; }
     .tscroll { overflow: visible; }
     table.port { min-width: 0; font-size: var(--fs-caption); }
@@ -956,8 +992,8 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>The lifecycle</h2></div>
-    <p class="sectsub">Eight stages — one accountability, one accountable role, one system of record each, with clear decision criteria for advancing. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
-    <div class="lifegrid" id="lifegrid"></div>
+    <p class="sectsub">Eight stages, each ending in one decision. Every answer routes somewhere with an owner and a record, so nothing stops without being written down. <strong>Follow a yes to see where it lands; Intake, Triage, and Prioritization open a short playbook.</strong></p>
+    <ol class="tree" id="lifetree"></ol>
     <p class="gatenote">Declining early is part of the process — declined and transferred outcomes stay in the portfolio as data.</p>
   </div>
 
@@ -1210,6 +1246,54 @@ const STAGES = [
   { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly increment review",
     outcome: "Measure and realize business outcomes", owner: "Business Sponsor", record: "Benefits dashboard" },
 ];
+
+/* The decision that ends each stage, and where each answer sends the work.
+   The "no" routes are routes, not failures — every one of them lands somewhere
+   with an owner and a record, which is what makes declining early cheap. */
+const GATES = {
+  intake: {
+    q: "Is there a named sponsor, a clear problem, and a way to tell whether it worked?",
+    yes: { to: "triage", text: "Routed to the weekly forum with a preliminary risk tier." },
+    no:  { text: "Goes back to the requester with the missing piece named. It stays open \u2014 nothing is declined for being incomplete." },
+  },
+  triage: {
+    q: "Is this worth a discovery, and is there anything we already run that solves it?",
+    yes: { to: "discovery", text: "Sized for a four-week discovery with a named product manager." },
+    alt: { label: "Fast lane", to: "delivery",
+           text: "Small, unflagged, and close to something we already run \u2014 goes straight to delivery without a discovery." },
+    no:  { text: "Reused, partnered to the team that already owns it, or declined with the reason recorded. Declines stay in the portfolio as data." },
+  },
+  discovery: {
+    q: "Does the evidence support the value, and can we build it with the data we have?",
+    yes: { to: "prioritization", text: "Exits with a value estimate, a size, and its WSJF inputs." },
+    no:  { text: "Reshaped to a narrower question and re-run, or parked with what we learned. A discovery that answers no in four weeks has done its job." },
+  },
+  prioritization: {
+    q: "Does it rank above the capacity line this cycle?",
+    yes: { to: "portfolio", text: "Goes to the Council with a rank and a claim on capacity." },
+    no:  { text: "Stays ranked in the backlog and is re-scored next cycle. Below the line means waiting for room, not rejected." },
+  },
+  portfolio: {
+    q: "Do we fund it, and do we have the people to start it now?",
+    yes: { to: "governance", text: "Approved and staffed, with a start date on the roadmap." },
+    no:  { text: "Deferred with a date to revisit, or declined with the reason recorded against the rank it held." },
+  },
+  governance: {
+    q: "Are the controls for its risk tier in place?",
+    yes: { to: "delivery", text: "Cleared to build, with the control set attached to the record." },
+    no:  { text: "Controls are assigned with owners, and it returns when they are met. This is where work waits most often, so the wait shows on the board." },
+  },
+  delivery: {
+    q: "Did the pilot meet the exit criteria we set before it started?",
+    yes: { to: "value", text: "Scales to the full population, with a benefits baseline captured first." },
+    no:  { text: "Reshaped and re-piloted, or retired with the learning written down. The criteria were set at discovery, so this is a check rather than a debate." },
+  },
+  value: {
+    q: "Is the measured benefit tracking to the baseline?",
+    yes: { text: "Finished: it becomes a business routine with a named owner, and the actuals recalibrate how we size the next one." },
+    no:  { text: "Re-scoped or retired, and the gap feeds back into our sizing assumptions." },
+  },
+};
 
 /* Playbook content — preview depth, three stages only. */
 const STAGE_DETAILS = {
@@ -2720,27 +2804,57 @@ function renderStatic() {
     tb.append(tr);
   }
 
-  // lifecycle grid (operating model tab) — cards with a playbook open it
-  const lg = document.getElementById("lifegrid");
+  /* One branch of a gate. A branch that names a destination is a button that
+     walks you to it; a terminal branch is plain text. */
+  function branchNode(kind, label, b) {
+    const dest = b.to ? STAGES.find(x => x.id === b.to) : null;
+    const node = el(dest ? "button" : "div", "branch " + kind);
+    if (dest) node.type = "button";
+    node.append(el("span", "blab", label));
+
+    const body = el("div");
+    if (dest) body.append(el("span", "bdest", (STAGES.indexOf(dest) + 1) + " · " + dest.name));
+    body.append(el("p", "btext", b.text));
+    node.append(body);
+
+    if (dest) node.addEventListener("click", () => {
+      const t = document.getElementById("gate-" + dest.id);
+      t.scrollIntoView({ behavior: "smooth", block: "center" });
+      t.classList.remove("flash");
+      void t.offsetWidth;          // restart the animation on a repeat click
+      t.classList.add("flash");
+    });
+    return node;
+  }
+
+  // lifecycle decision tree (operating model tab)
+  const tree = document.getElementById("lifetree");
   STAGES.forEach((s, i) => {
-    const hasPlaybook = !!STAGE_DETAILS[s.id];
-    const card = el(hasPlaybook ? "button" : "div", "lstage");
-    const top = el("div", "top");
-    top.append(el("span", "stepnum", String(i + 1)), el("h3", null, s.name));
-    card.append(top, el("p", "out", s.outcome));
-    const meta = el("div", "meta");
-    const ownerLine = el("div");
-    ownerLine.append(el("b", null, "Accountable: "), document.createTextNode(s.owner));
-    const recLine = el("div");
-    recLine.append(el("b", null, "Record: "), document.createTextNode(s.record));
-    meta.append(ownerLine, recLine);
-    card.append(meta);
-    if (hasPlaybook) {
-      card.type = "button";
-      card.append(el("div", "more", "Playbook →"));
-      card.addEventListener("click", () => openStage(s.id));
+    const g = GATES[s.id];
+    const li = el("li", "gate");
+    li.id = "gate-" + s.id;
+    li.append(el("span", "stepnum", String(i + 1)));
+
+    const head = el("div", "ghead");
+    head.append(el("h3", null, s.name));
+    if (STAGE_DETAILS[s.id]) {
+      const pb = el("button", "pbmini", "Playbook →");
+      pb.type = "button";
+      pb.addEventListener("click", () => openStage(s.id));
+      head.append(pb);
     }
-    lg.append(card);
+
+    const meta = el("p", "gmeta");
+    meta.append(el("b", null, "Accountable: "), document.createTextNode(s.owner + "  ·  "),
+                el("b", null, "Record: "), document.createTextNode(s.record));
+
+    const branches = el("div", "branches");
+    branches.append(branchNode("adv", "If yes", g.yes));
+    if (g.alt) branches.append(branchNode("adv", g.alt.label, g.alt));
+    branches.append(branchNode("off", "If no", g.no));
+
+    li.append(head, meta, el("p", "gq", g.q), branches);
+    tree.append(li);
   });
 
   renderTrends();
