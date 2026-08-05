@@ -86,7 +86,7 @@
     letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--ink-2); margin: 0;
   }
-  .eyebrow, .kicker, .brief .bk, .mission .pillar, .tenet .no, .cutline .cl-lab {
+  .eyebrow, .kicker, .mission .pillar, .tenet .no, .cutline .cl-lab {
     font: 700 var(--fs-micro)/1.2 var(--sans);
     letter-spacing: 0.14em; text-transform: uppercase;
     color: var(--gold);
@@ -151,15 +151,6 @@
   }
   .infobtn:hover { border-color: var(--link); color: var(--link); background: var(--link-wash); }
 
-  /* ---------- executive brief ---------- */
-  .brief { border-top: 3px solid var(--navy); padding: var(--s5) 0 var(--s1); margin-bottom: var(--s5); }
-  .brief .bk { display: block; margin-bottom: var(--s3); }
-  /* prose measures by ch; the brief is a set of one-line statements, not
-     paragraphs, so it takes a wide measure so each reads on a single line */
-  .brief ul { list-style: none; margin: 0; padding: 0; max-width: 980px; }
-  .brief li { font: 400 var(--fs-lead)/1.55 var(--serif); color: var(--ink); padding: var(--s1) 0; }
-  .brief li b { font-weight: 700; }
-  .brief li + li { border-top: 1px solid var(--hairline); margin-top: var(--s2); padding-top: var(--s3); }
 
   /* ---------- filter row ---------- */
   .filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-bottom: var(--s4); }
@@ -697,7 +688,7 @@
     details.analysis > .refbody { border: none; padding: 0; }
     .asof { display: inline; color: rgba(255,255,255,0.75); }
     .rail { position: static; }
-    .card, .stat, .tenet, .lstage, .opp, .brief, fieldset, .qrow,
+    .card, .stat, .tenet, .lstage, .opp, fieldset, .qrow,
     .row2, .row3 { break-inside: avoid; }
     .tscroll { overflow: visible; }
     table.port { min-width: 0; font-size: var(--fs-caption); }
@@ -728,7 +719,7 @@
 <div class="demobar">
   <div class="demobar-inner">
     <span class="label">Working demo</span>
-    <span>Illustrative data for discussion — in production this view reads live from Jira. Health, staleness, and the brief recompute on every load.</span>
+    <span>Illustrative data for discussion — in production this view reads live from Jira. Health, staleness, and capacity recompute on every load.</span>
   </div>
 </div>
 
@@ -736,11 +727,6 @@
 
 <!-- ================= PORTFOLIO TAB ================= -->
 <section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio">
-
-  <section class="brief" aria-label="Executive brief">
-    <div class="bk">Executive brief</div>
-    <ul id="brief"></ul>
-  </section>
 
   <!-- filter row: scopes every number, chart, and table row below it -->
   <div class="filters" id="filters">
@@ -1167,7 +1153,7 @@
 
 <footer>
   Data lives in the <code>USE_CASES</code> array at the top of this file's script — edit it by hand or regenerate it from a Jira export.
-  Health, staleness, and the executive brief are computed against today's date on every load. The intake form is a mock and does not submit anywhere.
+  Health, staleness, and capacity are computed against today's date on every load. The intake form is a mock and does not submit anywhere.
 </footer>
 
 <div class="tip" id="tip" role="status"></div>
@@ -1920,7 +1906,6 @@ function render() {
   document.getElementById("asof").textContent = "As of " +
     new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
 
-  renderBrief(allActive);
   renderStats(active);
   renderPipeline(active);
   renderBacklog(allActive); // capacity is a portfolio fact, not a slice fact
@@ -1929,54 +1914,6 @@ function render() {
   renderAttention(active);
   renderTable(visible);
   renderStatic();
-}
-
-/* Executive brief — computed from the full active portfolio, unaffected by filters. */
-function renderBrief(allActive) {
-  const ul = document.getElementById("brief");
-  ul.replaceChildren();
-  const t = (s) => document.createTextNode(s);
-  const b = (s) => el("b", null, s);
-
-  const scored = allActive.filter(u => u.wsjf != null);
-  const totalEst = scored.reduce((s, u) => s + (u.est || 0), 0);
-  const inDelivery = allActive.filter(u => (u.stage === "delivery" || u.stage === "value") && u.est)
-    .reduce((s, u) => s + u.est, 0);
-  const li1 = el("li");
-  li1.append(b(allActive.length + " initiatives in flight"), t(". "),
-    t(scored.length + " carry WSJF scores representing "), b(fmtMoney(totalEst) + " in estimated annual value"),
-    t(", of which "), b(fmtMoney(inDelivery)), t(" is in delivery or realization."));
-  ul.append(li1);
-
-  const plan = capacityPlan(allActive);
-  const liCap = el("li");
-  liCap.append(b(plan.committed + " of " + CAPACITY.points + " delivery points"),
-    t(" are committed to work in flight. "));
-  if (plan.fits.length)
-    liCap.append(b(plan.fits.map(u => u.id).join(", ")),
-      t((plan.fits.length === 1 ? " fits" : " fit") + " the " + plan.open + " that remain"));
-  else
-    liCap.append(t("Nothing fits the " + plan.open + " that remain"));
-  liCap.append(t("; "), b(plan.below.length + " scored use case" + (plan.below.length === 1 ? "" : "s")),
-    t(" sit" + (plan.below.length === 1 ? "s" : "") + " below the capacity line."));
-  ul.append(liCap);
-
-  const over = allActive.filter(u => u.health === "critical");
-  if (over.length) {
-    const li2 = el("li");
-    li2.append(b(over.length + " past their stage target: "),
-      t(over.map(u => u.id + " (" + (u.waitingOn || "decision overdue") + ")").join("; ") + "."));
-    ul.append(li2);
-  }
-
-  const staleC = allActive.filter(u => u.fresh !== "fresh").length;
-  const cyc = TRENDS.cycle, cFirst = cyc[0], cLast = cyc[cyc.length - 1];
-  const li3 = el("li");
-  li3.append(t("Median time from intake to decision is now "), b(cLast.days + " days"),
-    t(", down from " + cFirst.days + " in " + cFirst.m + ". "),
-    b(staleC + " initiatives"),
-    t(" have gone more than one review cycle without an update."));
-  ul.append(li3);
 }
 
 function renderStats(active) {
@@ -2066,7 +2003,8 @@ function renderPipeline(active) {
 }
 
 /* Capacity model: committed points, open points, and where the ranked
-   candidate list runs past what's left. Shared by the brief and the chart. */
+   candidate list runs past what's left. Shared by the chart, the weekly
+   status, and the suggested actions, so they never disagree. */
 function capacityPlan(active) {
   const committed = active
     .filter(u => u.stage === "delivery" || u.stage === "value")
@@ -2221,7 +2159,8 @@ function renderMix(active) {
 /* ---------- suggested actions ----------
    A small rules engine over the live portfolio. Rules run in priority order
    and claim use cases as they go, so one initiative never drives two
-   competing recommendations. Portfolio-wide, like the brief. */
+   competing recommendations. Computed portfolio-wide, never on a filtered
+   slice, so filtering the table can't change what a rule recommends. */
 const FORUM_BY_STAGE = {
   intake: "AI Intake & Triage", triage: "AI Intake & Triage", discovery: "Discovery Review",
   prioritization: "AI Portfolio Council", portfolio: "AI Portfolio Council",
