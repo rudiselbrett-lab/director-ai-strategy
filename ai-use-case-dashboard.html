@@ -860,10 +860,10 @@
       <span class="t">AI Use Case Portfolio</span>
     </div>
     <div class="tabs" role="tablist" aria-label="Views">
-      <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="true" aria-controls="tab-portfolio">Portfolio Dashboard</button>
-      <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
-      <button type="button" role="tab" id="tabbtn-thinking" aria-selected="false" aria-controls="tab-thinking">Operating Model</button>
+      <button type="button" role="tab" id="tabbtn-thinking" aria-selected="true" aria-controls="tab-thinking">Operating Model</button>
       <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake Form</button>
+      <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="false" aria-controls="tab-portfolio">Portfolio Dashboard</button>
+      <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
       <button type="button" role="tab" id="tabbtn-jira" aria-selected="false" aria-controls="tab-jira">Jira</button>
     </div>
     <span class="asof" id="asof"></span>
@@ -872,212 +872,8 @@
 
 <main class="wrap">
 
-<!-- ================= PORTFOLIO TAB ================= -->
-<section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio">
-
-  <div class="pagehead">
-    <div class="kicker">Portfolio dashboard</div>
-    <h1>Where every use case stands</h1>
-    <div class="note">
-      <span class="note-lab">Mock-up</span>
-      <p>The board: where each use case sits in the process, what has slipped past its stage target, and what fits the capacity we have. Sixteen sample use cases &mdash; the names, numbers, owners and dates are all invented for this demo. Health, staleness and capacity recompute against today&rsquo;s date every time the page loads.</p>
-    </div>
-  </div>
-
-  <!-- filter row: scopes every number, chart, and table row below it -->
-  <div class="filters" id="filters">
-    <select id="f-stage" aria-label="Filter by stage"></select>
-    <select id="f-health" aria-label="Filter by health">
-      <option value="">All health</option>
-      <option value="good">On track</option>
-      <option value="warning">At risk</option>
-      <option value="critical">Overdue</option>
-    </select>
-    <select id="f-fresh" aria-label="Filter by freshness">
-      <option value="">All freshness</option>
-      <option value="fresh">Fresh</option>
-      <option value="aging">Aging</option>
-      <option value="stale">Stale</option>
-      <option value="notfresh">Aging or stale</option>
-    </select>
-    <input type="search" id="f-q" placeholder="Search name, owner, sponsor, ID" aria-label="Search use cases">
-    <label class="chk"><input type="checkbox" id="f-closed"> Show closed</label>
-    <button class="reset" id="f-reset" type="button">Reset</button>
-  </div>
-
-  <!-- stat band -->
-  <div class="statband" id="kpis"></div>
-
-  <div class="row2">
-    <section class="card pipeline" aria-label="Pipeline by stage">
-      <div class="cardhead">
-        <h2>Pipeline by stage</h2>
-        <div class="legend">
-          <span class="key"><span class="dot good">✓</span> On track</span>
-          <span class="key"><span class="dot warning">!</span> At risk</span>
-          <span class="key"><span class="dot critical">✕</span> Overdue</span>
-        </div>
-      </div>
-      <div id="pipeline"></div>
-    </section>
-
-    <section class="card backlog" aria-label="Ranked backlog and capacity">
-      <div class="cardhead">
-        <h2>What starts next — WSJF <button class="infobtn" id="wsjf-info" type="button" title="How WSJF scoring works">i</button></h2>
-      </div>
-      <div class="bsub" id="backlog-sub"></div>
-      <div id="backlogrows"></div>
-      <div class="bnote" id="backlog-note"></div>
-    </section>
-  </div>
-
-  <section class="card attn" aria-label="Needs attention">
-    <div class="cardhead"><h2>Needs attention</h2></div>
-    <ul id="attn"></ul>
-  </section>
-
-  <section class="card tablecard" aria-label="All use cases">
-    <div class="cardhead">
-      <h2>All use cases</h2>
-      <span class="hint">Select a use case for its detail</span>
-      <span class="tablecount" id="tablecount"></span>
-    </div>
-    <div class="tscroll">
-      <table class="port" id="porttable">
-        <thead><tr id="headrow"></tr></thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-    <div class="empty-table" id="emptytable" hidden>No use cases match the current filters.</div>
-  </section>
-
-  <details class="ref analysis">
-    <summary>Trends and portfolio mix</summary>
-    <div class="refbody">
-      <!-- trend row: the "is it getting better" view; portfolio history, not filtered -->
-      <div class="row3">
-        <section class="card trend" aria-label="Value realized versus projected by quarter">
-          <div class="cardhead">
-            <h2>Value — realized vs. projected</h2>
-            <div class="legend">
-              <span class="key"><span class="sw real"></span> Realized</span>
-              <span class="key"><span class="sw proj"></span> Projected</span>
-            </div>
-          </div>
-          <div id="trend-value"></div>
-          <div class="takeaway" id="tv-note"></div>
-        </section>
-        <section class="card trend" aria-label="Triage decisions per month">
-          <div class="cardhead"><h2>Triage decisions per month</h2></div>
-          <div class="cols" id="trend-decisions"></div>
-          <div class="collabs" id="trend-decisions-labels"></div>
-          <div class="takeaway" id="td-note"></div>
-        </section>
-        <section class="card trend" aria-label="Cycle time from intake to decision">
-          <div class="cardhead"><h2>Cycle time — intake to decision</h2></div>
-          <div id="trend-cycle"></div>
-          <div class="linemonths" id="trend-cycle-labels"></div>
-          <div class="takeaway" id="tc-note"></div>
-        </section>
-      </div>
-      <!-- what kind of portfolio is this: reported from the fields intake collects -->
-      <div class="row2">
-        <section class="card mix" aria-label="Impact mix">
-          <div class="cardhead"><h2>Impact mix</h2></div>
-          <div id="impactmix"></div>
-          <div class="bnote" id="impact-note"></div>
-        </section>
-
-        <section class="card mix" aria-label="Risk flags in flight">
-          <div class="cardhead"><h2>Risk flags in flight</h2></div>
-          <div id="riskmix"></div>
-          <div class="bnote" id="risk-note"></div>
-        </section>
-      </div>
-    </div>
-  </details>
-
-  <details class="ref">
-    <summary>How health and staleness are computed</summary>
-    <div class="refbody">
-
-      <h3>Health — against the expected completion date</h3>
-      <table class="mini">
-        <thead><tr><th>Health</th><th>Rule</th></tr></thead>
-        <tbody>
-          <tr><td><span class="badge"><span class="dot good">✓</span><span class="txt">On track</span></span></td><td>Target date is beyond the stage's at-risk window.</td></tr>
-          <tr><td><span class="badge"><span class="dot warning">!</span><span class="txt">At risk</span></span></td><td>Target date is inside the at-risk window (per-stage thresholds below).</td></tr>
-          <tr><td><span class="badge"><span class="dot critical">✕</span><span class="txt">Overdue</span></span></td><td>Target date has passed without an exit decision.</td></tr>
-        </tbody>
-      </table>
-
-      <h3>Staleness — based on last update, by stage cadence</h3>
-      <p>A use case is <strong>aging</strong> past one review cycle without an update, and <strong>stale</strong> past two.</p>
-      <table class="mini" id="staletable">
-        <thead><tr><th>Stage</th><th>At-risk window</th><th>Aging after</th><th>Stale after</th><th>Cadence source</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </details>
-</section>
-
-<!-- ================= WEEKLY STATUS TAB ================= -->
-<section id="tab-status" role="tabpanel" aria-labelledby="tabbtn-status" hidden>
-
-  <div class="pagehead">
-    <div class="kicker">Weekly status</div>
-    <h1 id="status-week">Weekly portfolio status</h1>
-    <div class="note">
-      <span class="note-lab">Mock-up</span>
-      <p>The standing weekly report: one rating for the portfolio and three for its parts, what moved since last week, what the coming week turns on, and the open risks. Ratings are computed from the sample portfolio; the narrative is written the way a Jira comment stream would read. Sample data throughout.</p>
-    </div>
-    <div class="metaline">
-      <span>Ratings from portfolio data</span><span class="msep" aria-hidden="true">·</span>
-      <span>Narrative from Jira comments</span><span class="msep" aria-hidden="true">·</span>
-      <span>Issued weekly</span>
-    </div>
-  </div>
-
-  <div class="weekpick">
-    <label for="status-week-select">Report</label>
-    <select id="status-week-select"></select>
-    <span class="issued" id="status-issued"></span>
-  </div>
-
-  <div id="rag-overall"></div>
-  <div class="ragrow" id="rag-parts"></div>
-
-  <div class="row2">
-    <section class="card" aria-label="Changed since last week">
-      <div class="cardhead"><h2>Changed since last week</h2></div>
-      <ul class="changed" id="changed"></ul>
-      <div class="bnote">Sample entries. In production these are the week's Jira comments on each issue, so the report writes itself from the work.</div>
-    </section>
-
-    <section class="card" aria-label="Use cases to focus on">
-      <div class="cardhead"><h2>Use cases to focus on</h2></div>
-      <ol class="focus" id="focus"></ol>
-      <div class="bnote">The highest-severity suggested action on each initiative, so the report and the board never disagree.</div>
-    </section>
-  </div>
-
-  <div class="row2">
-    <section class="card" aria-label="Upcoming meetings">
-      <div class="cardhead"><h2>Upcoming meetings</h2></div>
-      <ul class="meetings" id="meetings"></ul>
-      <div class="bnote">Agendas are the initiatives sitting at the stages each forum reviews.</div>
-    </section>
-
-    <section class="card" aria-label="Risks">
-      <div class="cardhead"><h2>Risks</h2></div>
-      <ul class="risks" id="risks"></ul>
-      <div class="bnote">Portfolio-level risks, as distinct from the per-use-case flags that drive routing.</div>
-    </section>
-  </div>
-</section>
-
 <!-- ================= OPERATING MODEL TAB ================= -->
-<section id="tab-thinking" role="tabpanel" aria-labelledby="tabbtn-thinking" hidden>
+<section id="tab-thinking" role="tabpanel" aria-labelledby="tabbtn-thinking">
 
   <div class="mission">
     <div class="kicker">Operating model</div>
@@ -1316,7 +1112,211 @@
 
 </section>
 
-<!-- ================= IN JIRA TAB ================= -->
+<!-- ================= PORTFOLIO DASHBOARD TAB ================= -->
+<section id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio" hidden>
+
+  <div class="pagehead">
+    <div class="kicker">Portfolio dashboard</div>
+    <h1>Where every use case stands</h1>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>The board: where each use case sits in the process, what has slipped past its stage target, and what fits the capacity we have. Sixteen sample use cases &mdash; the names, numbers, owners and dates are all invented for this demo. Health, staleness and capacity recompute against today&rsquo;s date every time the page loads.</p>
+    </div>
+  </div>
+
+  <!-- filter row: scopes every number, chart, and table row below it -->
+  <div class="filters" id="filters">
+    <select id="f-stage" aria-label="Filter by stage"></select>
+    <select id="f-health" aria-label="Filter by health">
+      <option value="">All health</option>
+      <option value="good">On track</option>
+      <option value="warning">At risk</option>
+      <option value="critical">Overdue</option>
+    </select>
+    <select id="f-fresh" aria-label="Filter by freshness">
+      <option value="">All freshness</option>
+      <option value="fresh">Fresh</option>
+      <option value="aging">Aging</option>
+      <option value="stale">Stale</option>
+      <option value="notfresh">Aging or stale</option>
+    </select>
+    <input type="search" id="f-q" placeholder="Search name, owner, sponsor, ID" aria-label="Search use cases">
+    <label class="chk"><input type="checkbox" id="f-closed"> Show closed</label>
+    <button class="reset" id="f-reset" type="button">Reset</button>
+  </div>
+
+  <!-- stat band -->
+  <div class="statband" id="kpis"></div>
+
+  <div class="row2">
+    <section class="card pipeline" aria-label="Pipeline by stage">
+      <div class="cardhead">
+        <h2>Pipeline by stage</h2>
+        <div class="legend">
+          <span class="key"><span class="dot good">✓</span> On track</span>
+          <span class="key"><span class="dot warning">!</span> At risk</span>
+          <span class="key"><span class="dot critical">✕</span> Overdue</span>
+        </div>
+      </div>
+      <div id="pipeline"></div>
+    </section>
+
+    <section class="card backlog" aria-label="Ranked backlog and capacity">
+      <div class="cardhead">
+        <h2>What starts next — WSJF <button class="infobtn" id="wsjf-info" type="button" title="How WSJF scoring works">i</button></h2>
+      </div>
+      <div class="bsub" id="backlog-sub"></div>
+      <div id="backlogrows"></div>
+      <div class="bnote" id="backlog-note"></div>
+    </section>
+  </div>
+
+  <section class="card attn" aria-label="Needs attention">
+    <div class="cardhead"><h2>Needs attention</h2></div>
+    <ul id="attn"></ul>
+  </section>
+
+  <section class="card tablecard" aria-label="All use cases">
+    <div class="cardhead">
+      <h2>All use cases</h2>
+      <span class="hint">Select a use case for its detail</span>
+      <span class="tablecount" id="tablecount"></span>
+    </div>
+    <div class="tscroll">
+      <table class="port" id="porttable">
+        <thead><tr id="headrow"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty-table" id="emptytable" hidden>No use cases match the current filters.</div>
+  </section>
+
+  <details class="ref analysis">
+    <summary>Trends and portfolio mix</summary>
+    <div class="refbody">
+      <!-- trend row: the "is it getting better" view; portfolio history, not filtered -->
+      <div class="row3">
+        <section class="card trend" aria-label="Value realized versus projected by quarter">
+          <div class="cardhead">
+            <h2>Value — realized vs. projected</h2>
+            <div class="legend">
+              <span class="key"><span class="sw real"></span> Realized</span>
+              <span class="key"><span class="sw proj"></span> Projected</span>
+            </div>
+          </div>
+          <div id="trend-value"></div>
+          <div class="takeaway" id="tv-note"></div>
+        </section>
+        <section class="card trend" aria-label="Triage decisions per month">
+          <div class="cardhead"><h2>Triage decisions per month</h2></div>
+          <div class="cols" id="trend-decisions"></div>
+          <div class="collabs" id="trend-decisions-labels"></div>
+          <div class="takeaway" id="td-note"></div>
+        </section>
+        <section class="card trend" aria-label="Cycle time from intake to decision">
+          <div class="cardhead"><h2>Cycle time — intake to decision</h2></div>
+          <div id="trend-cycle"></div>
+          <div class="linemonths" id="trend-cycle-labels"></div>
+          <div class="takeaway" id="tc-note"></div>
+        </section>
+      </div>
+      <!-- what kind of portfolio is this: reported from the fields intake collects -->
+      <div class="row2">
+        <section class="card mix" aria-label="Impact mix">
+          <div class="cardhead"><h2>Impact mix</h2></div>
+          <div id="impactmix"></div>
+          <div class="bnote" id="impact-note"></div>
+        </section>
+
+        <section class="card mix" aria-label="Risk flags in flight">
+          <div class="cardhead"><h2>Risk flags in flight</h2></div>
+          <div id="riskmix"></div>
+          <div class="bnote" id="risk-note"></div>
+        </section>
+      </div>
+    </div>
+  </details>
+
+  <details class="ref">
+    <summary>How health and staleness are computed</summary>
+    <div class="refbody">
+
+      <h3>Health — against the expected completion date</h3>
+      <table class="mini">
+        <thead><tr><th>Health</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge"><span class="dot good">✓</span><span class="txt">On track</span></span></td><td>Target date is beyond the stage's at-risk window.</td></tr>
+          <tr><td><span class="badge"><span class="dot warning">!</span><span class="txt">At risk</span></span></td><td>Target date is inside the at-risk window (per-stage thresholds below).</td></tr>
+          <tr><td><span class="badge"><span class="dot critical">✕</span><span class="txt">Overdue</span></span></td><td>Target date has passed without an exit decision.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Staleness — based on last update, by stage cadence</h3>
+      <p>A use case is <strong>aging</strong> past one review cycle without an update, and <strong>stale</strong> past two.</p>
+      <table class="mini" id="staletable">
+        <thead><tr><th>Stage</th><th>At-risk window</th><th>Aging after</th><th>Stale after</th><th>Cadence source</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<!-- ================= WEEKLY STATUS TAB ================= -->
+<section id="tab-status" role="tabpanel" aria-labelledby="tabbtn-status" hidden>
+
+  <div class="pagehead">
+    <div class="kicker">Weekly status</div>
+    <h1 id="status-week">Weekly portfolio status</h1>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>The standing weekly report: one rating for the portfolio and three for its parts, what moved since last week, what the coming week turns on, and the open risks. Ratings are computed from the sample portfolio; the narrative is written the way a Jira comment stream would read. Sample data throughout.</p>
+    </div>
+    <div class="metaline">
+      <span>Ratings from portfolio data</span><span class="msep" aria-hidden="true">·</span>
+      <span>Narrative from Jira comments</span><span class="msep" aria-hidden="true">·</span>
+      <span>Issued weekly</span>
+    </div>
+  </div>
+
+  <div class="weekpick">
+    <label for="status-week-select">Report</label>
+    <select id="status-week-select"></select>
+    <span class="issued" id="status-issued"></span>
+  </div>
+
+  <div id="rag-overall"></div>
+  <div class="ragrow" id="rag-parts"></div>
+
+  <div class="row2">
+    <section class="card" aria-label="Changed since last week">
+      <div class="cardhead"><h2>Changed since last week</h2></div>
+      <ul class="changed" id="changed"></ul>
+      <div class="bnote">Sample entries. In production these are the week's Jira comments on each issue, so the report writes itself from the work.</div>
+    </section>
+
+    <section class="card" aria-label="Use cases to focus on">
+      <div class="cardhead"><h2>Use cases to focus on</h2></div>
+      <ol class="focus" id="focus"></ol>
+      <div class="bnote">The highest-severity suggested action on each initiative, so the report and the board never disagree.</div>
+    </section>
+  </div>
+
+  <div class="row2">
+    <section class="card" aria-label="Upcoming meetings">
+      <div class="cardhead"><h2>Upcoming meetings</h2></div>
+      <ul class="meetings" id="meetings"></ul>
+      <div class="bnote">Agendas are the initiatives sitting at the stages each forum reviews.</div>
+    </section>
+
+    <section class="card" aria-label="Risks">
+      <div class="cardhead"><h2>Risks</h2></div>
+      <ul class="risks" id="risks"></ul>
+      <div class="bnote">Portfolio-level risks, as distinct from the per-use-case flags that drive routing.</div>
+    </section>
+  </div>
+</section>
+
+<!-- ================= JIRA TAB ================= -->
 <section id="tab-jira" role="tabpanel" aria-labelledby="tabbtn-jira" hidden>
 
   <div class="pagehead">
@@ -2015,7 +2015,10 @@ function healthBadge(h) {
 }
 
 /* ---------- tabs ---------- */
-const TAB_IDS = ["portfolio", "status", "thinking", "intake", "jira"];
+/* Order follows the flow of work: the process, how an idea enters it, where
+   everything stands, how it is reported, and where the data lives. The first
+   entry is the landing tab. */
+const TAB_IDS = ["thinking", "intake", "portfolio", "status", "jira"];
 function selectTab(which) {
   for (const id of TAB_IDS) {
     const btn = document.getElementById("tabbtn-" + id);
