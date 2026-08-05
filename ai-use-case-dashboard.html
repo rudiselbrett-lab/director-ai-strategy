@@ -311,6 +311,42 @@
   .cpct { font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
   .port .ccell { white-space: nowrap; }
 
+  /* weekly status */
+  .ragmain {
+    background: #fff; border: 1px solid var(--hairline); border-top: 3px solid var(--rule);
+    padding: var(--s5); margin-bottom: var(--s4);
+    display: flex; gap: var(--s5); align-items: baseline; flex-wrap: wrap;
+  }
+  .ragmain.good     { border-top-color: var(--status-good); }
+  .ragmain.warning  { border-top-color: var(--status-warning); }
+  .ragmain.critical { border-top-color: var(--status-critical); }
+  .ragmain .rlabel { font: 400 var(--fs-h2)/1.2 var(--serif); display: flex; align-items: center; gap: var(--s3); }
+  .ragmain .rnote { flex: 1; min-width: 260px; color: var(--ink-2); font-size: var(--fs-body); }
+  .ragrow { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); margin-bottom: var(--s4); }
+  @media (max-width: 860px) { .ragrow { grid-template-columns: 1fr; } }
+  .ragcard { background: #fff; border: 1px solid var(--hairline); border-top: 3px solid var(--rule); padding: var(--s4) var(--s5) var(--s5); }
+  .ragcard.good     { border-top-color: var(--status-good); }
+  .ragcard.warning  { border-top-color: var(--status-warning); }
+  .ragcard.critical { border-top-color: var(--status-critical); }
+  .ragcard .rname { display: flex; align-items: center; gap: var(--s2); font-weight: 700; font-size: var(--fs-body); }
+  .ragcard .rmetric { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin: var(--s2) 0 2px; }
+  .ragcard .rnote { color: var(--ink-2); font-size: var(--fs-small); }
+
+  .changed { list-style: none; margin: 0; padding: 0; }
+  .changed li { display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s2) 0; border-top: 1px solid var(--hairline); font-size: var(--fs-small); line-height: 1.5; }
+  .changed li:first-child { border-top: none; }
+  .focus { list-style: none; margin: 0; padding: 0; counter-reset: f; }
+  .focus li {
+    counter-increment: f; display: flex; gap: var(--s3); align-items: flex-start;
+    padding: var(--s2) 0; border-top: 1px solid var(--hairline); font-size: var(--fs-small); line-height: 1.5;
+  }
+  .focus li:first-child { border-top: none; }
+  .focus li::before {
+    content: counter(f); width: 20px; height: 20px; flex: none; margin-top: 1px;
+    background: var(--navy); color: #fff; display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
+  }
+  .focus .who { color: var(--ink-3); }
+
   /* suggested actions, expanded beneath the use case they belong to */
   .actoggle {
     display: block; margin-top: 5px; background: none; border: none; padding: 0;
@@ -662,6 +698,7 @@
     </div>
     <div class="tabs" role="tablist" aria-label="Views">
       <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="true" aria-controls="tab-portfolio">Portfolio</button>
+      <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
       <button type="button" role="tab" id="tabbtn-thinking" aria-selected="false" aria-controls="tab-thinking">Operating Model</button>
       <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake</button>
     </div>
@@ -821,6 +858,38 @@
       </table>
     </div>
   </details>
+</section>
+
+<!-- ================= WEEKLY STATUS TAB ================= -->
+<section id="tab-status" role="tabpanel" aria-labelledby="tabbtn-status" hidden>
+
+  <div class="pagehead">
+    <div class="kicker">Status update</div>
+    <h1 id="status-week">Weekly portfolio status</h1>
+    <p>One page for the standing report: where the portfolio stands, what moved since last week, and what the coming week turns on.</p>
+    <div class="metaline">
+      <span>Ratings computed from the portfolio</span><span class="msep" aria-hidden="true">·</span>
+      <span>Narrative from Jira comments</span><span class="msep" aria-hidden="true">·</span>
+      <span>Issued weekly</span>
+    </div>
+  </div>
+
+  <div id="rag-overall"></div>
+  <div class="ragrow" id="rag-parts"></div>
+
+  <div class="row2">
+    <section class="card" aria-label="Changed since last week">
+      <div class="cardhead"><h2>Changed since last week</h2></div>
+      <ul class="changed" id="changed"></ul>
+      <div class="bnote">Sample entries. In production these are the week's Jira comments on each issue, so the report writes itself from the work.</div>
+    </section>
+
+    <section class="card" aria-label="Focus for the coming week">
+      <div class="cardhead"><h2>Focus for the coming week</h2></div>
+      <ol class="focus" id="focus"></ol>
+      <div class="bnote">Taken from the highest-severity suggested actions across the portfolio, so the report and the board never disagree.</div>
+    </section>
+  </div>
 </section>
 
 <!-- ================= OPERATING MODEL TAB ================= -->
@@ -1194,6 +1263,17 @@ const RISK_FLAGS = [
   { key: "No human review", label: "No human review" },
 ];
 
+/* The week's narrative. This is the layer Jira comments would supply: one
+   entry per material change, tagged with whether it helped or hurt. */
+const STATUS_LOG = [
+  { dir: "good",     text: "AI-005 Collections outreach timing cleared discovery and entered prioritization at WSJF 7.5, the highest unstarted score." },
+  { dir: "critical", text: "AI-004 KYC document extraction passed its four-week discovery timebox. Data access to the KYC repository is still unapproved." },
+  { dir: "warning",  text: "AI-003 Fraud alert prioritization is still held at AI Risk & Controls awaiting MRM model designation." },
+  { dir: "good",     text: "AI-016 HR policy chatbot was transferred to the Enterprise AI team and closed, with the rationale recorded." },
+  { dir: "good",     text: "Median intake-to-decision fell to 21 days, from 23 the week before." },
+  { dir: "neutral",  text: "AI-007 Marketing copy assistant arrived at intake — small, unflagged, and a candidate for the fast lane." },
+];
+
 const USE_CASES = [
   { id: "AI-001", name: "Contact center call summarization", func: "Contact Center",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Contact Center Ops", wsjf: 4.2, est: 850,
@@ -1408,7 +1488,7 @@ function healthBadge(h) {
 }
 
 /* ---------- tabs ---------- */
-const TAB_IDS = ["portfolio", "thinking", "intake"];
+const TAB_IDS = ["portfolio", "status", "thinking", "intake"];
 function selectTab(which) {
   for (const id of TAB_IDS) {
     const btn = document.getElementById("tabbtn-" + id);
@@ -1692,6 +1772,7 @@ function render() {
   renderPipeline(active);
   renderBacklog(allActive); // capacity is a portfolio fact, not a slice fact
   renderMix(active);
+  renderStatus(allActive); // the weekly report describes the portfolio, not a slice
   renderAttention(active);
   renderTable(visible);
   renderStatic();
@@ -2058,6 +2139,130 @@ function actionsFor(u, plan) {
   }
 
   return out.sort((x, y) => SEV_RANK[x.sev] - SEV_RANK[y.sev]);
+}
+
+/* ---------- weekly status ----------
+   Ratings are computed so the report can never drift from the portfolio it
+   describes. Each carries the rule that produced it. */
+const RAG = { good: "Green", warning: "Amber", critical: "Red" };
+
+function ragFor(active) {
+  const n = Math.max(1, active.length);
+
+  // Flow — is work actually moving through the lifecycle?
+  const overdue = active.filter(u => u.health === "critical");
+  const stale = active.filter(u => u.fresh !== "fresh");
+  const worst = overdue.length ? Math.max(...overdue.map(u => Math.abs(u.daysTo))) : 0;
+  const flow = {
+    name: "Flow", status: (overdue.length / n > 0.2 || worst > 21) ? "critical"
+      : (overdue.length || stale.length >= 3) ? "warning" : "good",
+    metric: overdue.length + " overdue",
+    note: overdue.length + " of " + active.length + " are past their stage target, the longest by " +
+          worst + days(worst) + ", and " + stale.length + " have gone more than a review cycle without an update.",
+  };
+
+  // Value — are we realising what we projected?
+  const done = TRENDS.value.filter(v => !v.partial);
+  const rz = done.reduce((a, v) => a + v.realized, 0), pj = done.reduce((a, v) => a + v.projected, 0);
+  const rate = Math.round(rz / pj * 100);
+  const live = TRENDS.value[TRENDS.value.length - 1];
+  const value = {
+    name: "Value", status: rate >= 90 ? "good" : rate >= 75 ? "warning" : "critical",
+    metric: rate + "%",
+    note: "of projected value realised across the last " + done.length + " closed quarters. " +
+          live.q + " is in flight at " + fmtMoney(live.realized) + " of " + fmtMoney(live.projected) + ".",
+  };
+
+  // Risk and controls — is anything stuck at the gate, and how much carries a flag?
+  const govLate = active.filter(u => u.stage === "governance" && u.health === "critical");
+  const govWorst = govLate.length ? Math.max(...govLate.map(u => Math.abs(u.daysTo))) : 0;
+  const flagged = active.filter(u => u.risk.length);
+  const risk = {
+    name: "Risk and controls", status: govWorst > 14 ? "critical" : govLate.length ? "warning" : "good",
+    metric: flagged.length + " of " + active.length,
+    note: "in flight carry a risk flag. " + (govLate.length
+      ? govLate.length + " held at AI Risk & Controls, the longest " + govWorst + days(govWorst) + " past target."
+      : "Nothing is currently held at the gate."),
+  };
+
+  const parts = [flow, value, risk];
+  const rank = { good: 0, warning: 1, critical: 2 };
+  const overall = parts.reduce((w, p) => rank[p.status] > rank[w.status] ? p : w, parts[0]);
+  return { parts, overall: {
+    status: overall.status,
+    note: overall.status === "good"
+      ? "Every dimension is inside tolerance."
+      : overall.name + " is the constraint — " + overall.note.charAt(0).toLowerCase() + overall.note.slice(1) +
+        " Overall takes the worst of the three.",
+  } };
+}
+
+function weeklyFocus(active, plan) {
+  const all = [];
+  for (const u of active) for (const a of actionsFor(u, plan)) all.push({ ...a, u });
+  all.sort((x, y) => SEV_RANK[x.sev] - SEV_RANK[y.sev]);
+  // one line per initiative — a week's focus should name five things, not one twice
+  const seen = new Set();
+  return all.filter(a => !seen.has(a.u.id) && seen.add(a.u.id)).slice(0, 5);
+}
+
+function renderStatus(active) {
+  const monday = new Date();
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  document.getElementById("status-week").textContent = "Week of " +
+    monday.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+
+  const rag = ragFor(active);
+
+  const main = document.getElementById("rag-overall");
+  main.replaceChildren();
+  const card = el("div", "ragmain " + rag.overall.status);
+  const lab = el("div", "rlabel");
+  const d = el("span", "dot " + rag.overall.status, HEALTH[rag.overall.status].glyph);
+  d.setAttribute("aria-hidden", "true");
+  lab.append(d, document.createTextNode("Overall — " + RAG[rag.overall.status]));
+  card.append(lab, el("div", "rnote", rag.overall.note));
+  main.append(card);
+
+  const parts = document.getElementById("rag-parts");
+  parts.replaceChildren();
+  for (const p of rag.parts) {
+    const c = el("div", "ragcard " + p.status);
+    const nm = el("div", "rname");
+    const pd = el("span", "dot " + p.status, HEALTH[p.status].glyph);
+    pd.setAttribute("aria-hidden", "true");
+    nm.append(pd, document.createTextNode(p.name + " — " + RAG[p.status]));
+    c.append(nm, el("div", "rmetric", p.metric), el("div", "rnote", p.note));
+    parts.append(c);
+  }
+
+  const ch = document.getElementById("changed");
+  ch.replaceChildren();
+  for (const e of STATUS_LOG) {
+    const li = el("li");
+    const dot = el("span", "dot " + (e.dir === "neutral" ? "neutral" : e.dir),
+      e.dir === "neutral" ? "\u2192" : HEALTH[e.dir].glyph);
+    dot.setAttribute("aria-hidden", "true");
+    li.append(dot, el("div", null, e.text));
+    ch.append(li);
+  }
+
+  const fo = document.getElementById("focus");
+  fo.replaceChildren();
+  const plan = capacityPlan(active);
+  const focus = weeklyFocus(active, plan);
+  if (!focus.length) {
+    fo.append(el("li", null, "Nothing outstanding — hold the cadence."));
+  } else {
+    for (const f of focus) {
+      const li = el("li");
+      const body = el("div");
+      body.append(el("span", "do", f.act), document.createTextNode(" — "),
+        el("span", "who", f.u.id + " · " + f.where));
+      li.append(body);
+      fo.append(li);
+    }
+  }
 }
 
 function renderAttention(active) {
