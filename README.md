@@ -3,7 +3,7 @@
 **Live demo:** https://rudiselbrett-lab.github.io/director-ai-strategy/
 
 A working demonstration of one process for every AI idea — so capacity goes to
-what's worth building. Built as a single self-contained HTML page with four views:
+what's worth building. Built as a single self-contained HTML page with five views:
 
 - **Portfolio** — health and staleness tracking, a WSJF-ranked backlog against a
   capacity line, per-use-case suggested actions, and a filterable use case table.
@@ -14,6 +14,9 @@ what's worth building. Built as a single self-contained HTML page with four view
   accountable roles, five standing forums with decision rights, and next steps.
 - **Intake** — a mock of the fifteen-minute use case intake form with live
   answer coaching.
+- **In Jira** — the same use cases as Jira issues: the backlog view, one issue
+  opened with its fields and comment stream, and a map from every dashboard
+  column to the field behind it, who sets it, and at which stage.
 
 All data is illustrative and this is not an Ally system of record. In production
 Jira is the system of record and this page is the view; health, staleness,

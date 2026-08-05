@@ -534,6 +534,93 @@
   .lstage .more { margin-top: auto; padding-top: var(--s3); font: 600 var(--fs-caption) var(--sans); color: var(--link); }
   .gatenote { color: var(--ink-3); font-size: var(--fs-small); margin-top: var(--s3); }
 
+  /* ---------- Jira mock ----------
+     Scoped tokens: this panel is a picture of another application, so it uses
+     Atlassian's colour language rather than ours. The frame is what tells the
+     reader they have left our page — nothing inside inherits our status
+     palette, and nothing outside inherits theirs. */
+  .jsect { font: 400 var(--fs-h2)/1.25 var(--serif); margin: var(--s7) 0 2px; }
+  .jsect:first-of-type { margin-top: var(--s5); }
+  .jsub { color: var(--ink-2); font-size: var(--fs-small); max-width: 78ch; margin: 0 0 var(--s3); }
+  .jira {
+    --j-ink:   #172b4d;
+    --j-ink-2: #5e6c84;
+    --j-line:  #dfe1e6;
+    --j-bg:    #f4f5f7;
+    --j-blue:  #0052cc;
+    border: 1px solid var(--j-line); background: #fff;
+    font: var(--fs-small) var(--sans); color: var(--j-ink);
+  }
+  .jira .jbar {
+    display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap;
+    background: var(--j-bg); border-bottom: 1px solid var(--j-line);
+    padding: var(--s2) var(--s3); color: var(--j-ink-2); font-size: var(--fs-caption);
+  }
+  .jira .jproj { font-weight: 600; color: var(--j-ink); }
+  .jira .jchip {
+    background: #fff; border: 1px solid var(--j-line); border-radius: 3px;
+    padding: 2px var(--s2); color: var(--j-ink-2);
+  }
+  .jira .jscroll { overflow-x: auto; }
+  .jira table { width: 100%; border-collapse: collapse; font-size: var(--fs-caption); }
+  .jira th {
+    text-align: left; font-weight: 600; color: var(--j-ink-2);
+    padding: var(--s2) var(--s3); border-bottom: 2px solid var(--j-line);
+    white-space: nowrap; font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .jira td { padding: var(--s2) var(--s3); border-bottom: 1px solid var(--j-line); vertical-align: middle; }
+  .jira tr:last-child td { border-bottom: none; }
+  .jira .jkey { color: var(--j-blue); font-weight: 600; white-space: nowrap; }
+  .jira .jsum { color: var(--j-ink); min-width: 200px; }
+  .jira .jnum { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .jira .jmuted { color: var(--j-ink-2); white-space: nowrap; }
+  /* issue-type glyph — a custom type, which is the point: this is not a bug tracker */
+  .jira .jtype {
+    display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 3px;
+    background: #6b2c91; color: #fff; font: 700 9px/1 var(--sans);
+  }
+  /* Atlassian lozenges. Their colour language, bounded to this frame. */
+  .jira .loz {
+    display: inline-block; border-radius: 3px; padding: 2px 6px; white-space: nowrap;
+    font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .jira .loz.todo  { background: #dfe1e6; color: #42526e; }
+  .jira .loz.prog  { background: #deebff; color: #0747a6; }
+  .jira .loz.done  { background: #e3fcef; color: #006644; }
+  .jira .loz.block { background: #ffebe6; color: #bf2600; }
+
+  .jira .jissue { display: grid; grid-template-columns: 1fr 300px; }
+  @media (max-width: 860px) { .jira .jissue { grid-template-columns: 1fr; } }
+  .jira .jmain { padding: var(--s4); border-right: 1px solid var(--j-line); }
+  @media (max-width: 860px) { .jira .jmain { border-right: none; border-bottom: 1px solid var(--j-line); } }
+  .jira .jmain h3 { font: 600 var(--fs-h3)/1.3 var(--sans); margin: 2px 0 var(--s3); color: var(--j-ink); }
+  .jira .jlab { font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--j-ink-2); }
+  .jira .jdesc { color: var(--j-ink); line-height: 1.55; margin: 4px 0 var(--s4); }
+  .jira .jcomment { border-top: 1px solid var(--j-line); padding-top: var(--s3); }
+  .jira .jc { display: grid; grid-template-columns: 26px 1fr; gap: var(--s2); margin-top: var(--s3); }
+  .jira .javatar {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--j-bg);
+    border: 1px solid var(--j-line); display: grid; place-items: center;
+    font: 700 var(--fs-nano) var(--sans); color: var(--j-ink-2);
+  }
+  .jira .jcwho { font-weight: 600; }
+  .jira .jcwhen { color: var(--j-ink-2); font-size: var(--fs-nano); }
+  .jira .jcbody { line-height: 1.5; margin: 2px 0 0; }
+  .jira .jside { padding: var(--s4); background: #fff; }
+  .jira .jside .jlab { display: block; margin-bottom: var(--s2); }
+  .jira .jfields { display: grid; grid-template-columns: 104px 1fr; gap: 6px var(--s2); align-items: baseline; }
+  .jira .jfields dt { color: var(--j-ink-2); font-size: var(--fs-nano); }
+  .jira .jfields dd { margin: 0; color: var(--j-ink); font-size: var(--fs-caption); }
+  .jira .jflag {
+    display: inline-block; background: var(--j-bg); border: 1px solid var(--j-line);
+    border-radius: 3px; padding: 1px 5px; margin: 0 3px 3px 0; font-size: var(--fs-nano); color: var(--j-ink-2);
+  }
+  .fieldmap td:first-child { font-weight: 600; }
+  .fieldmap code {
+    font-size: var(--fs-caption); background: var(--wash);
+    padding: 1px 4px; border-radius: var(--r); color: var(--ink);
+  }
+
   .opps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s3); }
   .opp { background: #fff; border: 1px solid var(--hairline); padding: var(--pad-card); }
   .opp h3 { font: 400 var(--fs-h3)/1.3 var(--serif); margin: 0 0 6px; }
@@ -720,6 +807,7 @@
       <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
       <button type="button" role="tab" id="tabbtn-thinking" aria-selected="false" aria-controls="tab-thinking">Operating Model</button>
       <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake</button>
+      <button type="button" role="tab" id="tabbtn-jira" aria-selected="false" aria-controls="tab-jira">In Jira</button>
     </div>
     <span class="asof" id="asof"></span>
   </div>
@@ -1158,6 +1246,48 @@
   </div>
 
 </section>
+
+<!-- ================= IN JIRA TAB ================= -->
+<section id="tab-jira" role="tabpanel" aria-labelledby="tabbtn-jira" hidden>
+
+  <div class="pagehead">
+    <div class="kicker">System of record</div>
+    <h1>What this looks like in Jira</h1>
+    <p>The dashboard is a view. Jira is where the work actually lives, and every column on the portfolio table traces back to a field with an owner and a stage at which it gets set.</p>
+    <div class="metaline">
+      <span>Project: AI Use Case Capability (AI)</span><span class="msep" aria-hidden="true">·</span>
+      <span>One issue per use case</span><span class="msep" aria-hidden="true">·</span>
+      <span>Declines stay as issues</span>
+    </div>
+  </div>
+
+  <h2 class="jsect">The backlog</h2>
+  <p class="jsub">The same sixteen use cases as Jira issues. This is the export the dashboard reads.</p>
+  <div class="jira" id="jira-list"></div>
+
+  <h2 class="jsect">One issue</h2>
+  <p class="jsub">The fields that do the work sit on the issue. The weekly status narrative is the comment stream, so the report writes itself from what the team already logs.</p>
+  <div class="jira" id="jira-issue"></div>
+
+  <h2 class="jsect">Where each column comes from</h2>
+  <p class="jsub">Nothing on the dashboard is typed twice. Each column is a Jira field, set by a named role at a named stage.</p>
+  <div class="card flush">
+    <div class="tscroll">
+      <table class="port fieldmap">
+        <thead><tr>
+          <th scope="col">Dashboard column</th>
+          <th scope="col">Jira field</th>
+          <th scope="col">Type</th>
+          <th scope="col">Set by</th>
+          <th scope="col">Set at</th>
+        </tr></thead>
+        <tbody id="fieldmap"></tbody>
+      </table>
+    </div>
+  </div>
+  <p class="gatenote">Health, staleness, completeness, and WSJF rank are not fields — they are computed from the fields above every time the page loads. Storing them would mean maintaining them.</p>
+
+</section>
 </main>
 
 <footer>
@@ -1552,6 +1682,161 @@ function fmtDate(dstr) {
   const [y, m, d] = dstr.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
 }
+/* ---------- Jira mock ----------
+   A picture of the system of record, built from the same USE_CASES array the
+   dashboard reads — so the two can never drift in a demo. Jira statuses are
+   named for the lifecycle stage; the category (to-do / in-progress / done)
+   is what drives the lozenge colour, exactly as it would in a real board. */
+const JIRA_STATUS = {
+  intake:         { label: "Intake",             cat: "todo" },
+  triage:         { label: "Triage",             cat: "todo" },
+  discovery:      { label: "In Discovery",       cat: "prog" },
+  prioritization: { label: "Ranked",             cat: "todo" },
+  portfolio:      { label: "Awaiting Decision",  cat: "todo" },
+  governance:     { label: "In Governance",      cat: "prog" },
+  delivery:       { label: "In Progress",        cat: "prog" },
+  value:          { label: "Measuring Benefits", cat: "prog" },
+};
+
+/* Every dashboard column, and the field behind it. The point of the table is
+   the last two columns: a field nobody owns is a field nobody fills in. */
+const FIELD_MAP = [
+  ["Use case",      "Summary",              "Text",              "Requester",        "Intake"],
+  ["Function",      "Consumer Bank function", "Select",          "Requester",        "Intake"],
+  ["Sponsor",       "Business Sponsor",     "User picker",       "Requester",        "Intake"],
+  ["Stage",         "Status",               "Workflow status",   "Forum that moves it", "Every stage"],
+  ["Owner",         "Assignee",             "User picker",       "AI Portfolio Team", "Triage"],
+  ["Est. value",    "Estimated Annual Value", "Number (K)",      "Product Manager",  "Discovery"],
+  ["Size",          "Story Points",         "Number",            "Product Manager",  "Discovery"],
+  ["WSJF",          "Cost of Delay ÷ Size", "Number",            "AI Portfolio Team", "Prioritization"],
+  ["Complete",      "Success Metric, Data Readiness, Baseline", "Select + checkbox", "Product Manager", "Discovery"],
+  ["Risk flags",    "Risk Tier, NPI, Reg Reporting", "Labels",   "Business Line Risk", "Triage, confirmed at Governance"],
+  ["Waiting on",    "Blocked Reason",       "Text",              "Whoever raises the block", "Any stage"],
+  ["Target",        "Stage Target Date",    "Date",              "Forum that owns the stage", "Every stage"],
+  ["Last update",   "Updated",              "System field",      "Jira",             "Automatic"],
+];
+
+function renderJira() {
+  const active = USE_CASES.slice().sort((a, b) => a.id.localeCompare(b.id));
+
+  /* --- backlog list --- */
+  const wrap = document.getElementById("jira-list");
+  const bar = el("div", "jbar");
+  bar.append(el("span", "jproj", "AI Use Case Capability"),
+             el("span", "jchip", "Type = AI Use Case"),
+             el("span", "jchip", "Order by Rank"),
+             el("span", null, active.length + " issues"));
+  const scroll = el("div", "jscroll");
+  const t = el("table");
+  const thead = el("thead"), htr = el("tr");
+  for (const h of ["", "Key", "Summary", "Status", "Assignee", "Sponsor", "Points", "WSJF", "Est. value", "Updated"]) {
+    const th = el("th", null, h);
+    th.scope = "col";
+    htr.append(th);
+  }
+  thead.append(htr);
+  const tb = el("tbody");
+  for (const u of active) {
+    const st = u.closed ? { label: "Done", cat: "done" } : JIRA_STATUS[u.stage];
+    const tr = el("tr");
+    const typeCell = el("td");
+    typeCell.append(el("span", "jtype", "AI"));
+    tr.append(typeCell,
+              el("td", "jkey", u.id),
+              el("td", "jsum", u.name),
+              el("td"),
+              el("td", "jmuted", u.owner),
+              el("td", "jmuted", u.sponsor || "—"),
+              el("td", "jnum", u.size != null ? String(u.size) : "—"),
+              el("td", "jnum", u.wsjf != null ? u.wsjf.toFixed(1) : "—"),
+              el("td", "jnum", fmtMoney(u.est)),
+              el("td", "jmuted", fmtDate(u.lastUpdate)));
+    const stCell = tr.children[3];   // the empty Status cell appended above
+    stCell.append(el("span", "loz " + st.cat, st.label));
+    if (u.waitingOn) stCell.append(document.createTextNode(" "), el("span", "loz block", "Blocked"));
+    tb.append(tr);
+  }
+  t.append(thead, tb);
+  scroll.append(t);
+  wrap.replaceChildren(bar, scroll);
+
+  /* --- one issue, opened --- */
+  const u = USE_CASES.find(x => x.id === "AI-003") || active[0];
+  const st = JIRA_STATUS[u.stage];
+  const box = document.getElementById("jira-issue");
+  const ibar = el("div", "jbar");
+  ibar.append(el("span", "jproj", "AI Use Case Capability"),
+              el("span", null, "/"), el("span", "jkey", u.id));
+
+  const grid = el("div", "jissue");
+  const main = el("div", "jmain");
+  main.append(el("span", "jlab", "AI Use Case"), el("h3", null, u.name));
+  main.append(el("span", "jlab", "Description"));
+  main.append(el("p", "jdesc",
+    "Fraud analysts work a queue ordered by alert age, so high-risk alerts wait behind low-risk ones. " +
+    "We believe ranking the queue by predicted risk lets the team clear the same volume with fewer " +
+    "losses. Success is measured as fraud loss per thousand alerts worked, against the current baseline."));
+
+  const com = el("div", "jcomment");
+  com.append(el("span", "jlab", "Activity"));
+  for (const c of [
+    { who: "S. Okafor", init: "SO", when: "2 days ago",
+      body: "Still held at AI Risk & Controls awaiting MRM model designation. Nothing on our side is blocking; " +
+            "we are on the agenda for the next sitting." },
+    { who: "R. Patel", init: "RP", when: "9 days ago",
+      body: "Discovery package accepted. Value estimate $1.2M, size 8, WSJF 6.8. Moving to Governance." },
+  ]) {
+    const row = el("div", "jc");
+    row.append(el("div", "javatar", c.init));
+    const body = el("div");
+    const head = el("div");
+    head.append(el("span", "jcwho", c.who), document.createTextNode("  "), el("span", "jcwhen", c.when));
+    body.append(head, el("p", "jcbody", c.body));
+    row.append(body);
+    com.append(row);
+  }
+  main.append(com);
+
+  const side = el("div", "jside");
+  side.append(el("span", "jlab", "Details"));
+  const dl = el("dl", "jfields");
+  const add = (k, v) => { dl.append(el("dt", null, k)); dl.append(v instanceof Node ? v : el("dd", null, v)); };
+  const stDd = el("dd");
+  stDd.append(el("span", "loz " + st.cat, st.label));
+  add("Status", stDd);
+  add("Assignee", u.owner);
+  add("Business Sponsor", u.sponsor || "—");
+  add("Consumer Bank function", u.func);
+  add("Story Points", u.size != null ? String(u.size) : "—");
+  add("Estimated Annual Value", fmtMoney(u.est));
+  add("WSJF", u.wsjf != null ? u.wsjf.toFixed(1) : "—");
+  add("Impact", u.impact.map(k => (IMPACTS.find(i => i.key === k) || {}).label || k).join(", "));
+  add("Data Readiness", u.dataReady ? u.dataReady.charAt(0).toUpperCase() + u.dataReady.slice(1) : "Not assessed");
+  add("Success Metric", u.metric ? "Defined" : "Not defined");
+  add("Baseline Captured", u.baseline ? "Yes" : "No");
+  const flags = el("dd");
+  if (u.risk && u.risk.length) u.risk.forEach(r => flags.append(el("span", "jflag", r)));
+  else flags.textContent = "None";
+  add("Risk Labels", flags);
+  add("Blocked Reason", u.waitingOn || "—");
+  add("Stage Target Date", fmtDate(u.target));
+  add("Updated", fmtDate(u.lastUpdate));
+  side.append(dl);
+
+  grid.append(main, side);
+  box.replaceChildren(ibar, grid);
+
+  /* --- field map --- */
+  const fm = document.getElementById("fieldmap");
+  fm.replaceChildren();
+  for (const [col, field, type, who, when] of FIELD_MAP) {
+    const tr = el("tr");
+    tr.append(el("td", null, col), el("td", null, field), el("td", null, type),
+              el("td", null, who), el("td", null, when));
+    fm.append(tr);
+  }
+}
+
 function fmtMoney(k) {
   if (k == null) return "—";
   return k >= 1000 ? "$" + (k / 1000).toFixed(1) + "M" : "$" + k + "K";
@@ -1636,7 +1921,7 @@ function healthBadge(h) {
 }
 
 /* ---------- tabs ---------- */
-const TAB_IDS = ["portfolio", "status", "thinking", "intake"];
+const TAB_IDS = ["portfolio", "status", "thinking", "intake", "jira"];
 function selectTab(which) {
   for (const id of TAB_IDS) {
     const btn = document.getElementById("tabbtn-" + id);
@@ -2743,6 +3028,7 @@ function renderStatic() {
     lg.append(card);
   });
 
+  renderJira();
   renderTrends();
 
   // intake team criteria grid
