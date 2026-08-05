@@ -510,21 +510,35 @@
   .mission .statement { font: 400 var(--fs-hero)/1.32 var(--serif); margin: var(--s3) 0; max-width: 46ch; }
   @media (max-width: 720px) { .mission .statement { font-size: var(--fs-h1); } }
   .mission .statement em { font-style: italic; }
-  .mission .statement-sub { color: var(--ink-2); font-size: var(--fs-lead); margin: 0; max-width: 68ch; }
+  .mission .statement-sub { color: var(--ink-2); font-size: var(--fs-lead); margin: 0; max-width: 76ch; }
   .mission .pillars { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--s3); margin-top: var(--s5); }
   .mission .psep { color: var(--rule); font-weight: 700; }
 
-  .sect { margin-top: var(--s8); }
+  /* Sections are chapters. The rule and the air above each one are what make
+     five different kinds of content read as a single page rather than five
+     stacked widgets. */
+  .sect { margin-top: var(--s7); padding-top: var(--s6); border-top: 1px solid var(--hairline); }
   .secthead { display: flex; align-items: baseline; gap: var(--s3); margin: 0 0 var(--s1); }
   .secthead h2 { font: 400 var(--fs-h2)/1.2 var(--serif); margin: 0; }
-  .sectsub { color: var(--ink-2); font-size: var(--fs-small); margin: var(--s1) 0 var(--s4); max-width: 72ch; }
+  .sectsub { color: var(--ink-2); font-size: var(--fs-small); margin: var(--s1) 0 var(--s5); max-width: 84ch; }
 
-  .tenets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 var(--s6); border-top: 1px solid var(--rule); }
+  /* Containers carry records and tables. Statements are set open on the page —
+     that is the whole rule, and it is why principles and standing questions
+     share one treatment while stages and forums share another. */
+  .tenets, .opps {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s5) var(--s6);
+  }
+  /* three columns, two filled — so these align to the principles above rather
+     than inventing a second column grid halfway down the page */
+  @media (max-width: 900px) { .opps { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 900px) { .tenets { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .tenets { grid-template-columns: 1fr; } }
-  .tenet { padding: var(--s4) 0; }
-  .tenet h3 { font: 400 var(--fs-h3)/1.3 var(--serif); margin: var(--s2) 0 6px; }
-  .tenet p { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; margin: 0; }
+  @media (max-width: 560px) { .tenets, .opps { grid-template-columns: 1fr; } }
+  .tenet, .opp { padding: 0; background: none; border: none; }
+  /* Serif titles here because these are ideas. Stage and forum names are
+     operational records and stay sans — that is the only font rule on the page. */
+  .tenet h3, .opp h3 { font: 400 var(--fs-h3)/1.3 var(--serif); margin: var(--s2) 0 6px; }
+  .opp h3 { margin-top: 0; }
+  .tenet p, .opp p { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; margin: 0; }
 
   .lifegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s3); }
   @media (max-width: 980px) { .lifegrid { grid-template-columns: repeat(2, 1fr); } }
@@ -680,23 +694,26 @@
     padding: 1px 5px; margin: 0 3px 3px 0; font-size: var(--fs-nano); color: #42526e;
   }
 
-  .opps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s3); }
-  .opp { background: #fff; border: 1px solid var(--hairline); padding: var(--pad-card); }
-  .opp h3 { font: 400 var(--fs-h3)/1.3 var(--serif); margin: 0 0 6px; }
-  .opp p { font-size: var(--fs-small); color: var(--ink-2); margin: 0; line-height: 1.5; }
-
-  ol.steps { list-style: none; margin: 0; padding: 0; max-width: 680px; counter-reset: step; }
+  ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
   ol.steps li {
-    counter-increment: step; display: flex; gap: var(--s4); align-items: center;
-    padding: var(--s3) 0; border-top: 1px solid var(--hairline);
+    counter-increment: step;
+    display: grid; grid-template-columns: 22px 1fr auto; gap: var(--s4);
+    align-items: baseline; padding: var(--s3) 0; border-top: 1px solid var(--hairline);
   }
-  ol.steps li:first-child { border-top: none; }
+  ol.steps li:first-child { border-top: none; padding-top: 0; }
   ol.steps li::before {
-    content: counter(step); width: 22px; height: 22px; flex: none;
+    content: counter(step); width: 22px; height: 22px;
     background: var(--brand); color: #fff;
     display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
   }
   ol.steps .stitle { font-weight: 600; font-size: var(--fs-body); }
+  /* the page asks for one owner and one date everywhere else; this list obliges */
+  ol.steps .smeta { font-size: var(--fs-caption); color: var(--ink-3); text-align: right; white-space: nowrap; }
+  ol.steps .smeta b { color: var(--ink-2); font-weight: 600; }
+  @media (max-width: 620px) {
+    ol.steps li { grid-template-columns: 22px 1fr; gap: var(--s3); }
+    ol.steps .smeta { grid-column: 2; text-align: left; margin-top: 2px; }
+  }
 
   /* ---------- playbook modal ---------- */
   dialog.playbook {
@@ -945,12 +962,18 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">05</span><h2>Next steps</h2></div>
+    <p class="sectsub">Each step has one owner and one date, on the same terms the process asks of every use case in it.</p>
     <ol class="steps">
-      <li><div class="stitle">Socialize the intake process</div></li>
-      <li><div class="stitle">Educate the Consumer Bank organization on the process</div></li>
-      <li><div class="stitle">Consumer Bank D&amp;A builds the MS intake form</div></li>
-      <li><div class="stitle">Use case owners populate intake for top-ranked use cases</div></li>
-      <li><div class="stitle">Consumer Bank D&amp;A Tech reviews and prioritizes for experiment</div></li>
+      <li><div class="stitle">Socialize the intake process</div>
+          <div class="smeta"><b>AI Portfolio Team</b> · Weeks 1&ndash;2</div></li>
+      <li><div class="stitle">Educate the Consumer Bank organization on the process</div>
+          <div class="smeta"><b>AI Portfolio Team</b> · Weeks 2&ndash;4</div></li>
+      <li><div class="stitle">Consumer Bank D&amp;A builds the MS intake form</div>
+          <div class="smeta"><b>Consumer Bank D&amp;A</b> · Week 3</div></li>
+      <li><div class="stitle">Use case owners populate intake for top-ranked use cases</div>
+          <div class="smeta"><b>Business Sponsors</b> · Weeks 4&ndash;6</div></li>
+      <li><div class="stitle">Consumer Bank D&amp;A Tech reviews and prioritizes for experiment</div>
+          <div class="smeta"><b>Consumer Bank D&amp;A Tech</b> · Week 6, then weekly</div></li>
     </ol>
   </div>
 
