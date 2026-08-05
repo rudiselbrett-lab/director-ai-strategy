@@ -311,23 +311,23 @@
   .cpct { font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
   .port .ccell { white-space: nowrap; }
 
-  /* suggested actions */
-  .actions { margin-top: var(--s4); }
-  .actions .actnote { margin-left: auto; color: var(--ink-3); font-size: var(--fs-caption); }
-  .actions ol { list-style: none; margin: 0; padding: 0; }
-  .actions li {
-    display: flex; gap: var(--s3); align-items: flex-start;
-    padding: var(--s3) 0; border-top: 1px solid var(--hairline);
+  /* suggested actions, expanded beneath the use case they belong to */
+  .actoggle {
+    display: block; margin-top: 5px; background: none; border: none; padding: 0;
+    cursor: pointer; text-align: left;
+    font: 600 var(--fs-caption) var(--sans); color: var(--link);
   }
-  .actions li:first-child { border-top: none; padding-top: 0; }
-  .actions .line { flex: 1; min-width: 0; font-size: var(--fs-body); line-height: 1.5; }
-  .actions .do { font-weight: 700; }
-  .actions .why { color: var(--ink-2); }
-  .actions .where { flex: none; align-self: center; }
-  @media (max-width: 720px) {
-    .actions li { flex-wrap: wrap; }
-    .actions .where { align-self: flex-start; margin-left: calc(14px + var(--s3)); }
+  .actoggle:hover { text-decoration: underline; }
+  tr.actionrow > td {
+    background: var(--panel); border-bottom: 1px solid var(--hairline);
+    padding: var(--s3) var(--s5);
   }
+  tr.actionrow ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+  tr.actionrow li { display: flex; gap: var(--s3); align-items: flex-start; }
+  tr.actionrow .line { flex: 1; min-width: 0; font-size: var(--fs-small); line-height: 1.5; }
+  tr.actionrow .do { font-weight: 700; }
+  tr.actionrow .why { color: var(--ink-2); }
+  tr.actionrow .where { flex: none; align-self: center; }
 
   /* needs attention */
   .attn { margin-bottom: var(--s4); }
@@ -745,15 +745,6 @@
       </table>
     </div>
     <div class="empty-table" id="emptytable" hidden>No use cases match the current filters.</div>
-  </section>
-
-  <!-- closing recommendation: computed from the portfolio, not authored -->
-  <section class="card actions" aria-label="Suggested actions">
-    <div class="cardhead">
-      <h2>Suggested actions</h2>
-      <span class="actnote">Derived from the portfolio above — recomputed on every load</span>
-    </div>
-    <ol id="actions"></ol>
   </section>
 
   <details class="ref analysis">
@@ -1482,6 +1473,9 @@ document.getElementById("wsjf-info").addEventListener("click", () => openStage("
    Reuses the playbook dialog so one modal serves the whole page. Everything
    shown is derived; nothing about a use case is written twice. */
 const days = n => n === 1 ? " day" : " days";
+// "a", "a and b", "a, b and c"
+const andList = xs => xs.length < 2 ? (xs[0] || "")
+  : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
 
 function detailLine(label, value) {
   const li = el("li");
@@ -1692,7 +1686,6 @@ function render() {
   renderPipeline(active);
   renderBacklog(allActive); // capacity is a portfolio fact, not a slice fact
   renderMix(active);
-  renderActions(allActive); // recommendations are about the portfolio, not the slice
   renderAttention(active);
   renderTable(visible);
   renderStatic();
@@ -1965,7 +1958,8 @@ function renderMix(active) {
     const top = ranked[0], bottom = ranked[ranked.length - 1];
     inote.textContent = top.label + " leads at " + top.items.length + " of " + active.length +
       " in flight; " + bottom.label.toLowerCase() + " is thinnest at " + bottom.items.length +
-      ". A use case can carry more than one impact type.";
+      (bottom.key === "revenue" ? " — worth seeding growth-side use cases at intake." : ".") +
+      " A use case can carry more than one impact type.";
   }
 
   // Risk concentration
@@ -2007,109 +2001,56 @@ function listIds(items, max) {
   return ids.join(", ") + (rest > 0 ? " and " + rest + " more" : "");
 }
 
-function suggestedActions(allActive) {
-  const out = [], claimed = new Set();
-  const take = us => { us.forEach(u => claimed.add(u.id)); return us; };
-  const free = us => us.filter(u => !claimed.has(u.id));
-  const plural = (n, one, many) => n === 1 ? one : many;
+/* Actions for a single use case. Status rules are mutually exclusive — the
+   most specific problem wins — while capacity, record and routing rules can
+   each add on top. */
+function actionsFor(u, plan) {
+  const out = [];
+  if (u.closed) return out;
 
-  // A use case without a named sponsor cannot be approved — name one or decline.
-  const noSponsor = free(allActive.filter(u => /sponsor/i.test(u.waitingOn || "")));
-  if (noSponsor.length) {
-    take(noSponsor);
-    const u = noSponsor[0];
-    out.push({ sev: "critical",
-      act: "Name a sponsor for " + u.id + " or decline it",
-      why: Math.abs(u.daysTo) + " days past its " + u.stageName.toLowerCase() +
-           " target with no one accountable for the value.",
+  if (/sponsor/i.test(u.waitingOn || "")) {
+    out.push({ sev: "critical", act: "Name a sponsor, or decline it",
+      why: Math.abs(u.daysTo) + days(Math.abs(u.daysTo)) + " past target with no one accountable for the value.",
       where: FORUM_BY_STAGE[u.stage] });
-  }
-
-  // Anything on a second return owes a decision rather than another cycle.
-  const due = free(allActive.filter(u => /second|decision due/i.test(u.next || "")));
-  if (due.length) {
-    take(due);
-    const u = due[0];
-    out.push({ sev: "warning",
-      act: "Settle " + u.id + " at the next triage",
+  } else if (/second|decision due/i.test(u.next || "")) {
+    out.push({ sev: "warning", act: "Settle it at the next triage",
       why: "it is on its second return and owes an Approve or Decline.",
       where: FORUM_BY_STAGE[u.stage] });
+  } else if (u.health === "critical" && u.waitingOn) {
+    out.push({ sev: "critical", act: "Clear the blocker",
+      why: Math.abs(u.daysTo) + days(Math.abs(u.daysTo)) + " past target on " + softLower(u.waitingOn) + ".",
+      where: FORUM_BY_STAGE[u.stage] });
+  } else if (u.health === "critical") {
+    out.push({ sev: "critical", act: "Decide or re-baseline",
+      why: Math.abs(u.daysTo) + days(Math.abs(u.daysTo)) + " past its " + u.stageName.toLowerCase() +
+           " target with no blocker recorded.",
+      where: FORUM_BY_STAGE[u.stage] });
+  } else if (u.fresh === "stale") {
+    out.push({ sev: "warning", act: "Ask for an update",
+      why: "nothing has moved in more than two review cycles.",
+      where: "Stage owner" });
   }
 
-  // Overdue and waiting on a named dependency — escalate together.
-  const blocked = free(allActive.filter(u => u.health === "critical" && u.waitingOn))
-    .sort((a, b) => a.daysTo - b.daysTo);
-  if (blocked.length) {
-    take(blocked);
-    const w = blocked[0];
-    out.push({ sev: "critical",
-      act: "Clear the " + plural(blocked.length, "blocker", "blockers") + " on " + listIds(blocked),
-      why: plural(blocked.length, "it is ", "the longest, " + w.id + ", is ") +
-           Math.abs(w.daysTo) + " days past target on " + softLower(w.waitingOn) + ".",
-      where: blocked.length === 1 ? FORUM_BY_STAGE[w.stage] : "Stage owners" });
-  }
-
-  // Quietly stale — no movement and nothing recorded about why.
-  const stale = free(allActive.filter(u => u.fresh === "stale" && u.health !== "critical"));
-  if (stale.length) {
-    take(stale);
-    out.push({ sev: "warning",
-      act: "Ask for an update on " + listIds(stale),
-      why: "nothing has moved in more than two review cycles and no blocker is recorded.",
-      where: "Stage owners" });
-  }
-
-  // Work below the line should be deferred on the record, not by silence.
-  const plan = capacityPlan(allActive);
-  if (plan.below.length) {
-    out.push({ sev: "warning",
-      act: "Defer the " + plan.below.length + " " + plural(plan.below.length, "use case", "use cases") +
-           " below the capacity line on the record",
-      why: "only " + plan.open + " of " + CAPACITY.points + " points are open and the next by rank needs " +
-           plan.below[0].size + ".",
+  if (plan && plan.below.some(x => x.id === u.id)) {
+    out.push({ sev: "warning", act: "Defer on the record, or free capacity",
+      why: (plan.open - plan.used) + " points remain after higher-ranked work and this needs " + u.size + ".",
       where: "AI Portfolio Council" });
   }
 
-  // Small and unflagged — the fast lane exists for exactly this.
-  const fast = free(allActive.filter(u =>
-    u.stage === "triage" && !u.risk.length && !u.waitingOn && (u.size || 99) <= 3));
-  if (fast.length) {
-    out.push({ sev: "opportunity",
-      act: "Route " + listIds(fast) + " through the fast lane",
+  if (u.complete.pct < 70) {
+    out.push({ sev: "warning", act: "Complete the record",
+      why: "only " + u.complete.pct + "% of what " + u.stageName.toLowerCase() +
+           " asks for is on file, missing " + andList(u.complete.missing.map(f => FIELD_LABEL[f])) + ".",
+      where: FORUM_BY_STAGE[u.stage] });
+  }
+
+  if (u.stage === "triage" && !u.risk.length && !u.waitingOn && (u.size || 99) <= 3) {
+    out.push({ sev: "opportunity", act: "Route through the fast lane",
       why: "no risk flags and small scope, so it need not wait on the monthly Council.",
       where: "Triage" });
   }
 
-  // Portfolio shape: is anything reaching for growth?
-  const rev = allActive.filter(u => (u.impact || []).includes("revenue")).length;
-  if (allActive.length && rev / allActive.length < 0.3) {
-    out.push({ sev: "opportunity",
-      act: "Seed growth-side use cases at intake",
-      why: "only " + rev + " of " + allActive.length + " in flight target revenue or growth.",
-      where: "AI Intake Review" });
-  }
-
-  return out.sort((a, b) => SEV_RANK[a.sev] - SEV_RANK[b.sev]).slice(0, 6);
-}
-
-function renderActions(allActive) {
-  const ol = document.getElementById("actions");
-  ol.replaceChildren();
-  const acts = suggestedActions(allActive);
-  if (!acts.length) {
-    ol.append(el("li", "empty", "Nothing to action — everything is on track and inside its review cadence."));
-    return;
-  }
-  for (const a of acts) {
-    const li = el("li");
-    const [cls, glyph] = SEV_DOT[a.sev];
-    const d = el("span", "dot " + cls, glyph);
-    d.setAttribute("aria-hidden", "true");
-    const line = el("div", "line");
-    line.append(el("span", "do", a.act), document.createTextNode(" — "), el("span", "why", a.why));
-    li.append(d, line, el("span", "chip where", a.where));
-    ol.append(li);
-  }
+  return out.sort((x, y) => SEV_RANK[x.sev] - SEV_RANK[y.sev]);
 }
 
 function renderAttention(active) {
@@ -2161,11 +2102,10 @@ function renderTable(visible) {
 
   const tbody = document.getElementById("tbody");
   tbody.replaceChildren();
+  const plan = capacityPlan(USE_CASES.map(x => enrich(x, todayUTC())).filter(x => !x.closed));
+  let withActions = 0;
   document.getElementById("emptytable").hidden = rows.length > 0;
   document.getElementById("porttable").style.display = rows.length ? "" : "none";
-  document.getElementById("tablecount").textContent =
-    rows.length + " of " + USE_CASES.length + " use cases";
-
   for (const u of rows) {
     const tr = el("tr", u.closed ? "closedrow" : null);
 
@@ -2175,6 +2115,7 @@ function renderTable(visible) {
     nameBtn.title = "Open " + u.id + " detail";
     nameBtn.addEventListener("click", () => openUseCase(u));
     tdName.append(nameBtn);
+    const acts = actionsFor(u, plan);
     tdName.append(el("div", "sub", u.func));
     if (u.risk.length) {
       const fl = el("div");
@@ -2252,7 +2193,45 @@ function renderTable(visible) {
     tr.append(tdU);
 
     tbody.append(tr);
+
+    if (acts.length) {
+      withActions++;
+      const drawer = el("tr", "actionrow");
+      drawer.hidden = true;
+      const cell = el("td");
+      cell.colSpan = COLS.length;
+      const ul = el("ul");
+      for (const a of acts) {
+        const li = el("li");
+        const [cls, glyph] = SEV_DOT[a.sev];
+        const dot = el("span", "dot " + cls, glyph);
+        dot.setAttribute("aria-hidden", "true");
+        const line = el("div", "line");
+        line.append(el("span", "do", a.act), document.createTextNode(" — "), el("span", "why", a.why));
+        li.append(dot, line, el("span", "chip where", a.where));
+        ul.append(li);
+      }
+      cell.append(ul);
+      drawer.append(cell);
+      tbody.append(drawer);
+
+      const toggle = el("button", "actoggle");
+      toggle.type = "button";
+      const label = () => (drawer.hidden ? "▸ " : "▾ ") + acts.length +
+        (acts.length === 1 ? " suggested action" : " suggested actions");
+      toggle.textContent = label();
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.addEventListener("click", () => {
+        drawer.hidden = !drawer.hidden;
+        toggle.textContent = label();
+        toggle.setAttribute("aria-expanded", String(!drawer.hidden));
+      });
+      tdName.append(toggle);
+    }
   }
+
+  document.getElementById("tablecount").textContent =
+    rows.length + " of " + USE_CASES.length + " use cases · " + withActions + " with actions";
 }
 
 let staticRendered = false;
@@ -2548,6 +2527,7 @@ document.getElementById("iform").addEventListener("submit", e => {
 // The analysis section is collapsed by default but belongs in a printed pack.
 window.addEventListener("beforeprint", () => {
   document.querySelectorAll("details.analysis").forEach(d => d.open = true);
+  document.querySelectorAll("tr.actionrow").forEach(r => r.hidden = false);
 });
 
 render();
