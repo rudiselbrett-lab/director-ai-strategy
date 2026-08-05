@@ -659,6 +659,10 @@
   .jira .jmain { min-width: 0; }
   .jira .jlab { font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--j-ink-2); }
   .jira .jdesc { color: var(--j-ink); line-height: 1.55; margin: 4px 0 var(--s4); }
+  /* the intake form's questions, carried into the issue as written */
+  .jira .jq { font-weight: 600; color: var(--j-ink); margin-top: var(--s3); }
+  .jira .jdesc > .jq:first-child { margin-top: 0; }
+  .jira .ja { margin: 2px 0 0; color: var(--j-ink); }
   .jira .jtabs { display: flex; gap: var(--s3); border-bottom: 1px solid var(--j-line); margin: 0 0 var(--s2); }
   .jira .jtabs span { padding: 0 0 6px; color: var(--j-ink-2); font-size: var(--fs-nano); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
   .jira .jtabs span.on { color: var(--j-blue); box-shadow: inset 0 -2px 0 var(--j-blue); }
@@ -1328,7 +1332,7 @@
     </div>
     <div class="metaline">
       <span>Project: AI Use Case Capability (AI)</span><span class="msep" aria-hidden="true">·</span>
-      <span>One issue per use case</span><span class="msep" aria-hidden="true">·</span>
+      <span>Issue type: Capability</span><span class="msep" aria-hidden="true">·</span>
       <span>Declines stay as issues</span>
     </div>
   </div>
@@ -1767,6 +1771,12 @@ function avatar(name, big) {
   a.style.background = JIRA_AV[h % JIRA_AV.length];
   return a;
 }
+/* One custom issue type across the project: every use case is a Capability. */
+function capabilityIcon() {
+  const i = el("span", "jtype", "C");
+  i.title = "Capability";
+  return i;
+}
 function lozenge(st) {
   const l = el("span", "loz " + st.cat);
   l.append(document.createTextNode(st.label), el("span", "jcar", "▾"));
@@ -1795,7 +1805,7 @@ function renderJira() {
 
   const bar = el("div", "jtoolbar");
   bar.append(el("span", "jsearch", "Search issues"));
-  for (const f of ["Type: AI Use Case", "Status: All", "Assignee", "+ More"]) {
+  for (const f of ["Type: Capability", "Status: All", "Assignee", "+ More"]) {
     const chip = el("span", "jsel");
     chip.append(document.createTextNode(f), el("span", "jcar", "▾"));
     bar.append(chip);
@@ -1819,7 +1829,7 @@ function renderJira() {
     const tr = el("tr", u.waitingOn ? "flagged" : null);
 
     const typeCell = el("td");
-    typeCell.append(el("span", "jtype", "AI"));
+    typeCell.append(capabilityIcon());
 
     const sumCell = el("td", "jsum");
     if (u.waitingOn) sumCell.append(el("span", "jflagicon", "⚑"));
@@ -1850,8 +1860,10 @@ function renderJira() {
   const st = JIRA_STATUS[u.stage];
 
   const ibody = el("div", "jbody issue");
-  ibody.append(el("div", "jcrumb", "Projects / AI Use Case Capability / " + u.id),
-               el("h3", "jtitle", u.name));
+  const crumb = el("div", "jcrumb");
+  crumb.append(document.createTextNode("Projects / AI Use Case Capability / "),
+               capabilityIcon(), document.createTextNode(" Capability " + u.id));
+  ibody.append(crumb, el("h3", "jtitle", u.name));
 
   const acts = el("div", "jacts");
   acts.append(el("span", "jbtn pri", "Edit"));
@@ -1860,11 +1872,30 @@ function renderJira() {
 
   const grid = el("div", "jissue");
   const main = el("div", "jmain");
+  /* The description is the intake form's three narrative answers, carried across
+     verbatim. Nothing is rewritten on the way in — the requester's words are what
+     the forum reads, which is the whole argument for keeping intake short. */
   main.append(el("span", "jlab", "Description"));
-  main.append(el("p", "jdesc",
-    "Fraud analysts work a queue ordered by alert age, so high-risk alerts wait behind low-risk ones. " +
-    "We believe ranking the queue by predicted risk lets the team clear the same volume with fewer " +
-    "losses. Success is measured as fraud loss per thousand alerts worked, against the current baseline."));
+  const desc = el("div", "jdesc");
+  for (const [q, a] of [
+    ["What problem are we solving, and why now?",
+     "Fraud analysts work one queue ordered by alert age, so a high-risk alert can sit behind " +
+     "low-risk ones for most of a shift. Alert volume is up 34% year on year and the team has not " +
+     "grown. Now, because the Q3 loss run rate is running above plan and adding headcount is not " +
+     "on the table."],
+    ["What does the process look like today, and what changes?",
+     "Today an analyst opens the oldest unworked alert, checks the transaction and the customer " +
+     "history across two systems, and dispositions it. That review does not change. What changes " +
+     "is the order the queue is worked in: alerts are ranked by predicted risk so the highest " +
+     "exposure is seen first. Nothing is auto-closed and every disposition stays with a person."],
+    ["What metric defines success, and what is it today?",
+     "Fraud loss per thousand alerts worked. Today that is $4,100, averaged across the last two " +
+     "quarters. Target is $3,200 within two quarters of launch, with no increase in the false " +
+     "positive rate."],
+  ]) {
+    desc.append(el("div", "jq", q), el("p", "ja", a));
+  }
+  main.append(desc);
 
   const tabs = el("div", "jtabs");
   tabs.append(el("span", "on", "Comments"), el("span", null, "History"), el("span", null, "Work log"));
