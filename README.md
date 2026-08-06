@@ -22,8 +22,46 @@ what's worth building. Built as a single self-contained HTML page with five view
 All data is illustrative and this is not an Ally system of record. In production
 Jira is the system of record and this page is the view; health, staleness,
 capacity, and the weekly ratings recompute against the current date on every
-load. To change the data, edit the `USE_CASES` and `TRENDS` arrays at the top of
-the script in `ai-use-case-dashboard.html`.
+load.
+
+## Building it from Python
+
+`build_portfolio.py` is a single file with no dependencies — Python 3.8 or
+newer and nothing else. The page template and the sample portfolio are both
+embedded in it, so you can copy that one file to any machine and run it:
+
+```
+python3 build_portfolio.py            # writes ai-use-case-portfolio.html
+python3 build_portfolio.py --open     # and opens it
+```
+
+To change the data, round-trip it through JSON or a spreadsheet:
+
+```
+python3 build_portfolio.py --write-data portfolio.json   # dump it
+python3 build_portfolio.py --data portfolio.json         # rebuild from it
+
+python3 build_portfolio.py --write-csv use_cases.csv     # just the use cases
+python3 build_portfolio.py --csv use_cases.csv           # rebuild from it
+```
+
+The CSV path is the one a Jira export would take: export the issues, map the
+columns, rebuild. List fields (`impact`, `risk`) are pipe-separated.
+
+The script only supplies data. Health, staleness, completeness, WSJF rank, the
+capacity line, suggested actions, the weekly ratings, forum sittings and the
+portfolio risks are all computed in the page against the date it is opened —
+so a page built today still reads correctly next month.
+
+If `ai-use-case-dashboard.html` sits next to the script it is used as the
+template, so you can iterate on the design and rebuild. Otherwise the embedded
+copy is used. The data the script replaces is delimited by the `DATA BLOCK`
+markers in that file.
+
+## Editing the page directly
+
+To change the data by hand instead, edit the `USE_CASES` and `TRENDS` arrays at
+the top of the script in `ai-use-case-dashboard.html`.
 
 Branding lives in four CSS custom properties (`--brand`, `--brand-2`,
 `--accent`, `--accent-bright`) in the `:root` block — the values there are
