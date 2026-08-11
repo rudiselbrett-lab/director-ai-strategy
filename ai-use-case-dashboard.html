@@ -1468,14 +1468,19 @@ const STAGE_DETAILS = {
    build_portfolio.py replaces everything between these two markers. Edit the
    data here, or generate it from a Jira export with the Python script.
    ========================================================================= */
+/* The date this sample was authored. Every date below shifts by
+   (today - ANCHOR) on load, so the demo keeps its shape whenever it is opened.
+   Set to null for real data, where the dates mean what they say. */
+const ANCHOR = "2026-08-11";
+
 /* Portfolio history for the trend panels. Value figures are $K of
    annual run-rate; realized is measured at the Portfolio Increment Review. */
 const TRENDS = {
   value: [
-    { q: "Q4 '25", projected: 1800, realized: 1500 },
-    { q: "Q1 '26", projected: 2600, realized: 2100 },
-    { q: "Q2 '26", projected: 4200, realized: 3400 },
-    { q: "Q3 '26", projected: 5700, realized: 2900, partial: true },
+    { q: "Q4 '25", projected: 1800, realized: 1650 },
+    { q: "Q1 '26", projected: 2600, realized: 2400 },
+    { q: "Q2 '26", projected: 4200, realized: 3900 },
+    { q: "Q3 '26", projected: 5700, realized: 3600, partial: true },
   ],
   decisions: [
     { m: "Feb", n: 4,  mix: { Approve: 1, "Rapid Prototype": 1, Decline: 2 } },
@@ -1516,11 +1521,11 @@ const RISK_FLAGS = [
    entry per material change, tagged with whether it helped or hurt. */
 const STATUS_LOG = [
   { dir: "good",     text: "AI-005 Collections outreach timing cleared discovery and entered prioritization at WSJF 7.5, the highest unstarted score." },
-  { dir: "critical", text: "AI-004 KYC document extraction passed its four-week discovery timebox. Data access to the KYC repository is still unapproved." },
-  { dir: "warning",  text: "AI-003 Fraud alert prioritization is still held at AI Risk & Controls awaiting MRM model designation." },
+  { dir: "good",     text: "Q2 '26 closed at $3.9M of $4.2M projected, taking realised value across the last three closed quarters to 92%." },
+  { dir: "warning",  text: "AI-003 Fraud alert prioritization is the only initiative past its stage target, and is still awaiting MRM model designation." },
+  { dir: "warning",  text: "AI-004 KYC document extraction reaches its discovery target this week with data access to the KYC repository still unapproved." },
   { dir: "good",     text: "AI-016 HR policy chatbot was transferred to the Enterprise AI team and closed, with the rationale recorded." },
   { dir: "good",     text: "Median intake-to-decision fell to 21 days, from 23 the week before." },
-  { dir: "neutral",  text: "AI-007 Marketing copy assistant arrived at intake — small, unflagged, and a candidate for the fast lane." },
 ];
 
 /* Issued reports, kept as issued. A status report is a point-in-time
@@ -1552,10 +1557,10 @@ const STATUS_HISTORY = [
       { id: "AI-004", name: "KYC document extraction", act: "Confirm repository access", why: "the discovery timebox closes next week" },
     ],
     meetings: [
-      { name: "Discovery Review", when: "Wed, Jul 29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
-      { name: "AI Intake & Triage", when: "Thu, Jul 30", cadence: "Weekly", agenda: "3 on the agenda — AI-010, AI-012, AI-007" },
-      { name: "AI Risk & Controls", when: "Tue, Aug 11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "Thu, Aug 20", cadence: "Monthly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
+      { name: "Discovery Review", when: "2026-07-29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
+      { name: "AI Intake & Triage", when: "2026-07-30", cadence: "Weekly", agenda: "3 on the agenda — AI-010, AI-012, AI-007" },
+      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Monthly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Approvals we do not control",
@@ -1589,10 +1594,10 @@ const STATUS_HISTORY = [
       { id: "AI-012", name: "Teller balancing assistant", act: "Re-prep for triage", why: "deferred a cycle for incomplete prep" },
     ],
     meetings: [
-      { name: "AI Intake & Triage", when: "Thu, Jul 23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
-      { name: "Discovery Review", when: "Wed, Jul 29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-002, AI-004, AI-013" },
-      { name: "AI Risk & Controls", when: "Tue, Aug 11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "Thu, Aug 20", cadence: "Monthly", agenda: "2 on the agenda — AI-005, AI-014" },
+      { name: "AI Intake & Triage", when: "2026-07-23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
+      { name: "Discovery Review", when: "2026-07-29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-002, AI-004, AI-013" },
+      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Monthly", agenda: "2 on the agenda — AI-005, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 closed below projection",
@@ -1623,10 +1628,10 @@ const STATUS_HISTORY = [
       { id: "AI-001", name: "Contact center call summarization", act: "Confirm the value baseline with the sponsor", why: "benefits reporting starts next quarter" },
     ],
     meetings: [
-      { name: "AI Intake & Triage", when: "Thu, Jul 16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
-      { name: "Discovery Review", when: "Wed, Jul 15", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-002, AI-004" },
-      { name: "AI Risk & Controls", when: "Tue, Jul 14", cadence: "Monthly", agenda: "2 on the agenda — AI-008, AI-011" },
-      { name: "AI Portfolio Council", when: "Thu, Jul 16", cadence: "Monthly", agenda: "2 on the agenda — AI-006, AI-014" },
+      { name: "AI Intake & Triage", when: "2026-07-16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
+      { name: "Discovery Review", when: "2026-07-15", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-002, AI-004" },
+      { name: "AI Risk & Controls", when: "2026-07-14", cadence: "Monthly", agenda: "2 on the agenda — AI-008, AI-011" },
+      { name: "AI Portfolio Council", when: "2026-07-16", cadence: "Monthly", agenda: "2 on the agenda — AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 tracking below projection",
@@ -1643,105 +1648,105 @@ const USE_CASES = [
     size: 8, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-07-30", target: "2026-09-30", next: "Benefits baseline capture" },
+    lastUpdate: "2026-08-07", target: "2026-09-25", next: "Benefits baseline capture" },
 
   { id: "AI-002", name: "Complaint triage and routing", func: "Customer Care",
     stage: "discovery", owner: "J. Whitfield", sponsor: "Head of Customer Care", wsjf: null, est: null,
     size: 5, impact: ["cycle", "risk"],
     metric: true, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-07-31", target: "2026-08-07", next: "Discovery Review Aug 5" },
+    lastUpdate: "2026-08-08", target: "2026-08-23", next: "Discovery Review" },
 
   { id: "AI-003", name: "Fraud alert prioritization", func: "Fraud Operations",
     stage: "governance", owner: "S. Okafor", sponsor: "Fraud Ops Director", wsjf: 6.8, est: 1200,
     size: 8, impact: ["risk", "insight"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: "MRM model designation",
-    lastUpdate: "2026-07-17", target: "2026-07-27", next: "AI Risk & Controls" },
+    lastUpdate: "2026-08-09", target: "2026-08-08", next: "AI Risk & Controls" },
 
   { id: "AI-004", name: "KYC document extraction", func: "Onboarding",
     stage: "discovery", owner: "R. Patel", sponsor: "Deposits Operations", wsjf: null, est: null,
     size: 13, impact: ["cost", "cycle", "risk"],
     metric: true, dataReady: null, baseline: false,
     risk: ["NPI", "Reg report"], waitingOn: "Data access approval for KYC repository",
-    lastUpdate: "2026-07-10", target: "2026-08-03", next: "Discovery Review Aug 5" },
+    lastUpdate: "2026-08-05", target: "2026-08-15", next: "Discovery Review" },
 
   { id: "AI-005", name: "Collections outreach timing", func: "Collections",
     stage: "prioritization", owner: "D. Kim", sponsor: "Collections VP", wsjf: 7.5, est: 950,
     size: 5, impact: ["revenue", "insight", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-08-01", target: "2026-08-21", next: "Portfolio Council Aug 20" },
+    lastUpdate: "2026-08-08", target: "2026-08-27", next: "AI Portfolio Council" },
 
   { id: "AI-006", name: "Branch staffing forecast", func: "Branch Network",
     stage: "portfolio", owner: "L. Nguyen", sponsor: "Retail Distribution", wsjf: 5.1, est: 400,
     size: 8, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: true,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-07-22", target: "2026-08-20", next: "Portfolio Council Aug 20" },
+    lastUpdate: "2026-07-30", target: "2026-08-20", next: "AI Portfolio Council" },
 
   { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
     stage: "triage", owner: "Intake team", sponsor: "Consumer Marketing", wsjf: null, est: null,
     size: 2, impact: ["revenue", "cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-08-01", target: "2026-08-06", next: "AI Intake & Triage Aug 6 — fast-lane candidate" },
+    lastUpdate: "2026-08-09", target: "2026-08-16", next: "AI Intake & Triage — fast-lane candidate" },
 
   { id: "AI-008", name: "Chat deflection FAQ assistant", func: "Digital Banking",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Digital Channels", wsjf: 5.9, est: 600,
     size: 5, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["No human review"], waitingOn: null,
-    lastUpdate: "2026-07-24", target: "2026-08-14", next: "Pilot exit review" },
+    lastUpdate: "2026-08-06", target: "2026-09-01", next: "Pilot exit review" },
 
   { id: "AI-009", name: "Wire fraud anomaly detection", func: "Payments",
     stage: "intake", owner: "Intake team", sponsor: "Payments Risk", wsjf: null, est: null,
     size: 8, impact: ["risk", "insight"],
     metric: false, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-07-31", target: "2026-08-07", next: "AI Intake & Triage Aug 7" },
+    lastUpdate: "2026-08-10", target: "2026-08-17", next: "AI Intake & Triage" },
 
   { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
     stage: "intake", owner: "Intake team", sponsor: "— (sponsor not named)", wsjf: null, est: null,
     size: 3, impact: ["insight"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Named business sponsor",
-    lastUpdate: "2026-07-17", target: "2026-07-24", next: "Blocked at intake — awaiting a named sponsor" },
+    lastUpdate: "2026-08-02", target: "2026-08-13", next: "Blocked at intake — awaiting a named sponsor" },
 
   { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
     stage: "value", owner: "T. Brooks", sponsor: "Lending Operations", wsjf: 8.9, est: 1400,
     size: 3, impact: ["revenue", "cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-07-06", target: "2026-09-30", next: "Portfolio Increment Review (Q3)" },
+    lastUpdate: "2026-08-01", target: "2026-09-30", next: "Portfolio Increment Review (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
     stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null, est: null,
     size: 3, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Prep incomplete — deferred one cycle",
-    lastUpdate: "2026-07-22", target: "2026-07-29", next: "Second triage return — decision due this cycle" },
+    lastUpdate: "2026-08-03", target: "2026-08-19", next: "Second triage return — decision due this cycle" },
 
   { id: "AI-013", name: "ATM cash forecasting", func: "Branch Network",
     stage: "discovery", owner: "R. Patel", sponsor: "Treasury Services", wsjf: null, est: null,
     size: 5, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-07-30", target: "2026-08-24", next: "Discovery Review Aug 26" },
+    lastUpdate: "2026-08-07", target: "2026-08-29", next: "Discovery Review" },
 
   { id: "AI-014", name: "Dispute intake summarizer", func: "Customer Care",
     stage: "prioritization", owner: "D. Kim", sponsor: "Card Services", wsjf: 3.4, est: 300,
     size: 8, impact: ["cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-07-15", target: "2026-08-21", next: "Portfolio Council Aug 20" },
+    lastUpdate: "2026-08-05", target: "2026-09-04", next: "AI Portfolio Council" },
 
   { id: "AI-015", name: "RM email auto-drafting", func: "Small Business",
     stage: "triage", owner: "Intake team", sponsor: "Small Business Banking", wsjf: null, est: null,
     size: 2, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-07-22", target: "2026-07-22", next: "—",
+    lastUpdate: "2026-07-24", target: "2026-07-22", next: "—",
     closed: { outcome: "Declined", reason: "Low quantifiable value; duplicates enterprise CRM assistant", date: "2026-07-22" } },
 
   { id: "AI-016", name: "HR policy chatbot", func: "Human Resources",
@@ -1765,6 +1770,31 @@ const stageOrder = Object.fromEntries(STAGES.map((s, i) => [s.id, i]));
 
 function utc(dstr) { const [y, m, d] = dstr.split("-").map(Number); return Date.UTC(y, m - 1, d); }
 function todayUTC() { const n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); }
+function iso(ms) { return new Date(ms).toISOString().slice(0, 10); }
+
+/* ---------- sample-date drift ----------
+   The sample is authored against ANCHOR. Left alone, a fixed-date sample gets
+   redder every day it sits unopened — a demo built for one Tuesday reads as a
+   portfolio in crisis a fortnight later. So every date shifts by
+   (today - ANCHOR) on load and the portfolio keeps its intended shape whenever
+   it is opened.
+
+   Real data does not want this. Set ANCHOR to null and dates are used exactly
+   as given, which is what a Jira export needs. */
+const SHIFT = (typeof ANCHOR === "string" && ANCHOR)
+  ? Math.round((todayUTC() - utc(ANCHOR)) / DAY) : 0;
+function slide(dstr) { return SHIFT && dstr ? iso(utc(dstr) + SHIFT * DAY) : dstr; }
+
+if (SHIFT) {
+  for (const u of USE_CASES) {
+    u.lastUpdate = slide(u.lastUpdate);
+    u.target = slide(u.target);
+  }
+  for (const r of STATUS_HISTORY) {
+    r.week = slide(r.week);
+    for (const m of r.meetings || []) m.when = slide(m.when);
+  }
+}
 function fmtDate(dstr) {
   const [y, m, d] = dstr.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
@@ -2632,6 +2662,18 @@ function listIds(items, max) {
   return ids.join(", ") + (rest > 0 ? " and " + rest + " more" : "");
 }
 
+/* daysTo is signed: negative is past the target, positive is still ahead of
+   it. The sponsor rule below is the only one that can fire while a use case is
+   still inside its target, so the phrasing has to handle both directions —
+   saying "2 days past target" about work that is not yet due is the kind of
+   error a reader catches immediately and stops trusting the rest. */
+function targetPhrase(u) {
+  const n = Math.abs(u.daysTo);
+  if (u.daysTo < 0) return n + days(n) + " past target";
+  if (u.daysTo === 0) return "at its target today";
+  return "due in " + n + days(n);
+}
+
 /* Actions for a single use case. Status rules are mutually exclusive — the
    most specific problem wins — while capacity, record and routing rules can
    each add on top. */
@@ -2641,7 +2683,7 @@ function actionsFor(u, plan) {
 
   if (/sponsor/i.test(u.waitingOn || "")) {
     out.push({ sev: "critical", act: "Name a sponsor, or decline it",
-      why: Math.abs(u.daysTo) + days(Math.abs(u.daysTo)) + " past target with no one accountable for the value.",
+      why: targetPhrase(u) + " with no one accountable for the value.",
       where: FORUM_BY_STAGE[u.stage] });
   } else if (/second|decision due/i.test(u.next || "")) {
     out.push({ sev: "warning", act: "Settle it at the next triage",
@@ -2649,7 +2691,7 @@ function actionsFor(u, plan) {
       where: FORUM_BY_STAGE[u.stage] });
   } else if (u.health === "critical" && u.waitingOn) {
     out.push({ sev: "critical", act: "Clear the blocker",
-      why: Math.abs(u.daysTo) + days(Math.abs(u.daysTo)) + " past target on " + softLower(u.waitingOn) + ".",
+      why: targetPhrase(u) + " on " + softLower(u.waitingOn) + ".",
       where: FORUM_BY_STAGE[u.stage] });
   } else if (u.health === "critical") {
     out.push({ sev: "critical", act: "Decide or re-baseline",
@@ -2942,7 +2984,8 @@ function paintReport(r) {
   for (const m of r.meetings || []) {
     const li = el("li");
     const head = el("div", "m1");
-    head.append(el("span", "mname", m.name), el("span", "mwhen", m.when), el("span", "mcad", m.cadence));
+    const when = /^\d{4}-\d{2}-\d{2}$/.test(m.when) ? fmtDay(new Date(utc(m.when))) : m.when;
+    head.append(el("span", "mname", m.name), el("span", "mwhen", when), el("span", "mcad", m.cadence));
     li.append(head, el("div", "magenda", m.agenda));
     mt.append(li);
   }
