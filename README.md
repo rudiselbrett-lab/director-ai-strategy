@@ -3,7 +3,7 @@
 **Live demo:** https://rudiselbrett-lab.github.io/director-ai-strategy/
 
 A working demonstration of one process for every AI idea — so capacity goes to
-what's worth building. Built as a single self-contained HTML page with five views:
+what's worth building. Built as a single self-contained HTML page with six views:
 
 - **Operating Model** — the mission, core principles, eight-stage lifecycle with
   accountable roles, five standing forums with decision rights, and next steps.
@@ -18,6 +18,9 @@ what's worth building. Built as a single self-contained HTML page with five view
 - **Jira** — the same use cases as Jira issues, styled as Jira: the backlog view
   with workflow statuses and flagged rows, and one issue opened with its full
   field set and comment stream.
+- **AI First** — *The AI Operating System*: a written piece on running the work
+  with AI as infrastructure rather than as a search box, in three layers —
+  information, action, automation.
 
 All data is illustrative and this is not an Ally system of record. In production
 Jira is the system of record and this page is the view; health, staleness,
