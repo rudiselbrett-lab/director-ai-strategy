@@ -106,7 +106,9 @@
   }
   .brand .div { color: rgba(255,255,255,0.28); }
   .brand .t { font: 400 16px/1 var(--serif); color: #fff; letter-spacing: 0.01em; }
-  .tabs { display: flex; gap: var(--s1); }
+  /* wraps rather than overflowing once the label count grows — this also
+     fixes a 4px horizontal overflow that existed at phone widths */
+  .tabs { display: flex; flex-wrap: wrap; gap: var(--s1) 0; }
   .tabs button {
     font: 500 var(--fs-body) var(--sans);
     color: rgba(255,255,255,0.68); background: none; border: none; cursor: pointer;
@@ -562,6 +564,51 @@
   .lstage .more { margin-top: auto; padding-top: var(--s3); font: 600 var(--fs-caption) var(--sans); color: var(--link); }
   .gatenote { color: var(--ink-3); font-size: var(--fs-small); margin-top: var(--s3); }
 
+  /* ---------- AI First essay ----------
+     Long-form editorial. It borrows the operating model's chapter rules and its
+     open-statement treatment rather than inventing a third visual system —
+     the only new shapes here are the lead, the turn, and the closing result. */
+  .premise { margin-top: var(--s6); max-width: 760px; }
+  .premise .kicker { display: block; margin-bottom: var(--s2); }
+  .premise p { font-size: var(--fs-lead); color: var(--ink-2); line-height: 1.6; margin: 0 0 var(--s4); }
+  .premise .plead {
+    font: 400 var(--fs-h2)/1.4 var(--serif); color: var(--ink); margin: 0 0 var(--s4);
+  }
+  .premise .pturn {
+    color: var(--ink); border-left: 2px solid var(--accent);
+    padding-left: var(--s4); margin-bottom: 0;
+  }
+
+  /* Two columns, not three: these bodies run several sentences and a third
+     column would set them too narrow to read comfortably. */
+  .aigrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s5) var(--s6); }
+  @media (max-width: 780px) { .aigrid { grid-template-columns: 1fr; } }
+  .aigrid .tenet h3 { margin-top: 0; }
+  .aigrid .tenet .no + h3 { margin-top: var(--s2); }
+  .aigrid code {
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: var(--fs-caption);
+    background: var(--wash); padding: 1px 4px; border-radius: var(--r);
+  }
+
+  /* The line each layer is arguing toward. */
+  .result {
+    font: italic 400 var(--fs-lead)/1.55 var(--serif); color: var(--ink);
+    border-left: 2px solid var(--accent); padding-left: var(--s4);
+    margin: var(--s5) 0 0; max-width: 72ch;
+  }
+
+  ul.evid { list-style: none; margin: var(--s3) 0 0; padding: 0; }
+  ul.evid li {
+    display: flex; flex-wrap: wrap; gap: 4px var(--s3); align-items: baseline;
+    padding: 6px 0; border-top: 1px solid rgba(179,134,0,0.28);
+  }
+  ul.evid li:first-child { border-top: none; }
+  ul.evid span { flex: 1 1 auto; }
+  ul.evid b {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--fs-caption); font-weight: 600; white-space: nowrap;
+  }
+
   /* ---------- Jira mock ----------
      Scoped tokens: this panel is a picture of another application, so it uses
      Atlassian's colour language rather than ours. The frame is what tells the
@@ -886,6 +933,7 @@
       <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="false" aria-controls="tab-portfolio">Portfolio Dashboard</button>
       <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
       <button type="button" role="tab" id="tabbtn-jira" aria-selected="false" aria-controls="tab-jira">Jira</button>
+      <button type="button" role="tab" id="tabbtn-aifirst" aria-selected="false" aria-controls="tab-aifirst">AI First</button>
     </div>
     <span class="asof" id="asof"></span>
   </div>
@@ -1367,6 +1415,147 @@
   <h2 class="jsect">One issue</h2>
   <p class="jsub">The fields that do the work sit on the issue. The weekly status narrative is the comment stream, so the report writes itself from what the team already logs.</p>
   <div class="jira" id="jira-issue"></div>
+
+</section>
+
+<!-- ================= AI FIRST TAB ================= -->
+<section id="tab-aifirst" role="tabpanel" aria-labelledby="tabbtn-aifirst" hidden>
+
+  <div class="pagehead">
+    <div class="kicker">AI first</div>
+    <h1>The AI Operating System</h1>
+    <div class="note">
+      <span class="note-lab">Written piece</span>
+      <p>How I run my own work with AI as infrastructure rather than as a search box &mdash; the operating pattern underneath the process on the other tabs. This one is an argument rather than sample data, so there are no numbers on it to disbelieve.</p>
+    </div>
+  </div>
+
+  <div class="premise">
+    <div class="kicker">The premise</div>
+    <p class="plead">Most people use AI as a better search box. Ask a question, get an answer, close the tab, lose everything. The knowledge evaporates the moment the session ends.</p>
+    <p>This pattern inverts that. The assistant doesn&rsquo;t have a memory, it lives inside one. An instructions file is read at the start of every session, before any other work, so every session boots into full context instead of starting from zero. The org chart, the active programs, the conventions, the open decisions are all loaded before the first question is asked.</p>
+    <p class="pturn">That&rsquo;s the shift. AI-first isn&rsquo;t &ldquo;we use Copilot a lot.&rdquo; It&rsquo;s &ldquo;the system of record is machine-readable, and the assistant is a first-class operator inside it.&rdquo;</p>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">01</span><h2>Information</h2></div>
+    <p class="sectsub">Make the organization&rsquo;s knowledge addressable. Nothing else works until this is true. The foundation is a deliberate memory topology.</p>
+    <div class="aigrid">
+      <div class="tenet">
+        <h3>A boot sequence</h3>
+        <p>Consult the folders for context on any question about work, programs, or deliverables without waiting to be told. The assistant orients itself.</p>
+      </div>
+      <div class="tenet">
+        <h3>A privacy boundary that&rsquo;s enforced, not hoped for</h3>
+        <p>Personal material goes to private memory. Shared strategy, reference docs, and source-system data go to team memory. When the classification is unclear, ask. Individual 1:1 notes never leak into team space.</p>
+      </div>
+      <div class="tenet">
+        <h3>A navigation contract</h3>
+        <p>Read a folder&rsquo;s README first: purpose, file listings, subfolder descriptions. At session start, read the top-level README and each immediate subfolder README. Two levels only. Go deeper only when a task requires it. Bounded, predictable, cheap.</p>
+      </div>
+      <div class="tenet">
+        <h3>Conventions that keep it parseable</h3>
+        <p>Markdown first, structured data only when something needs parsing. Link, don&rsquo;t copy, so facts are referenced rather than duplicated. Minimize new files and add sections to existing ones. This is what stops a knowledge base from rotting into a folder graveyard.</p>
+      </div>
+      <div class="tenet">
+        <h3>People as data</h3>
+        <p>When a name comes up and the profile isn&rsquo;t known, check the personnel folder. If it&rsquo;s still missing, ask enough questions to build the profile, then offer to add it. The system gets smarter about the organization every time it meets someone new.</p>
+      </div>
+    </div>
+    <p class="result">Information stops being something you remember and becomes something you query.</p>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">02</span><h2>Action</h2></div>
+    <p class="sectsub">Encode the judgment, not just the facts. This is the layer almost nobody builds, and it&rsquo;s the one that matters. Facts alone produce a chatbot. Facts plus protocol produce an operator. The point is to write down how decisions actually get made, so the assistant can execute them the way the owner would.</p>
+    <div class="aigrid">
+      <div class="tenet">
+        <h3>The Inventory Protocol</h3>
+        <p>Notes get captured, never applied silently. No existing content changes without review. It runs append-only into an audit log, stamps every entry with date, person, and channel, and sorts everything into What&rsquo;s New, What We Need to Know, and Decisions Needed. Second-hand information is flagged as <code>[Unconfirmed]</code> until a human confirms it. Conflicts don&rsquo;t get resolved by guesswork: where an incoming item disagrees with the inventory, the inventory stands and the new value is logged as an open item rather than applied.</p>
+      </div>
+      <div class="tenet">
+        <h3>The Review Gate</h3>
+        <p>A standing quality check that encodes one reviewer&rsquo;s editorial standard as a repeatable pre-flight. Before anything goes to the reviewer, run it against the checklist. MECE is the primary standard. Report what passes, what fails, and the specific fix. Never silently rewrite the work.</p>
+      </div>
+      <div class="tenet">
+        <h3>The Support Guide</h3>
+        <p>A routing brain with a learning loop. Check the answer log first, because if the question has been answered before, the answer already exists. Answer it only if it traces to something real, and never guess. If it can&rsquo;t be answered, route it: canonical resource first, then a named person, and say plainly that this is a routing, not an answer. Every new answer gets logged, so the guide gets faster the more it&rsquo;s used.</p>
+      </div>
+      <div class="tenet">
+        <h3>Human-in-the-loop by design</h3>
+        <p>Draft email and chat messages, don&rsquo;t send or post without an explicit go-ahead. Don&rsquo;t overwrite files, create new ones or ask first. If a note would change existing content, stop, show a before and after, and wait. Speed on retrieval and drafting, a hard gate on anything that leaves the building or destroys history. That&rsquo;s the trade that makes the whole thing safe enough to run fast.</p>
+      </div>
+    </div>
+    <p class="result">The assistant doesn&rsquo;t just tell you things, it does the work, to a defined standard, inside stated guardrails.</p>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">03</span><h2>Automation</h2></div>
+    <p class="sectsub">Collapse recurring work to a phrase. Once the judgment is written down, the recurring parts stop needing a human at all.</p>
+    <div class="aigrid">
+      <div class="tenet">
+        <h3>Reserved commands</h3>
+        <p>A commands README holds the inventory of reserved phrases that trigger standardized workflows. It&rsquo;s read at session start, and when a command or a synonym appears, the documented steps are followed exactly. &ldquo;Add note to discussion topic&rdquo; is a multi-step file operation compressed into five plain-English words. There&rsquo;s no syntax to learn.</p>
+      </div>
+      <div class="tenet">
+        <h3>The accomplishments flywheel</h3>
+        <p>Whenever something of substance is completed &mdash; a deliverable, a decision, a meeting outcome, a message sent, a file produced &mdash; an entry is appended under the current week. The weekly report then writes itself: read the log, then sweep email, chat, and calendar for work that happened outside a session, sorted into Delivered, Moved Forward, Decisions and Escalations, Stakeholder Engagement, and Blockers and Risks. The goal, stated plainly, is a complete weekly account of the work with near-zero manual effort. The reporting burden collapses because the logging already happened as a side effect of doing the work.</p>
+      </div>
+      <div class="tenet">
+        <h3>Programs built for humans</h3>
+        <p>Utilities live in a dedicated programs folder. No admin rights required, relative paths only, and every program ships a setup guide written for non-technical users. Automation a team can actually adopt, not just admire.</p>
+      </div>
+      <div class="tenet">
+        <h3>Integrity under change</h3>
+        <p>Moves require reference updates: READMEs in the moved item, its parent, and its subfolders, plus a search across all files for links to the old location. Log the relocation and the date. The system maintains itself as it grows.</p>
+      </div>
+    </div>
+    <p class="result">Work that used to cost an hour a week costs a sentence.</p>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">04</span><h2>Why this is genuinely AI-first</h2></div>
+    <p class="sectsub">Four claims, each of which has to hold for the pattern to be more than a filing system.</p>
+    <div class="aigrid">
+      <div class="tenet">
+        <div class="no">01</div>
+        <h3>Memory is infrastructure, not a feature</h3>
+        <p>Chat history is disposable. A structured file system with READMEs, conventions, and provenance is durable, auditable, and portable across tools and models.</p>
+      </div>
+      <div class="tenet">
+        <div class="no">02</div>
+        <h3>Every answer improves the next one</h3>
+        <p>Answer log, feedback log, audit log, accomplishments log, all append-only, never edited or deleted. The system accumulates rather than resets. That&rsquo;s compounding, and compounding is the whole game.</p>
+      </div>
+      <div class="tenet">
+        <div class="no">03</div>
+        <h3>Truth has an address</h3>
+        <p>Every claim carries a source, a date, and a person. Nothing is fabricated, and the assistant reports only what it actually found. Nothing is deleted either, because a superseded value is preserved as a prior-value line so history stays recoverable. In a regulated environment, that isn&rsquo;t a nice-to-have, it&rsquo;s the license to operate this way at all.</p>
+      </div>
+      <div class="tenet">
+        <div class="no">04</div>
+        <h3>The human stays the decision-maker</h3>
+        <p>The assistant reads, drafts, routes, checks, logs, and proposes. A person approves. That division is written into the operating rules, not left to good intentions.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">05</span><h2>Evidence to attach</h2></div>
+    <p class="sectsub">The claims above are worth what the numbers behind them are worth. These are the four that make the case.</p>
+    <div class="note">
+      <span class="note-lab">To fill in</span>
+      <div>
+        <p>Placeholders, not results. Fill these in before showing the piece as a proof point, or drop this section and use it as a playbook.</p>
+        <ul class="evid">
+          <li><span>Time reclaimed per week, before and after</span><b>[X hours]</b></li>
+          <li><span>Volume the support layer absorbed</span><b>[N answered from the log vs. routed]</b></li>
+          <li><span>Adoption beyond the author</span><b>[N people or teams running the same structure]</b></li>
+          <li><span>Cycle time on the recurring deliverable</span><b>[before &rarr; after]</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
 </section>
 </main>
@@ -2108,7 +2297,7 @@ function healthBadge(h) {
 /* Order follows the flow of work: the process, how an idea enters it, where
    everything stands, how it is reported, and where the data lives. The first
    entry is the landing tab. */
-const TAB_IDS = ["thinking", "intake", "portfolio", "status", "jira"];
+const TAB_IDS = ["thinking", "intake", "portfolio", "status", "jira", "aifirst"];
 function selectTab(which) {
   for (const id of TAB_IDS) {
     const btn = document.getElementById("tabbtn-" + id);
