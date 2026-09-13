@@ -3,10 +3,14 @@
 **Live demo:** https://rudiselbrett-lab.github.io/director-ai-strategy/
 
 A working demonstration of one process for every AI idea — so capacity goes to
-what's worth building. Built as a single self-contained HTML page with six views:
+what's worth building. Built as a single self-contained HTML page with seven views:
 
 - **Operating Model** — the mission, core principles, eight-stage lifecycle with
   accountable roles, five standing forums with decision rights, and next steps.
+- **How It Works** — the whole process as one diagram: the eight-stage spine,
+  the forum that decides each stage, the system of record it lands in, the
+  off-ramps, the capacity line, and the loop back from measured value. Drawn
+  from the same stage and forum definitions, so it cannot drift from them.
 - **Intake Form** — a mock of the fifteen-minute use case intake form with
   live answer coaching.
 - **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog

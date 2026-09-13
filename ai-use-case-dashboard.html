@@ -564,6 +564,34 @@
   .lstage .more { margin-top: auto; padding-top: var(--s3); font: 600 var(--fs-caption) var(--sans); color: var(--link); }
   .gatenote { color: var(--ink-3); font-size: var(--fs-small); margin-top: var(--s3); }
 
+  /* ---------- how it works: flow diagram ----------
+     Styled through the page's own tokens rather than presentation attributes,
+     so the diagram inherits the palette and cannot drift from it. It scrolls
+     inside its own box at narrow widths, the same as the tables. */
+  .flowwrap { overflow-x: auto; padding-bottom: var(--s2); }
+  .flow { display: block; width: 100%; min-width: 760px; height: auto; }
+  .flow .fbox { fill: #fff; stroke: var(--rule); stroke-width: 1; }
+  .flow .fnum { fill: var(--brand); }
+  .flow .fnumt { fill: #fff; font: 700 11px var(--sans); }
+  .flow .fname { fill: var(--ink); font: 700 13px var(--sans); }
+  .flow .fout, .flow .frec { fill: var(--ink-2); font: 400 11px var(--sans); }
+  .flow .fforum { fill: var(--ink); font: 600 11.5px var(--sans); }
+  .flow .fcad { fill: var(--ink-3); font: 400 9.5px var(--sans); }
+  .flow .foff { fill: var(--ink-3); font: italic 400 10px var(--sans); }
+  .flow .fhead {
+    fill: var(--accent); font: 700 9px var(--sans);
+    letter-spacing: 0.12em;
+  }
+  .flow .fline { stroke: var(--rule); stroke-width: 1; fill: none; }
+  .flow .farrow { fill: var(--rule); }
+  /* the capacity line and the feedback loop are the two structural ideas, so
+     both take the brand hue — never a status colour, which stays reserved */
+  .flow .fcap { stroke: var(--brand); stroke-width: 1; stroke-dasharray: 5 4; }
+  .flow .fcapt { fill: var(--brand); font: 700 9px var(--sans); letter-spacing: 0.1em; }
+  .flow .floop { stroke: var(--brand); stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  .flow .farrowl { fill: var(--brand); }
+  .flow .floopt { fill: var(--brand); font: 700 8.5px var(--sans); letter-spacing: 0.1em; }
+
   /* ---------- AI First essay ----------
      Long-form editorial. It borrows the operating model's chapter rules and its
      open-statement treatment rather than inventing a third visual system —
@@ -929,6 +957,7 @@
     </div>
     <div class="tabs" role="tablist" aria-label="Views">
       <button type="button" role="tab" id="tabbtn-thinking" aria-selected="true" aria-controls="tab-thinking">Operating Model</button>
+      <button type="button" role="tab" id="tabbtn-flow" aria-selected="false" aria-controls="tab-flow">How It Works</button>
       <button type="button" role="tab" id="tabbtn-intake" aria-selected="false" aria-controls="tab-intake">Intake Form</button>
       <button type="button" role="tab" id="tabbtn-portfolio" aria-selected="false" aria-controls="tab-portfolio">Portfolio Dashboard</button>
       <button type="button" role="tab" id="tabbtn-status" aria-selected="false" aria-controls="tab-status">Weekly Status</button>
@@ -1023,6 +1052,50 @@
       <li><div class="stitle">Consumer Bank D&amp;A Tech reviews and prioritizes for experiment</div>
           <div class="smeta"><b>Consumer Bank D&amp;A Tech</b> · Week 6, then weekly</div></li>
     </ol>
+  </div>
+
+</section>
+
+<!-- ================= HOW IT WORKS TAB ================= -->
+<section id="tab-flow" role="tabpanel" aria-labelledby="tabbtn-flow" hidden>
+
+  <div class="pagehead">
+    <div class="kicker">How it works</div>
+    <h1>One use case, end to end</h1>
+    <div class="note">
+      <span class="note-lab">Mock-up</span>
+      <p>The whole process in one picture: what happens, who decides it, what gets written down, and where work leaves. Drawn from the same stage and forum definitions the Operating Model tab lists, so the picture and the tables cannot disagree.</p>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">01</span><h2>The spine</h2></div>
+    <p class="sectsub">Every idea enters through one door and moves down one path. Each stage has a forum that decides it and a system of record that holds the result. Nothing advances on a conversation alone.</p>
+    <div class="flowwrap"><div id="flow"></div></div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">02</span><h2>What actually holds it together</h2></div>
+    <p class="sectsub">Four mechanisms do the work. Take any one away and the process becomes a list of meetings.</p>
+    <div class="aigrid">
+      <div class="tenet">
+        <h3>One front door</h3>
+        <p>Every idea arrives through the same fifteen-minute form and becomes a Jira issue with an ID. There is no side channel, so the portfolio on the dashboard is the whole portfolio rather than the part that happened to get written down.</p>
+      </div>
+      <div class="tenet">
+        <h3>A decision right at every stage</h3>
+        <p>Each stage names the forum that can move it and the record that proves it moved. A use case cannot sit between stages, because sitting is itself visible: the dashboard counts days against the stage target and the update.</p>
+      </div>
+      <div class="tenet">
+        <h3>A capacity line, not a wish list</h3>
+        <p>Ranking by WSJF only matters if something stops at the line. Committed delivery work consumes the points first, and what is left decides how far down the ranked backlog we get. Below the line means waiting for room, not rejected.</p>
+      </div>
+      <div class="tenet">
+        <h3>Exits are outcomes, not failures</h3>
+        <p>Work leaves the spine at every stage, and each exit is recorded with a reason: reused, partnered, reshaped, parked, deferred, declined. Declining early is the cheapest thing the process does, and declines stay in the portfolio as data.</p>
+      </div>
+    </div>
+    <p class="result">The loop at the left is what makes it a system rather than a pipeline: measured actuals go back into how the next estimate is sized.</p>
   </div>
 
 </section>
@@ -2293,11 +2366,122 @@ function healthBadge(h) {
   return b;
 }
 
+/* ---------- how it works: the process as one picture ----------
+   Laid out from STAGES and FORUM_BY_STAGE rather than hand-drawn, so the
+   diagram cannot drift from the tables on the Operating Model tab. Rename a
+   stage or move a forum and the picture redraws with it.
+
+   Off-ramps are the one thing the data does not carry: they are the outcome
+   vocabulary of each gate, so they live here next to the drawing. */
+const OFFRAMP = {
+  intake:         "Returned to the requester for the missing piece",
+  triage:         "Reuse, partner, or decline — recorded either way",
+  discovery:      "Reshape and re-run, or park with what we learned",
+  prioritization: "Below the line waits for room; it is not rejected",
+  portfolio:      "Defer with a date, or decline with the reason",
+  governance:     "Controls assigned; it returns when they are met",
+  delivery:       "Reshape and re-pilot, or retire with the learning",
+  value:          null,
+};
+
+function renderFlow() {
+  const host = document.getElementById("flow");
+  if (!host) return;
+
+  const NS = "http://www.w3.org/2000/svg";
+  const W = 940, ROW = 96, TOP = 78, BOXW = 330, BOXH = 58, BX = 278;
+  const LOOP_X = 22, FORUM_R = 250, REC_X = 646;
+  const n = STAGES.length;
+  const H = TOP + (n - 1) * ROW + BOXH / 2 + 62;
+  const cy = i => TOP + i * ROW;
+
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.setAttribute("class", "flow");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label",
+    "The lifecycle end to end. " +
+    STAGES.map((s, i) => (i + 1) + ". " + s.name + ", decided at " +
+      FORUM_BY_STAGE[s.id] + ", recorded in " + s.record +
+      (OFFRAMP[s.id] ? ". Off-ramp: " + OFFRAMP[s.id] : "") + ".").join(" ") +
+    " Measured actuals from value realization feed back into prioritization.");
+
+  const el = (tag, attrs, text, parent) => {
+    const node = document.createElementNS(NS, tag);
+    for (const k in attrs) node.setAttribute(k, attrs[k]);
+    if (text !== undefined && text !== null) node.textContent = text;
+    (parent || svg).append(node);
+    return node;
+  };
+
+  // arrowheads
+  const defs = el("defs", {});
+  for (const [id, cls] of [["fa", "farrow"], ["fal", "farrowl"]]) {
+    const m = el("marker", { id: id, viewBox: "0 0 8 8", refX: 7, refY: 4,
+      markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, null, defs);
+    el("path", { d: "M0,0 L8,4 L0,8 z", class: cls }, null, m);
+  }
+
+  // column headers
+  el("text", { x: FORUM_R, y: 26, class: "fhead", "text-anchor": "end" }, "DECIDES");
+  el("text", { x: BX, y: 26, class: "fhead" }, "THE WORK");
+  el("text", { x: REC_X, y: 26, class: "fhead" }, "RECORDED IN, AND WHERE IT CAN LEAVE");
+
+  STAGES.forEach((s, i) => {
+    const y = cy(i), top = y - BOXH / 2;
+
+    // connector into the next stage
+    if (i < n - 1) {
+      el("line", { x1: BX + 26, y1: top + BOXH, x2: BX + 26, y2: cy(i + 1) - BOXH / 2,
+        class: "fline", "marker-end": "url(#fa)" });
+    }
+
+    // who decides
+    el("text", { x: FORUM_R, y: y - 3, class: "fforum", "text-anchor": "end" },
+      FORUM_BY_STAGE[s.id]);
+    const forum = FORUMS.find(f => f.name === FORUM_BY_STAGE[s.id]);
+    el("text", { x: FORUM_R, y: y + 12, class: "fcad", "text-anchor": "end" },
+      forum ? forum.cadence.toLowerCase() : "");
+    el("line", { x1: FORUM_R + 12, y1: y, x2: BX - 8, y2: y,
+      class: "fline", "marker-end": "url(#fa)" });
+
+    // the stage itself
+    el("rect", { x: BX, y: top, width: BOXW, height: BOXH, rx: 2, class: "fbox" });
+    el("rect", { x: BX + 13, y: y - 11, width: 22, height: 22, class: "fnum" });
+    el("text", { x: BX + 24, y: y + 4, class: "fnumt", "text-anchor": "middle" }, String(i + 1));
+    el("text", { x: BX + 48, y: y - 3, class: "fname" }, s.name);
+    el("text", { x: BX + 48, y: y + 13, class: "fout" }, s.owner);
+
+    // what it leaves behind, and how it can leave
+    el("text", { x: REC_X, y: OFFRAMP[s.id] ? y - 3 : y + 4, class: "frec" }, s.record);
+    if (OFFRAMP[s.id]) {
+      el("text", { x: REC_X, y: y + 13, class: "foff" }, "↳ " + OFFRAMP[s.id]);
+    }
+  });
+
+  // the capacity line sits between ranking and funding — brand hue, not a status
+  const capY = cy(3) + ROW / 2;
+  el("line", { x1: BX - 40, y1: capY, x2: BX + BOXW + 40, y2: capY, class: "fcap" });
+  el("text", { x: BX + BOXW + 46, y: capY + 3, class: "fcapt" }, "CAPACITY LINE");
+
+  // measured actuals feed the next estimate
+  const botY = cy(n - 1) + BOXH / 2 + 26;
+  el("path", { class: "floop", "marker-end": "url(#fal)",
+    d: "M" + (BX + 26) + "," + (cy(n - 1) + BOXH / 2) +
+       " V" + botY + " H" + LOOP_X + " V" + cy(3) + " H" + (BX - 8) });
+  const midY = (botY + cy(3)) / 2;
+  el("text", { x: LOOP_X - 7, y: midY, class: "floopt", "text-anchor": "middle",
+    transform: "rotate(-90 " + (LOOP_X - 7) + " " + midY + ")" },
+    "MEASURED ACTUALS RESIZE THE NEXT ESTIMATE");
+
+  host.replaceChildren(svg);
+}
+
 /* ---------- tabs ---------- */
 /* Order follows the flow of work: the process, how an idea enters it, where
    everything stands, how it is reported, and where the data lives. The first
    entry is the landing tab. */
-const TAB_IDS = ["thinking", "intake", "portfolio", "status", "jira", "aifirst"];
+const TAB_IDS = ["thinking", "flow", "intake", "portfolio", "status", "jira", "aifirst"];
 function selectTab(which) {
   for (const id of TAB_IDS) {
     const btn = document.getElementById("tabbtn-" + id);
@@ -3417,6 +3601,7 @@ function renderStatic() {
     lg.append(card);
   });
 
+  renderFlow();
   renderJira();
   renderTrends();
 
