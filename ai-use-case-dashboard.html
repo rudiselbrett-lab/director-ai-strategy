@@ -542,27 +542,11 @@
   .opp h3 { margin-top: 0; }
   .tenet p, .opp p { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; margin: 0; }
 
-  .lifegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s3); }
-  @media (max-width: 980px) { .lifegrid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .lifegrid { grid-template-columns: 1fr; } }
-  .lstage {
-    background: #fff; border: 1px solid var(--hairline);
-    padding: var(--pad-tight); text-align: left; display: flex; flex-direction: column;
-  }
-  button.lstage { cursor: pointer; transition: border-color var(--t), background var(--t); }
-  button.lstage:hover { border-color: var(--link); background: var(--brand-wash); }
-  .lstage .top { display: flex; align-items: center; gap: var(--s2); margin-bottom: var(--s2); }
+  /* still used by the intake form's fieldset legends */
   .stepnum {
     width: 22px; height: 22px; flex: none; background: var(--brand); color: #fff;
     display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
   }
-  /* operational card titles are sans; editorial ones (tenets, opportunities) are serif */
-  .lstage h3 { font: 700 var(--fs-body)/1.3 var(--sans); margin: 0; }
-  .lstage .out { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s2); }
-  .lstage .meta { font-size: var(--fs-caption); color: var(--ink-3); }
-  .lstage .meta b { color: var(--ink-2); font-weight: 600; }
-  .lstage .more { margin-top: auto; padding-top: var(--s3); font: 600 var(--fs-caption) var(--sans); color: var(--link); }
-  .gatenote { color: var(--ink-3); font-size: var(--fs-small); margin-top: var(--s3); }
 
   /* ---------- how it works: flow diagram ----------
      Styled through the page's own tokens rather than presentation attributes,
@@ -582,6 +566,16 @@
     fill: var(--accent); font: 700 9px var(--sans);
     letter-spacing: 0.12em;
   }
+  /* The full table is operator detail. It folds away so the exec view leads
+     with the tiles, the pipeline and what needs attention. */
+  .tablefold > summary { font: 600 var(--fs-lead) var(--sans); }
+  .tablefold .tablecount { color: var(--ink-3); font: 400 var(--fs-small) var(--sans); margin-left: var(--s2); }
+  .tablefold .cardhead { padding-bottom: var(--s2); }
+
+  .flow .fpb { fill: var(--link); font: 600 10.5px var(--sans); }
+  .flow .fhit { fill: transparent; cursor: pointer; }
+  .flow .fhit:hover, .flow .fhit:focus-visible { fill: var(--brand-wash); outline: none; }
+  .flow .fhit:focus-visible { stroke: var(--link); stroke-width: 2; }
   .flow .fline { stroke: var(--rule); stroke-width: 1; fill: none; }
   .flow .farrow { fill: var(--rule); }
   /* the capacity line and the feedback loop are the two structural ideas, so
@@ -937,7 +931,7 @@
     details.analysis > .refbody { border: none; padding: 0; }
     .asof { display: inline; color: rgba(255,255,255,0.75); }
     .rail { position: static; }
-    .card, .stat, .tenet, .lstage, .opp, fieldset, .qrow,
+    .card, .stat, .tenet, .opp, fieldset, .qrow,
     .row2, .row3 { break-inside: avoid; }
     .tscroll { overflow: visible; }
     table.port { min-width: 0; font-size: var(--fs-caption); }
@@ -985,7 +979,7 @@
     </div>
     <div class="note">
       <span class="note-lab">Mock-up</span>
-      <p>How the process works: the mission, the principles, the eight stages with their accountable roles and systems of record, and the five forums that make the decisions. This is a proposal for how the function would run &mdash; not a description of something Ally operates today.</p>
+      <p>How the function would run: the mission, the principles, and the forums that decide. A proposal, not something Ally operates today.</p>
     </div>
   </div>
 
@@ -1003,15 +997,8 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">02</span><h2>The lifecycle</h2></div>
-    <p class="sectsub">Eight stages — one accountability, one accountable role, one system of record each, with clear decision criteria for advancing. <strong>Intake, Triage, and Prioritization open a short playbook.</strong></p>
-    <div class="lifegrid" id="lifegrid"></div>
-    <p class="gatenote">Declining early is part of the process — declined and transferred outcomes stay in the portfolio as data.</p>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">03</span><h2>Operating routines</h2></div>
-    <p class="sectsub">Five standing forums, each with a decision right, an output, and a system of record.</p>
+    <div class="secthead"><span class="kicker">02</span><h2>Operating routines</h2></div>
+    <p class="sectsub">Five standing forums, each with a decision right and a system of record.</p>
     <div class="card flush">
       <div class="tscroll">
         <table class="mini routines">
@@ -1029,7 +1016,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>Where I'd push it next</h2></div>
+    <div class="secthead"><span class="kicker">03</span><h2>Where I'd push it next</h2></div>
     <p class="sectsub">Two standing questions we keep asking of the process and of every use case in it.</p>
     <div class="opps">
       <div class="opp"><h3>Add more information, action, automation, and AI</h3><p>Continuously identify where each can be put to work — in our use cases and in the process that manages them.</p></div>
@@ -1038,8 +1025,8 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">05</span><h2>Next steps</h2></div>
-    <p class="sectsub">Each step has one owner and one date, on the same terms the process asks of every use case in it.</p>
+    <div class="secthead"><span class="kicker">04</span><h2>Next steps</h2></div>
+    <p class="sectsub">One owner and one date each, on the terms the process asks of every use case in it.</p>
     <ol class="steps">
       <li><div class="stitle">Socialize the intake process</div>
           <div class="smeta"><b>AI Portfolio Team</b> · Weeks 1&ndash;2</div></li>
@@ -1064,19 +1051,19 @@
     <h1>One use case, end to end</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
-      <p>The whole process in one picture: what happens, who decides it, what gets written down, and where work leaves. Drawn from the same stage and forum definitions the Operating Model tab lists, so the picture and the tables cannot disagree.</p>
+      <p>The whole process in one picture: what happens, who decides, what gets written down, and where work leaves.</p>
     </div>
   </div>
 
   <div class="sect">
     <div class="secthead"><span class="kicker">01</span><h2>The spine</h2></div>
-    <p class="sectsub">Every idea enters through one door and moves down one path. Each stage has a forum that decides it and a system of record that holds the result. Nothing advances on a conversation alone.</p>
+    <p class="sectsub">One door in, one path down. Every stage has a forum that decides it and a record that holds the result.</p>
     <div class="flowwrap"><div id="flow"></div></div>
   </div>
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>What actually holds it together</h2></div>
-    <p class="sectsub">Four mechanisms do the work. Take any one away and the process becomes a list of meetings.</p>
+    <p class="sectsub">Take any one of these away and the process becomes a list of meetings.</p>
     <div class="aigrid">
       <div class="tenet">
         <h3>One front door</h3>
@@ -1108,7 +1095,7 @@
     <h1>Fifteen minutes, not a specification</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
-      <p>The form a requester fills in. Deliberately lightweight &mdash; enough to decide whether a use case is worth building, not to specify it. Try typing into the narrative boxes to see the live answer coaching respond. This is a mock-up: nothing submits anywhere.</p>
+      <p>The form a requester fills in. Type into a narrative box to see the live answer coaching. Nothing submits anywhere.</p>
     </div>
     <div class="metaline">
       <span>Target: 15 minutes</span><span class="msep" aria-hidden="true">·</span>
@@ -1268,7 +1255,7 @@
     <h1>Where every use case stands</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
-      <p>The board: where each use case sits in the process, what has slipped past its stage target, and what fits the capacity we have. Sixteen sample use cases &mdash; the names, numbers, owners and dates are all invented for this demo. Health, staleness and capacity recompute against today&rsquo;s date every time the page loads.</p>
+      <p>Where each use case sits, what has slipped, and what fits our capacity. Sixteen invented use cases; health and capacity recompute on every load.</p>
     </div>
   </div>
 
@@ -1324,11 +1311,11 @@
     <ul id="attn"></ul>
   </section>
 
-  <section class="card tablecard" aria-label="All use cases">
+  <details class="ref tablefold">
+    <summary>All use cases <span class="tablecount" id="tablecount"></span></summary>
+    <div class="refbody">
     <div class="cardhead">
-      <h2>All use cases</h2>
       <span class="hint">Select a use case for its detail</span>
-      <span class="tablecount" id="tablecount"></span>
     </div>
     <div class="tscroll">
       <table class="port" id="porttable">
@@ -1337,7 +1324,8 @@
       </table>
     </div>
     <div class="empty-table" id="emptytable" hidden>No use cases match the current filters.</div>
-  </section>
+    </div>
+  </details>
 
   <details class="ref analysis">
     <summary>Trends and portfolio mix</summary>
@@ -1417,7 +1405,7 @@
     <h1 id="status-week">Weekly portfolio status</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
-      <p>The standing weekly report: one rating for the portfolio and three for its parts, what moved since last week, what the coming week turns on, and the open risks. Ratings are computed from the sample portfolio; the narrative is written the way a Jira comment stream would read. Sample data throughout.</p>
+      <p>The standing weekly report. Ratings compute from the sample portfolio; the narrative reads as Jira comments would. Sample data throughout.</p>
     </div>
     <div class="metaline">
       <span>Ratings from portfolio data</span><span class="msep" aria-hidden="true">·</span>
@@ -1472,7 +1460,7 @@
     <h1>The system of record</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
-      <p>The same portfolio as it would appear in Jira, where the work actually lives &mdash; one issue per use case, and the fields on that issue are what the dashboard reads. Styled to match Jira, but this is a picture rather than a live connection, and every issue on it is invented.</p>
+      <p>The same portfolio as it would appear in Jira, one issue per use case. A picture, not a live connection; every issue is invented.</p>
     </div>
     <div class="metaline">
       <span>Project: AI Use Case Capability (AI)</span><span class="msep" aria-hidden="true">·</span>
@@ -1499,7 +1487,7 @@
     <h1>The AI Operating System</h1>
     <div class="note">
       <span class="note-lab">Written piece</span>
-      <p>How I run my own work with AI as infrastructure rather than as a search box &mdash; the operating pattern underneath the process on the other tabs. This one is an argument rather than sample data, so there are no numbers on it to disbelieve.</p>
+      <p>How I run my own work with AI as infrastructure rather than a search box. An argument, not sample data.</p>
     </div>
   </div>
 
@@ -1588,7 +1576,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">04</span><h2>Why this is genuinely AI-first</h2></div>
-    <p class="sectsub">Four claims, each of which has to hold for the pattern to be more than a filing system.</p>
+    <p class="sectsub">Each has to hold for the pattern to be more than a filing system.</p>
     <div class="aigrid">
       <div class="tenet">
         <div class="no">01</div>
@@ -1615,7 +1603,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">05</span><h2>Evidence to attach</h2></div>
-    <p class="sectsub">The claims above are worth what the numbers behind them are worth. These are the four that make the case.</p>
+    <p class="sectsub">The claims above are worth what the numbers behind them are worth.</p>
     <div class="note">
       <span class="note-lab">To fill in</span>
       <div>
@@ -2451,6 +2439,20 @@ function renderFlow() {
     el("text", { x: BX + 24, y: y + 4, class: "fnumt", "text-anchor": "middle" }, String(i + 1));
     el("text", { x: BX + 48, y: y - 3, class: "fname" }, s.name);
     el("text", { x: BX + 48, y: y + 13, class: "fout" }, s.owner);
+
+    /* The three stages with a playbook open it from the box — the operating
+       model no longer repeats the stage list, so this is where they live. */
+    if (STAGE_DETAILS[s.id]) {
+      el("text", { x: BX + BOXW - 14, y: y + 4, class: "fpb", "text-anchor": "end" }, "Playbook \u2192");
+      const hit = el("rect", { x: BX, y: top, width: BOXW, height: BOXH,
+        class: "fhit", role: "button", tabindex: "0" });
+      el("title", {}, s.name + " playbook", hit);
+      const open = () => openStage(s.id);
+      hit.addEventListener("click", open);
+      hit.addEventListener("keydown", ev => {
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); open(); }
+      });
+    }
 
     // what it leaves behind, and how it can leave
     el("text", { x: REC_X, y: OFFRAMP[s.id] ? y - 3 : y + 4, class: "frec" }, s.record);
@@ -3396,7 +3398,11 @@ function renderAttention(active) {
   }
   for (const u of flagged.slice(0, 8)) {
     const li = el("li");
-    const d = el("span", "dot " + u.health, HEALTH[u.health].glyph);
+    /* The dot answers why this is on the list, not whether the date has slipped.
+       A use case that is blocked or stale but still inside its target is a real
+       item here, and a green tick against it reads as a contradiction. */
+    const sev = u.health === "critical" ? "critical" : "warning";
+    const d = el("span", "dot " + sev, HEALTH[sev].glyph);
     d.setAttribute("aria-hidden", "true");
     const who = el("div", "who");
     who.append(el("div", "nm", u.id + " · " + u.name), el("div", "st", u.stageName));
@@ -3577,29 +3583,6 @@ function renderStatic() {
       el("td", null, s.cadence));
     tb.append(tr);
   }
-
-  // lifecycle grid (operating model tab) — cards with a playbook open it
-  const lg = document.getElementById("lifegrid");
-  STAGES.forEach((s, i) => {
-    const hasPlaybook = !!STAGE_DETAILS[s.id];
-    const card = el(hasPlaybook ? "button" : "div", "lstage");
-    const top = el("div", "top");
-    top.append(el("span", "stepnum", String(i + 1)), el("h3", null, s.name));
-    card.append(top, el("p", "out", s.outcome));
-    const meta = el("div", "meta");
-    const ownerLine = el("div");
-    ownerLine.append(el("b", null, "Accountable: "), document.createTextNode(s.owner));
-    const recLine = el("div");
-    recLine.append(el("b", null, "Record: "), document.createTextNode(s.record));
-    meta.append(ownerLine, recLine);
-    card.append(meta);
-    if (hasPlaybook) {
-      card.type = "button";
-      card.append(el("div", "more", "Playbook →"));
-      card.addEventListener("click", () => openStage(s.id));
-    }
-    lg.append(card);
-  });
 
   renderFlow();
   renderJira();
