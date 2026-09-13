@@ -566,6 +566,36 @@
     fill: var(--accent); font: 700 9px var(--sans);
     letter-spacing: 0.12em;
   }
+  /* Readiness matrix: the council's grid. */
+  .readyfold > summary { font: 600 var(--fs-lead) var(--sans); }
+  .readylead { color: var(--ink-2); font-size: var(--fs-small); max-width: 78ch; margin: 0 0 var(--s3); }
+  .ready th.rdim {
+    font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); text-align: center; vertical-align: bottom; width: 88px;
+  }
+  .ready td.rcell { text-align: center; }
+  .ready td.rname { min-width: 220px; }
+  .ready .rid { font-weight: 700; margin-right: 6px; }
+  .ready .rpend { color: var(--rule); font-weight: 700; }
+  .raglegend {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 6px var(--s5);
+    margin: var(--s3) 0 0; padding: 0; font-size: var(--fs-caption); color: var(--ink-3);
+  }
+  .raglegend li { display: flex; align-items: center; gap: 6px; }
+  .raglegend b { color: var(--ink-2); font-weight: 600; }
+  .jira .jraglegend { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--s3); }
+
+  .readyneeds { padding-top: var(--s3); }
+  .needlist { list-style: none; margin: var(--s2) 0 0; padding: 0; max-width: 900px; }
+  .needlist li {
+    padding: 5px 0; border-top: 1px solid var(--hairline);
+    font-size: var(--fs-small); color: var(--ink-2);
+  }
+  .needlist li:first-child { border-top: none; }
+  .needlist .nid { font-weight: 700; color: var(--ink); margin-right: var(--s2); }
+  .needlist b { color: var(--ink); font-weight: 600; }
+  .readynote { color: var(--ink-3); font-size: var(--fs-small); margin: 0; }
+
   /* Gate tracker: the approved book, gate by gate. */
   .gates { list-style: none; margin: 0; padding: 0 var(--s5) var(--s4); }
   .gates li { padding: var(--s3) 0; border-top: 1px solid var(--hairline); }
@@ -745,6 +775,28 @@
   .jira .loz.prog { background: var(--j-blue-w); color: #0747a6; }
   .jira .loz.done { background: #e3fcef; color: #006644; }
   .jira .loz .jcar { opacity: 0.7; font-weight: 400; }
+  /* A readiness block as it would be typed into the description field. The
+     bracketed tokens are monospace so they read as a convention a script can
+     parse, not as decoration. */
+  .jira .jready {
+    border: 1px solid var(--j-line); border-left: 3px solid var(--j-blue);
+    border-radius: 3px; background: var(--j-bg); padding: var(--s3); margin: 4px 0 var(--s4);
+  }
+  .jira .jrhead {
+    font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.06em;
+    color: var(--j-ink-2); margin-bottom: 6px;
+  }
+  .jira .jrline { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; padding: 2px 0; }
+  .jira .jrtok {
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: var(--fs-nano);
+    font-weight: 700; border-radius: 2px; padding: 1px 4px; min-width: 54px; text-align: center;
+  }
+  .jira .jrdim { color: var(--j-ink); font-weight: 600; }
+  .jira .jrneed { color: var(--j-ink-2); }
+  .jira .rag-red   { background: #ffebe6; color: #bf2600; }
+  .jira .rag-amber { background: #fffae6; color: #974f0c; }
+  .jira .rag-green { background: #e3fcef; color: #006644; }
+  .jira .rag-na    { background: var(--j-bg-2); color: var(--j-ink-2); }
 
   /* issue view */
   .jira .jbody.issue { padding-bottom: var(--s4); }
@@ -1024,7 +1076,7 @@
             <tr><td>AI Intake &amp; Triage</td><td>Weekly</td><td>Route or decline</td><td>Every submission routed to discovery, prototype, partner, or declined, with a named owner and date. Preliminary risk tier flagged.</td><td>Jira</td></tr>
             <tr><td>Discovery Review</td><td>Bi-weekly</td><td>Advance or kill</td><td>Each discovery package exited as Build, Reshape, Park, or Stop, with the evidence that drove it.</td><td>Jira</td></tr>
             <tr><td>AI Risk &amp; Controls</td><td>Monthly</td><td>Confirm tier, block launch</td><td>Risk designation confirmed and required controls assigned for new use cases. Second half: production health across live use cases — drift, incidents, control testing, retirement candidates.</td><td>Archer</td></tr>
-            <tr><td>AI Portfolio Council</td><td>Monthly</td><td>Set rank, commit capacity</td><td>Ranked backlog by WSJF (Weighted Shortest Job First), with any deviation from rank recorded and attributed.</td><td>Jira</td></tr>
+            <tr><td>AI Portfolio Council</td><td>Monthly</td><td>Set rank, commit capacity, grade readiness</td><td>Ranked backlog by WSJF (Weighted Shortest Job First), with any deviation from rank recorded and attributed. Every use case graded against the readiness framework &mdash; sponsor and problem, value case, data, model evaluated, risk and controls, adoption and benefits &mdash; with a named owner and a date against every red.</td><td>Jira</td></tr>
             <tr><td>Delivery &amp; Controls Review</td><td>Monthly</td><td>Unblock or re-baseline</td><td>Every approved use case walked gate by gate: time in gate against expected, who owns the queue it is sitting in, and an escalation or a new date for anything past expected. This is the cadence approved work runs on between quarters.</td><td>Jira</td></tr>
             <tr><td>Portfolio Increment Review</td><td>Quarterly</td><td>Fund and staff</td><td>Benefits measured against baseline first, WSJF inputs recalibrated from actuals, then funding and staffing committed for the increment.</td><td>Jira, benefits log</td></tr>
           </tbody>
@@ -1338,6 +1390,23 @@
     <p class="gatefoot">Time in gate is measured against the expected duration for that gate, not against
       the stage target &mdash; a nine-month build has one stage date and seven places to stall.</p>
   </section>
+
+  <details class="ref readyfold">
+    <summary>Readiness by use case <span class="tablecount" id="readycount"></span></summary>
+    <div class="refbody">
+      <p class="readylead">What the AI Portfolio Council grades each month. A dimension is only graded once
+        the work reaches the stage it belongs to &mdash; anything earlier reads as not yet due, not as a failure.
+        Every grade is computed from the record.</p>
+      <div class="tscroll">
+        <table class="port ready" id="readytable">
+          <thead><tr id="readyhead"></tr></thead>
+          <tbody id="readybody"></tbody>
+        </table>
+      </div>
+      <ul class="raglegend" id="raglegend"></ul>
+      <div class="readyneeds" id="readyneeds"></div>
+    </div>
+  </details>
 
   <details class="ref tablefold">
     <summary>All use cases <span class="tablecount" id="tablecount"></span></summary>
@@ -1741,6 +1810,79 @@ const STAGE_DETAILS = {
     ],
   },
 };
+
+/* ---------- readiness framework ----------
+   What the Portfolio Council grades. The gate path says where a use case sits
+   in a queue; this says whether it is actually ready, across dimensions that
+   move independently — a use case can be building fine and still be red on
+   model validation.
+
+   `from` is the stage at which a dimension starts being graded. Before that it
+   reads as not yet due rather than red: grading a use case at intake against
+   controls it has not reached yet produces a wall of red that nobody trusts,
+   and the point of a framework is that a red means something.
+
+   Every grade is computed from the record. Nothing here is a stored opinion. */
+const READINESS = [
+  { key: "sponsor", name: "Sponsor and problem", from: "intake",
+    grade: u => !u.sponsor ? ["critical", "Name a business sponsor accountable for the value"]
+              : !u.metric  ? ["warning",  "Define the success metric"]
+              : ["good", null] },
+
+  { key: "value", name: "Value case", from: "discovery",
+    grade: u => u.est == null ? ["critical", "Size the annual benefit"]
+              : !u.baseline   ? ["warning",  "Capture the baseline the benefit is measured against"]
+              : ["good", null] },
+
+  { key: "data", name: "Data readiness", from: "discovery",
+    grade: u => !u.dataReady          ? ["critical", "Assess data readiness"]
+              : u.dataReady === "partial" ? ["warning", "Close the known data gaps"]
+              : u.dataReady === "ready"   ? ["good", null]
+              : ["critical", "Data is not ready; reshape or park"] },
+
+  { key: "model", name: "Model evaluated", from: "governance",
+    grade: u => {
+      const st = gateState(u);
+      const mrm = GATE_BY_ID.mrm.i;
+      if (/mrm|model/i.test(u.waitingOn || "")) return ["critical", "Awaiting " + softLower(u.waitingOn)];
+      if (st && st.g.i > mrm) return ["good", null];
+      if (st && st.g.i === mrm) return st.status === "good"
+        ? ["warning", "In model validation, inside the expected window"]
+        : ["critical", "In model validation " + st.inGate + days(st.inGate) + " against " + st.g.days];
+      return ["warning", "Not yet submitted for model validation"];
+    } },
+
+  { key: "controls", name: "Risk and controls", from: "governance",
+    grade: u => {
+      const i = stageOrder[u.stage];
+      if (i > stageOrder.governance) return ["good", null];
+      if (u.waitingOn) return ["critical", "Blocked at the risk gate — " + softLower(u.waitingOn)];
+      return ["warning", "Controls not yet confirmed for its tier"];
+    } },
+
+  { key: "adoption", name: "Adoption and benefits", from: "delivery",
+    grade: u => u.stage === "value" && u.baseline ? ["good", null]
+              : u.stage === "value" ? ["critical", "Live without a measured baseline"]
+              : ["warning", "Business routine and benefit owner not yet named"] },
+];
+
+/* The scale, stated rather than assumed. Red is not "bad", it is "blocked and
+   someone owns unblocking it"; amber is in progress. */
+const RAG_SCALE = [
+  ["critical", "Red",     "Blocked, or past the window it should have cleared in"],
+  ["warning",  "Amber",   "In progress, or partly met"],
+  ["good",     "Green",   "Met, with the evidence on the record"],
+  ["pending",  "Not due", "The work has not reached this stage yet"],
+];
+
+/* A dimension is graded only once the work has reached the stage it belongs to. */
+function readiness(u) {
+  return READINESS.map(d => {
+    if (stageOrder[u.stage] < stageOrder[d.from]) return { d, grade: "pending", need: null };
+    const [grade, need] = d.grade(u);
+    return { d, grade, need };
+  });
+}
 
 /* The internal path an approved use case walks. Intake and discovery are the
    part everyone designs; this is where a bank's AI work actually spends its
@@ -2259,6 +2401,25 @@ function renderJira() {
   ]) {
     desc.append(el("div", "jq", q), el("p", "ja", a));
   }
+  /* The readiness grade lives in the description, not in custom fields. Adding
+     fields to a bank's Jira needs an admin and a change request; a convention
+     inside a text field needs neither, and the bracketed tokens stay greppable
+     so reporting can still read the grade back out of the text. */
+  const rag = { critical: ["rag-red", "RED"], warning: ["rag-amber", "AMBER"],
+                good: ["rag-green", "GREEN"], pending: ["rag-na", "N/A"] };
+  const rb = el("div", "jready");
+  rb.append(el("div", "jrhead",
+    "READINESS \u00b7 graded " + fmtDate(iso(todayUTC())) + " \u00b7 AI Portfolio Council"));
+  for (const c of readiness(u)) {
+    const line = el("div", "jrline");
+    const [cls, tok] = rag[c.grade];
+    line.append(el("span", "jrtok " + cls, "[" + tok + "]"), el("span", "jrdim", c.d.name));
+    if (c.need) line.append(el("span", "jrneed", "\u2014 " + softLower(c.need)));
+    else if (c.grade === "pending")
+      line.append(el("span", "jrneed", "\u2014 not due until " + stageById[c.d.from].name));
+    rb.append(line);
+  }
+  desc.append(rb);
   main.append(desc);
 
   const tabs = el("div", "jtabs");
@@ -2394,10 +2555,12 @@ function enrich(uc, today) {
 }
 
 /* ---------- tiny DOM helper (textContent only — data is untrusted) ---------- */
-function el(tag, cls, text) {
+function el(tag, cls, text, ...kids) {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
-  if (text !== undefined && text !== null) n.textContent = text;
+  if (text instanceof Node) kids.unshift(text);
+  else if (text !== undefined && text !== null) n.textContent = text;
+  if (kids.length) n.append(...kids);
   return n;
 }
 
@@ -2824,6 +2987,7 @@ function render() {
   renderStatus(allActive); // the weekly report describes the portfolio, not a slice
   renderAttention(active);
   renderGates(active);
+  renderReadiness(active);
   renderTable(visible);
   renderStatic();
 }
@@ -3465,6 +3629,93 @@ function gateState(u) {
   const inGate = Math.round((todayUTC() - utc(u.gateSince)) / DAY);
   const status = inGate > g.days * 1.5 ? "critical" : inGate > g.days ? "warning" : "good";
   return { g, inGate, status };
+}
+
+/* The council's grid: every active use case against every dimension, plus the
+   list of what is actually blocking. Sorted worst first — the council should
+   not have to hunt for the reds. */
+function renderReadiness(active) {
+  const head = document.getElementById("readyhead");
+  const body = document.getElementById("readybody");
+  const needs = document.getElementById("readyneeds");
+  const count = document.getElementById("readycount");
+  if (!head || !body) return;
+
+  const rows = active.map(u => ({ u, cells: readiness(u) }));
+  const score = r => r.cells.reduce((n, c) =>
+    n + (c.grade === "critical" ? 100 : c.grade === "warning" ? 1 : 0), 0);
+  rows.sort((a, b) => score(b) - score(a) || a.u.id.localeCompare(b.u.id));
+
+  head.replaceChildren();
+  const blank = el("th", null, "Use case");
+  blank.scope = "col";
+  head.append(blank);
+  for (const d of READINESS) {
+    const th = el("th", "rdim", d.name);
+    th.scope = "col";
+    head.append(th);
+  }
+
+  body.replaceChildren();
+  for (const { u, cells } of rows) {
+    const tr = el("tr");
+    const first = el("td", "rname");
+    first.append(el("span", "rid", u.id), document.createTextNode(" " + u.name));
+    tr.append(first);
+    for (const c of cells) {
+      const td = el("td", "rcell");
+      if (c.grade === "pending") {
+        const dash = el("span", "rpend", "\u2013");
+        dash.title = "Not due until " + stageById[c.d.from].name;
+        td.append(dash);
+      } else {
+        const dot = el("span", "dot " + c.grade, HEALTH[c.grade].glyph);
+        dot.title = c.need || (c.d.name + ": met");
+        td.append(dot);
+      }
+      tr.append(td);
+    }
+    body.append(tr);
+  }
+
+  const leg = document.getElementById("raglegend");
+  if (leg) {
+    leg.replaceChildren();
+    for (const [g, label, meaning] of RAG_SCALE) {
+      const li = el("li");
+      if (g === "pending") li.append(el("span", "rpend", "\u2013"));
+      else {
+        const dot = el("span", "dot " + g, HEALTH[g].glyph);
+        dot.setAttribute("aria-hidden", "true");
+        li.append(dot);
+      }
+      li.append(el("b", null, label), document.createTextNode(" " + meaning));
+      leg.append(li);
+    }
+  }
+
+  const blocked = rows.reduce((n, r) => n + r.cells.filter(c => c.grade === "critical").length, 0);
+  count.textContent = rows.length + " use cases \u00b7 " + blocked +
+    (blocked === 1 ? " blocking gap" : " blocking gaps");
+
+  // what is needed, reds only — the council's action list
+  needs.replaceChildren();
+  const list = [];
+  for (const { u, cells } of rows)
+    for (const c of cells)
+      if (c.grade === "critical") list.push({ u, c });
+  if (!list.length) {
+    needs.append(el("p", "readynote", "No blocking gaps across the portfolio."));
+    return;
+  }
+  needs.append(el("div", "label", "What is needed"));
+  const ul = el("ul", "needlist");
+  for (const { u, c } of list) {
+    const li = el("li");
+    li.append(el("span", "nid", u.id), el("b", null, c.d.name), document.createTextNode(" \u2014 " + c.need));
+    ul.append(li);
+  }
+  needs.append(ul);
 }
 
 function renderGates(active) {
