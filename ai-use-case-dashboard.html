@@ -1067,17 +1067,17 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>Operating routines</h2></div>
-    <p class="sectsub">Six standing forums, each with a decision right and a system of record.</p>
+    <p class="sectsub">Six standing forums, each with a decision right and a system of record. No forum meets less often than the stage it owns can go stale &mdash; that rule, not preference, is what sets these cadences.</p>
     <div class="card flush">
       <div class="tscroll">
         <table class="mini routines">
           <thead><tr><th>Forum</th><th>Cadence</th><th>Decision right</th><th>Output</th><th>System of record</th></tr></thead>
           <tbody>
             <tr><td>AI Intake &amp; Triage</td><td>Weekly</td><td>Route or decline</td><td>Every submission routed to discovery, prototype, partner, or declined, with a named owner and date. Preliminary risk tier flagged.</td><td>Jira</td></tr>
-            <tr><td>Discovery Review</td><td>Bi-weekly</td><td>Advance or kill</td><td>Each discovery package exited as Build, Reshape, Park, or Stop, with the evidence that drove it.</td><td>Jira</td></tr>
-            <tr><td>AI Risk &amp; Controls</td><td>Monthly</td><td>Confirm tier, block launch</td><td>Risk designation confirmed and required controls assigned for new use cases. Second half: production health across live use cases — drift, incidents, control testing, retirement candidates.</td><td>Archer</td></tr>
-            <tr><td>AI Portfolio Council</td><td>Monthly</td><td>Set rank, commit capacity, grade readiness</td><td>Ranked backlog by WSJF (Weighted Shortest Job First), with any deviation from rank recorded and attributed. Every use case graded against the readiness framework &mdash; sponsor and problem, value case, data, model evaluated, risk and controls, adoption and benefits &mdash; with a named owner and a date against every red.</td><td>Jira</td></tr>
-            <tr><td>Delivery &amp; Controls Review</td><td>Monthly</td><td>Unblock or re-baseline</td><td>Every approved use case walked gate by gate: time in gate against expected, who owns the queue it is sitting in, and an escalation or a new date for anything past expected. This is the cadence approved work runs on between quarters.</td><td>Jira</td></tr>
+            <tr><td>Discovery Review</td><td>Weekly</td><td>Advance or kill</td><td>Each discovery package exited as Build, Reshape, Park, or Stop, with the evidence that drove it.</td><td>Jira</td></tr>
+            <tr><td>AI Risk &amp; Controls</td><td>Bi-weekly</td><td>Confirm tier, block launch</td><td>Risk designation confirmed and required controls assigned for new use cases. Second half: production health across live use cases — drift, incidents, control testing, retirement candidates.</td><td>Archer</td></tr>
+            <tr><td>AI Portfolio Council</td><td>Bi-weekly</td><td>Set rank, commit capacity, grade readiness</td><td>Ranked backlog by WSJF (Weighted Shortest Job First), reviewed every sitting with any deviation from rank recorded and attributed. Capacity is committed monthly, at every second sitting. Every use case graded against the readiness framework &mdash; sponsor and problem, value case, data, model evaluated, risk and controls, adoption and benefits &mdash; with a named owner and a date against every red.</td><td>Jira</td></tr>
+            <tr><td>Delivery &amp; Controls Review</td><td>Bi-weekly</td><td>Unblock or re-baseline</td><td>Every approved use case walked gate by gate: time in gate against expected, who owns the queue it is sitting in, and an escalation or a new date for anything past expected. This is the cadence approved work runs on between quarters.</td><td>Jira</td></tr>
             <tr><td>Portfolio Increment Review</td><td>Quarterly</td><td>Fund and staff</td><td>Benefits measured against baseline first, WSJF inputs recalibrated from actuals, then funding and staffing committed for the increment.</td><td>Jira, benefits log</td></tr>
           </tbody>
         </table>
@@ -1757,15 +1757,15 @@ const STAGES = [
     outcome: "Assess, route, and identify reuse opportunities", owner: "AI Portfolio Team", record: "Jira backlog" },
   { id: "discovery",      name: "Discovery & Sizing", staleDays: 10, riskWindow: 5,  cadence: "Four-week timebox",
     outcome: "Validate value, feasibility, and scope", owner: "Product Manager", record: "Discovery package" },
-  { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,  cadence: "Monthly scoring session",
+  { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,  cadence: "Bi-weekly Portfolio Council",
     outcome: "Evaluate and rank opportunities", owner: "AI Portfolio Team", record: "Portfolio backlog" },
-  { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,  cadence: "Monthly Portfolio Council",
+  { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,  cadence: "Bi-weekly Portfolio Council",
     outcome: "Approve, defer, or reject investment", owner: "AI Portfolio Council", record: "AI roadmap" },
-  { id: "governance",     name: "Governance",         staleDays: 30, riskWindow: 7,  cadence: "Monthly risk and controls review",
+  { id: "governance",     name: "Governance",         staleDays: 30, riskWindow: 7,  cadence: "Bi-weekly risk and controls review",
     outcome: "Confirm risk, compliance, and control requirements are satisfied", owner: "Business Line Risk", record: "Archer" },
-  { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14, cadence: "Quarterly increment review / sprint cadence",
+  { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14, cadence: "Bi-weekly delivery and controls review",
     outcome: "Deliver, launch, and scale the solution", owner: "Product Manager", record: "Quarterly plan" },
-  { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly increment review",
+  { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly benefits review, bi-weekly production health",
     outcome: "Measure and realize business outcomes", owner: "Business Sponsor", record: "Benefits dashboard" },
 ];
 
@@ -3327,14 +3327,44 @@ function actionsFor(u, plan) {
 /* The standing calendar. Next sittings are computed rather than dated, so
    the report stays plausible whenever it is opened, and each forum knows
    which stages it reviews — that is what produces the agenda. */
+/* Cadence is not a preference. A forum that meets less often than the stage it
+   owns can go stale is a queue with a meeting attached: work blows its target,
+   nobody is in the room, and the next sitting inherits a bigger problem. So
+   every stage is seen by some forum at least as often as its staleDays.
+
+   That rule is what set these, and it is asserted at load — add a forum or
+   slow one down and the console says which stage it stranded.
+
+   Days are spread across the week so no two forums collide, and the two that
+   stay slow stay slow for a reason: the Council commits capacity monthly even
+   though it reviews rank fortnightly, and benefits cannot be measured faster
+   than a quarter. */
 const FORUMS = [
-  { name: "AI Intake & Triage",        cadence: "Weekly",    stages: ["intake", "triage"],              next: () => nextWeekly(4) },
-  { name: "Discovery Review",          cadence: "Bi-weekly", stages: ["discovery"],                     next: () => nextBiweekly(3, "2026-01-07") },
-  { name: "AI Risk & Controls",        cadence: "Monthly",   stages: ["governance"],                    next: () => nextMonthly(2, 2) },
-  { name: "AI Portfolio Council",      cadence: "Monthly",   stages: ["prioritization", "portfolio"],   next: () => nextMonthly(4, 3) },
-  { name: "Delivery & Controls Review", cadence: "Monthly",   stages: ["delivery"],                    next: () => nextMonthly(3, 3) },
-  { name: "Portfolio Increment Review",cadence: "Quarterly", stages: ["delivery", "value"],             next: () => nextQuarterly(4, 3) },
+  { name: "AI Intake & Triage",         cadence: "Weekly",    stages: ["intake", "triage"],            next: () => nextWeekly(4) },
+  { name: "Discovery Review",           cadence: "Weekly",    stages: ["discovery"],                   next: () => nextWeekly(3) },
+  { name: "AI Portfolio Council",       cadence: "Bi-weekly", stages: ["prioritization", "portfolio"], next: () => nextBiweekly(1, "2026-01-12") },
+  { name: "AI Risk & Controls",         cadence: "Bi-weekly", stages: ["governance", "value"],         next: () => nextBiweekly(2, "2026-01-06") },
+  { name: "Delivery & Controls Review", cadence: "Bi-weekly", stages: ["delivery"],                    next: () => nextBiweekly(5, "2026-01-09") },
+  { name: "Portfolio Increment Review", cadence: "Quarterly", stages: ["value"],                       next: () => nextQuarterly(4, 3) },
 ];
+const CADENCE_DAYS = { Weekly: 7, "Bi-weekly": 14, Monthly: 30, Quarterly: 90 };
+
+/* Every stage must be seen by some forum at least as often as it can go stale.
+   Cheap to check, and the failure it catches is silent otherwise. */
+(function assertCadence() {
+  const seen = {};
+  for (const f of FORUMS)
+    for (const id of f.stages)
+      seen[id] = Math.min(seen[id] ?? Infinity, CADENCE_DAYS[f.cadence]);
+  for (const st of STAGES) {
+    const gap = seen[st.id];
+    if (gap === undefined)
+      console.warn("Cadence: no forum covers " + st.name);
+    else if (gap > st.staleDays)
+      console.warn("Cadence: " + st.name + " goes stale at " + st.staleDays +
+                   " days but its fastest forum sits every " + gap);
+  }
+})();
 
 function nextWeekly(dow) {
   const d = new Date(todayUTC());
