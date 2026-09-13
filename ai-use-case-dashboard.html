@@ -566,6 +566,15 @@
     fill: var(--accent); font: 700 9px var(--sans);
     letter-spacing: 0.12em;
   }
+  .gatespec .gnumsm {
+    display: inline-grid; place-items: center; width: 17px; height: 17px;
+    background: var(--brand); color: #fff; font: 700 var(--fs-nano) var(--sans);
+    margin-right: 6px; vertical-align: 1px;
+  }
+  .gatespec td:last-child { text-align: right; white-space: nowrap; color: var(--ink-2); }
+  .readyspec td:first-child { font-weight: 600; white-space: nowrap; }
+  .readyspec td:last-child { white-space: nowrap; color: var(--ink-3); }
+
   /* Readiness matrix: the council's grid. */
   .readyfold > summary { font: 600 var(--fs-lead) var(--sans); }
   .readylead { color: var(--ink-2); font-size: var(--fs-small); max-width: 78ch; margin: 0 0 var(--s3); }
@@ -577,6 +586,7 @@
   .ready td.rname { min-width: 220px; }
   .ready .rid { font-weight: 700; margin-right: 6px; }
   .ready .rpend { color: var(--rule); font-weight: 700; }
+  .raglegend { margin-bottom: var(--s3); }
   .raglegend {
     list-style: none; display: flex; flex-wrap: wrap; gap: 6px var(--s5);
     margin: var(--s3) 0 0; padding: 0; font-size: var(--fs-caption); color: var(--ink-3);
@@ -1067,7 +1077,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>Operating routines</h2></div>
-    <p class="sectsub">Six standing forums, each with a decision right and a system of record. No forum meets less often than the stage it owns can go stale &mdash; that rule, not preference, is what sets these cadences.</p>
+    <p class="sectsub">Six standing forums, each with a decision right and a system of record. No forum meets less often than the stage it owns can go stale &mdash; that rule, not preference, is what sets these cadences. <strong>Cadence is how often we look, not how often we all sit down:</strong> where the board is green a sitting is a two-minute confirmation against it, and people are only in a room when something red needs a decision the data cannot make.</p>
     <div class="card flush">
       <div class="tscroll">
         <table class="mini routines">
@@ -1086,7 +1096,40 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">03</span><h2>Where I'd push it next</h2></div>
+    <div class="secthead"><span class="kicker">03</span><h2>The gates approved work passes</h2></div>
+    <p class="sectsub">Once funded, a use case stops moving between stages and starts moving between queues other teams own. Time in gate is measured against each queue, not against the stage date &mdash; a nine-month build has one stage date and seven places to stall. The Delivery &amp; Controls Review walks them fortnightly.</p>
+    <details class="ref">
+      <summary>The seven gates, their owners and expected duration</summary>
+      <div class="refbody">
+        <div class="tscroll">
+          <table class="mini gatespec">
+            <thead><tr><th>Gate</th><th>Who owns the queue</th><th>Expected</th></tr></thead>
+            <tbody id="gatespec"></tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">04</span><h2>How readiness is graded</h2></div>
+    <p class="sectsub">Six dimensions the Portfolio Council grades every fortnight, each computed from the record rather than argued in the room. A dimension starts being graded only when the work reaches the stage it belongs to, so an early use case is not marked down for controls it has not reached.</p>
+    <ul class="raglegend" id="raglegend2"></ul>
+    <details class="ref">
+      <summary>The six dimensions, what each asks, and when it starts counting</summary>
+      <div class="refbody">
+        <div class="tscroll">
+          <table class="mini readyspec">
+            <thead><tr><th>Dimension</th><th>What it asks</th><th>Graded from</th></tr></thead>
+            <tbody id="readyspec"></tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">05</span><h2>Where I'd push it next</h2></div>
     <p class="sectsub">Two standing questions we keep asking of the process and of every use case in it.</p>
     <div class="opps">
       <div class="opp"><h3>Add more information, action, automation, and AI</h3><p>Continuously identify where each can be put to work — in our use cases and in the process that manages them.</p></div>
@@ -1095,7 +1138,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>Next steps</h2></div>
+    <div class="secthead"><span class="kicker">06</span><h2>Next steps</h2></div>
     <p class="sectsub">One owner and one date each, on the terms the process asks of every use case in it.</p>
     <ol class="steps">
       <li><div class="stitle">Socialize the intake process</div>
@@ -1127,7 +1170,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">01</span><h2>The spine</h2></div>
-    <p class="sectsub">One door in, one path down. Every stage has a forum that decides it and a record that holds the result.</p>
+    <p class="sectsub">One door in, one path down. Every stage has a forum that decides it and a record that holds the result &mdash; and because the record is what the forum reads, most sittings confirm rather than deliberate.</p>
     <div class="flowwrap"><div id="flow"></div></div>
   </div>
 
@@ -1825,22 +1868,26 @@ const STAGE_DETAILS = {
    Every grade is computed from the record. Nothing here is a stored opinion. */
 const READINESS = [
   { key: "sponsor", name: "Sponsor and problem", from: "intake",
+    asks: "Is someone accountable for the value, and is the problem stated with a way to tell if it worked?",
     grade: u => !u.sponsor ? ["critical", "Name a business sponsor accountable for the value"]
               : !u.metric  ? ["warning",  "Define the success metric"]
               : ["good", null] },
 
   { key: "value", name: "Value case", from: "discovery",
+    asks: "Is the benefit sized, and measured against a baseline we actually captured?",
     grade: u => u.est == null ? ["critical", "Size the annual benefit"]
               : !u.baseline   ? ["warning",  "Capture the baseline the benefit is measured against"]
               : ["good", null] },
 
   { key: "data", name: "Data readiness", from: "discovery",
+    asks: "Does the data exist, can we get to it, and do we know its gaps?",
     grade: u => !u.dataReady          ? ["critical", "Assess data readiness"]
               : u.dataReady === "partial" ? ["warning", "Close the known data gaps"]
               : u.dataReady === "ready"   ? ["good", null]
               : ["critical", "Data is not ready; reshape or park"] },
 
   { key: "model", name: "Model evaluated", from: "governance",
+    asks: "Has MRM validated it, and if not, where is it in that queue?",
     grade: u => {
       const st = gateState(u);
       const mrm = GATE_BY_ID.mrm.i;
@@ -1853,6 +1900,7 @@ const READINESS = [
     } },
 
   { key: "controls", name: "Risk and controls", from: "governance",
+    asks: "Is the risk tier confirmed and are the controls it demands in place?",
     grade: u => {
       const i = stageOrder[u.stage];
       if (i > stageOrder.governance) return ["good", null];
@@ -1861,6 +1909,7 @@ const READINESS = [
     } },
 
   { key: "adoption", name: "Adoption and benefits", from: "delivery",
+    asks: "Is there a business routine, a named owner for it, and measurement running?",
     grade: u => u.stage === "value" && u.baseline ? ["good", null]
               : u.stage === "value" ? ["critical", "Live without a measured baseline"]
               : ["warning", "Business routine and benefit owner not yet named"] },
@@ -3664,6 +3713,47 @@ function gateState(u) {
 /* The council's grid: every active use case against every dimension, plus the
    list of what is actually blocking. Sorted worst first — the council should
    not have to hunt for the reds. */
+/* The operating model states the framework; the dashboard shows it applied.
+   Both read the same config, so the definition cannot drift from the instance. */
+function renderSpecs() {
+  const g = document.getElementById("gatespec");
+  if (g) {
+    g.replaceChildren();
+    GATE_PATH.forEach((gate, i) => {
+      const tr = el("tr");
+      const first = el("td");
+      first.append(el("span", "gnumsm", String(i + 1)), document.createTextNode(" " + gate.name));
+      tr.append(first, el("td", null, gate.owner), el("td", "jnum", gate.days + days(gate.days)));
+      g.append(tr);
+    });
+  }
+
+  const r = document.getElementById("readyspec");
+  if (r) {
+    r.replaceChildren();
+    for (const d of READINESS)
+      r.append(el("tr", null, null,
+        el("td", null, d.name), el("td", null, d.asks),
+        el("td", "jmuted", stageById[d.from].name)));
+  }
+
+  const leg = document.getElementById("raglegend2");
+  if (leg) {
+    leg.replaceChildren();
+    for (const [grade, label, meaning] of RAG_SCALE) {
+      const li = el("li");
+      if (grade === "pending") li.append(el("span", "rpend", "\u2013"));
+      else {
+        const dot = el("span", "dot " + grade, HEALTH[grade].glyph);
+        dot.setAttribute("aria-hidden", "true");
+        li.append(dot);
+      }
+      li.append(el("b", null, label), document.createTextNode(" " + meaning));
+      leg.append(li);
+    }
+  }
+}
+
 function renderReadiness(active) {
   const head = document.getElementById("readyhead");
   const body = document.getElementById("readybody");
@@ -3995,6 +4085,7 @@ function renderStatic() {
     tb.append(tr);
   }
 
+  renderSpecs();
   renderFlow();
   renderJira();
   renderTrends();
