@@ -566,6 +566,23 @@
     fill: var(--accent); font: 700 9px var(--sans);
     letter-spacing: 0.12em;
   }
+  /* Gate tracker: the approved book, gate by gate. */
+  .gates { list-style: none; margin: 0; padding: 0 var(--s5) var(--s4); }
+  .gates li { padding: var(--s3) 0; border-top: 1px solid var(--hairline); }
+  .gates li:first-child { border-top: none; }
+  .gates .g1 { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+  .gates .gnm { font-weight: 600; font-size: var(--fs-body); }
+  .gates .gstrip { display: flex; gap: 3px; margin: var(--s2) 0 6px; max-width: 420px; }
+  .gates .gseg { height: 6px; flex: 1; border-radius: 1px; background: var(--hairline); }
+  .gates .gseg.done { background: var(--brand); }
+  .gates .gseg.now.good { background: var(--status-good); }
+  .gates .gseg.now.warning { background: var(--status-warning); }
+  .gates .gseg.now.critical { background: var(--status-critical); }
+  .gates .gmeta { font-size: var(--fs-caption); color: var(--ink-3); }
+  .gates .gmeta b { color: var(--ink); font-weight: 600; }
+  .gates .gdays { color: var(--ink-2); }
+  .gatefoot { color: var(--ink-3); font-size: var(--fs-caption); margin: 0; padding: 0 var(--s5) var(--s4); }
+
   /* The full table is operator detail. It folds away so the exec view leads
      with the tiles, the pipeline and what needs attention. */
   .tablefold > summary { font: 600 var(--fs-lead) var(--sans); }
@@ -998,7 +1015,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>Operating routines</h2></div>
-    <p class="sectsub">Five standing forums, each with a decision right and a system of record.</p>
+    <p class="sectsub">Six standing forums, each with a decision right and a system of record.</p>
     <div class="card flush">
       <div class="tscroll">
         <table class="mini routines">
@@ -1008,6 +1025,7 @@
             <tr><td>Discovery Review</td><td>Bi-weekly</td><td>Advance or kill</td><td>Each discovery package exited as Build, Reshape, Park, or Stop, with the evidence that drove it.</td><td>Jira</td></tr>
             <tr><td>AI Risk &amp; Controls</td><td>Monthly</td><td>Confirm tier, block launch</td><td>Risk designation confirmed and required controls assigned for new use cases. Second half: production health across live use cases — drift, incidents, control testing, retirement candidates.</td><td>Archer</td></tr>
             <tr><td>AI Portfolio Council</td><td>Monthly</td><td>Set rank, commit capacity</td><td>Ranked backlog by WSJF (Weighted Shortest Job First), with any deviation from rank recorded and attributed.</td><td>Jira</td></tr>
+            <tr><td>Delivery &amp; Controls Review</td><td>Monthly</td><td>Unblock or re-baseline</td><td>Every approved use case walked gate by gate: time in gate against expected, who owns the queue it is sitting in, and an escalation or a new date for anything past expected. This is the cadence approved work runs on between quarters.</td><td>Jira</td></tr>
             <tr><td>Portfolio Increment Review</td><td>Quarterly</td><td>Fund and staff</td><td>Benefits measured against baseline first, WSJF inputs recalibrated from actuals, then funding and staffing committed for the increment.</td><td>Jira, benefits log</td></tr>
           </tbody>
         </table>
@@ -1309,6 +1327,16 @@
   <section class="card attn" aria-label="Needs attention">
     <div class="cardhead"><h2>Needs attention</h2></div>
     <ul id="attn"></ul>
+  </section>
+
+  <section class="card" aria-label="Through the internal process">
+    <div class="cardhead">
+      <h2>Through the internal process</h2>
+      <span class="hint">Approved work only &mdash; where it sits in Ally&rsquo;s internal gates</span>
+    </div>
+    <ul class="gates" id="gates"></ul>
+    <p class="gatefoot">Time in gate is measured against the expected duration for that gate, not against
+      the stage target &mdash; a nine-month build has one stage date and seven places to stall.</p>
   </section>
 
   <details class="ref tablefold">
@@ -1714,6 +1742,28 @@ const STAGE_DETAILS = {
   },
 };
 
+/* The internal path an approved use case walks. Intake and discovery are the
+   part everyone designs; this is where a bank's AI work actually spends its
+   time, and it is the half a stage-level view cannot see — "Governance" as one
+   box hides four queues with four different owners.
+
+   `days` is the expected time in gate. Over it is slow, half again over it is
+   stuck: the same shape as the stage staleness rules, applied inside a stage
+   rather than across them. */
+const GATE_PATH = [
+  { id: "build",    name: "Build",                    owner: "Product Manager",       days: 45 },
+  { id: "mrm",      name: "Model validation",         owner: "MRM",                   days: 30 },
+  { id: "security", name: "Security and third party", owner: "Information Security",  days: 20 },
+  { id: "change",   name: "Change approval",          owner: "Change Advisory Board", days: 10 },
+  { id: "pilot",    name: "Pilot",                    owner: "Business Sponsor",      days: 30 },
+  { id: "scale",    name: "Scale",                    owner: "Product Manager",       days: 30 },
+  { id: "benefits", name: "Benefits realised",        owner: "Business Sponsor",      days: 90 },
+];
+const GATE_BY_ID = Object.fromEntries(GATE_PATH.map((g, i) => [g.id, { ...g, i }]));
+/* Only work past the funding decision walks it. */
+const APPROVED_STAGES = ["governance", "delivery", "value"];
+
+
 /* ===== DATA BLOCK START =====================================================
    build_portfolio.py replaces everything between these two markers. Edit the
    data here, or generate it from a Jira export with the Python script.
@@ -1898,6 +1948,7 @@ const USE_CASES = [
     size: 8, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
+    gate: "pilot", gateSince: "2026-07-24",
     lastUpdate: "2026-08-07", target: "2026-09-25", next: "Benefits baseline capture" },
 
   { id: "AI-002", name: "Complaint triage and routing", func: "Customer Care",
@@ -1912,6 +1963,7 @@ const USE_CASES = [
     size: 8, impact: ["risk", "insight"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: "MRM model designation",
+    gate: "mrm", gateSince: "2026-06-20",
     lastUpdate: "2026-08-09", target: "2026-08-08", next: "AI Risk & Controls" },
 
   { id: "AI-004", name: "KYC document extraction", func: "Onboarding",
@@ -1947,6 +1999,7 @@ const USE_CASES = [
     size: 5, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["No human review"], waitingOn: null,
+    gate: "change", gateSince: "2026-07-28",
     lastUpdate: "2026-08-06", target: "2026-09-01", next: "Pilot exit review" },
 
   { id: "AI-009", name: "Wire fraud anomaly detection", func: "Payments",
@@ -1968,6 +2021,7 @@ const USE_CASES = [
     size: 3, impact: ["revenue", "cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
+    gate: "benefits", gateSince: "2026-07-02",
     lastUpdate: "2026-08-01", target: "2026-09-30", next: "Portfolio Increment Review (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
@@ -2039,6 +2093,7 @@ if (SHIFT) {
   for (const u of USE_CASES) {
     u.lastUpdate = slide(u.lastUpdate);
     u.target = slide(u.target);
+    if (u.gateSince) u.gateSince = slide(u.gateSince);
   }
   for (const r of STATUS_HISTORY) {
     r.week = slide(r.week);
@@ -2768,6 +2823,7 @@ function render() {
   renderMix(active);
   renderStatus(allActive); // the weekly report describes the portfolio, not a slice
   renderAttention(active);
+  renderGates(active);
   renderTable(visible);
   renderStatic();
 }
@@ -3020,7 +3076,7 @@ function renderMix(active) {
 const FORUM_BY_STAGE = {
   intake: "AI Intake & Triage", triage: "AI Intake & Triage", discovery: "Discovery Review",
   prioritization: "AI Portfolio Council", portfolio: "AI Portfolio Council",
-  governance: "AI Risk & Controls", delivery: "Portfolio Increment Review",
+  governance: "AI Risk & Controls", delivery: "Delivery & Controls Review",
   value: "Portfolio Increment Review",
 };
 const SEV_RANK = { critical: 0, warning: 1, opportunity: 2 };
@@ -3112,6 +3168,7 @@ const FORUMS = [
   { name: "Discovery Review",          cadence: "Bi-weekly", stages: ["discovery"],                     next: () => nextBiweekly(3, "2026-01-07") },
   { name: "AI Risk & Controls",        cadence: "Monthly",   stages: ["governance"],                    next: () => nextMonthly(2, 2) },
   { name: "AI Portfolio Council",      cadence: "Monthly",   stages: ["prioritization", "portfolio"],   next: () => nextMonthly(4, 3) },
+  { name: "Delivery & Controls Review", cadence: "Monthly",   stages: ["delivery"],                    next: () => nextMonthly(3, 3) },
   { name: "Portfolio Increment Review",cadence: "Quarterly", stages: ["delivery", "value"],             next: () => nextQuarterly(4, 3) },
 ];
 
@@ -3160,6 +3217,23 @@ function upcomingMeetings(active, n) {
    per-use-case risk flags that drive routing. */
 function portfolioRisks(active, plan) {
   const out = [];
+
+  /* Approved work stalling inside an internal gate. A stage-level view misses
+     this entirely — the use case is still "in delivery" and still inside its
+     stage target while a queue it does not own runs long. */
+  const stalled = active
+    .filter(u => APPROVED_STAGES.includes(u.stage))
+    .map(u => ({ u, st: gateState(u) }))
+    .filter(x => x.st && x.st.status !== "good")
+    .sort((a, b) => b.st.inGate - a.st.inGate);
+  if (stalled.length) out.push({
+    sev: stalled.some(x => x.st.status === "critical") ? "critical" : "warning",
+    title: "Approved work stalled at a gate",
+    text: stalled.length + (stalled.length === 1 ? " approved use case is" : " approved use cases are") +
+      " past the expected time in their current gate — " +
+      stalled.map(x => x.u.id + " at " + softLower(x.st.g.name) + ", " +
+        x.st.inGate + days(x.st.inGate) + " against " + x.st.g.days).join("; ") +
+      ". The queue owner is outside the portfolio team in every case." });
 
   const ext = active.filter(u => /approval|designation|access/i.test(u.waitingOn || ""));
   if (ext.length) out.push({ sev: ext.some(u => u.health === "critical") ? "critical" : "warning",
@@ -3379,6 +3453,62 @@ function paintReport(r) {
       li.append(d2, body);
       rk.append(li);
     }
+  }
+}
+
+/* Approved work, gate by gate. A stage-level view says "in delivery" for nine
+   months; this says which queue it is sitting in, who owns that queue, and how
+   long it has been there. */
+function gateState(u) {
+  const g = GATE_BY_ID[u.gate];
+  if (!g || !u.gateSince) return null;
+  const inGate = Math.round((todayUTC() - utc(u.gateSince)) / DAY);
+  const status = inGate > g.days * 1.5 ? "critical" : inGate > g.days ? "warning" : "good";
+  return { g, inGate, status };
+}
+
+function renderGates(active) {
+  const ul = document.getElementById("gates");
+  if (!ul) return;
+  ul.replaceChildren();
+
+  const rows = active
+    .filter(u => APPROVED_STAGES.includes(u.stage) && gateState(u))
+    .sort((a, b) => gateState(b).inGate - gateState(a).inGate);
+
+  if (!rows.length) {
+    ul.append(el("li", "empty", "No approved use cases are in flight."));
+    return;
+  }
+
+  for (const u of rows) {
+    const { g, inGate, status } = gateState(u);
+    const li = el("li");
+
+    const head = el("div", "g1");
+    const d = el("span", "dot " + status, HEALTH[status].glyph);
+    d.setAttribute("aria-hidden", "true");
+    head.append(d, el("span", "gnm", u.id + " \u00b7 " + u.name));
+    if (u.waitingOn) head.append(el("span", "chip", "Waiting: " + u.waitingOn));
+
+    // the path, with the current gate marked
+    const strip = el("div", "gstrip");
+    strip.setAttribute("role", "img");
+    strip.setAttribute("aria-label",
+      "Gate " + (g.i + 1) + " of " + GATE_PATH.length + ": " + g.name);
+    GATE_PATH.forEach((step, i) => {
+      const seg = el("span", "gseg " + (i < g.i ? "done" : i === g.i ? "now " + status : "todo"));
+      seg.title = step.name;
+      strip.append(seg);
+    });
+
+    const meta = el("div", "gmeta");
+    meta.append(el("b", null, g.name),
+      document.createTextNode(" \u00b7 " + g.owner + " \u00b7 "),
+      el("span", "gdays", inGate + days(inGate) + " in gate, expected " + g.days));
+
+    li.append(head, strip, meta);
+    ul.append(li);
   }
 }
 
