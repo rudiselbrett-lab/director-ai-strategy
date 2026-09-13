@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+
+# installed only to run the browser checks; never part of the deliverable
+node_modules/
