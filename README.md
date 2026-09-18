@@ -20,9 +20,11 @@ what's worth building. Built as a single self-contained HTML page with six views
 - **Weekly Status** — RAG for the portfolio and its three elements, what changed
   since last week, which use cases and forums the coming week turns on, and the
   portfolio-level risks. Previous weeks are kept as issued.
-- **Jira** — the same use cases as Jira issues, styled as Jira: the backlog view
-  with workflow statuses and flagged rows, and one issue opened with its full
-  field set and comment stream.
+- **Jira** — the same use cases as Jira issues, styled as Jira: an Action
+  Required dashboard whose three gadgets each grade the portfolio on a
+  different logic (decision rights, time against the expected window, and the
+  readiness framework), the backlog view with workflow statuses and flagged
+  rows, and one issue opened with its full field set and comment stream.
 - **AI First** — *The AI Operating System*: a written piece on running the work
   with AI as infrastructure rather than as a search box, in three layers —
   information, action, automation.
