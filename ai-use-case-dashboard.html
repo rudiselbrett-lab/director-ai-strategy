@@ -643,22 +643,6 @@
   .needlist b { color: var(--ink); font-weight: 600; }
   .readynote { color: var(--ink-3); font-size: var(--fs-small); margin: 0; }
 
-  /* Readiness matrix: the council's grid. */
-  .gates { list-style: none; margin: 0; padding: 0 var(--s5) var(--s4); }
-  .gates li { padding: var(--s3) 0; border-top: 1px solid var(--hairline); }
-  .gates li:first-child { border-top: none; }
-  .gates .g1 { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
-  .gates .gnm { font-weight: 600; font-size: var(--fs-body); }
-  .gates .gstrip { display: flex; gap: var(--s1); margin: var(--s2) 0 var(--s2); max-width: 420px; }
-  .gates .gseg { height: 6px; flex: 1; border-radius: 1px; background: var(--hairline); }
-  .gates .gseg.done { background: var(--brand); }
-  .gates .gseg.now.good { background: var(--status-good); }
-  .gates .gseg.now.warning { background: var(--status-warning); }
-  .gates .gseg.now.critical { background: var(--status-critical); }
-  .gates .gmeta { font-size: var(--fs-caption); color: var(--ink-3); }
-  .gates .gmeta b { color: var(--ink); font-weight: 600; }
-  .gates .gdays { color: var(--ink-2); }
-  .gatefoot { color: var(--ink-3); font-size: var(--fs-caption); margin: 0; padding: 0 var(--s5) var(--s4); }
 
   /* The full table is operator detail. It folds away so the exec view leads
      with the tiles, the pipeline and what needs attention. */
