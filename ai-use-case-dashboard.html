@@ -55,9 +55,19 @@
     --fs-h1:      27px;
     --fs-hero:    30px;
 
-    /* space — 4px base */
+    /* Space. An 8px structural rhythm on a 4px base, and nothing off it —
+       no 3px, 5px, 6px or 7px anywhere. Strict 8px-only was considered and
+       rejected: this is a type-led page, not a component library, and a 14px
+       status glyph cannot carry an 8px inset. 1px and 2px survive only as
+       borders and optical insets, never as spacing. */
     --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
     --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
+
+    /* Measure. Two, and only two: a display measure for statements set open
+       on the page, and a reading measure for everything that is prose. Six
+       different max-widths is not a spine, it is an accident. */
+    --measure:      76ch;   /* body prose — top of the comfortable range */
+    --measure-lead: 46ch;   /* display statements only */
 
     --r: 2px;
     --pad-card: var(--s5) var(--s5);
@@ -138,9 +148,9 @@
     border-left-width: 3px; border-radius: var(--r);
     padding: var(--s3) var(--s4); margin: var(--s3) 0;
     display: grid; grid-template-columns: auto 1fr; gap: var(--s3);
-    align-items: baseline; max-width: 780px;
+    align-items: baseline; max-width: var(--measure);
   }
-  @media (max-width: 560px) { .note { grid-template-columns: 1fr; gap: 4px; } }
+  @media (max-width: 560px) { .note { grid-template-columns: 1fr; gap: var(--s1); } }
   .note .note-lab {
     font: 700 var(--fs-micro)/1.6 var(--sans); letter-spacing: 0.12em;
     text-transform: uppercase; color: var(--note-ink); white-space: nowrap;
@@ -182,18 +192,18 @@
   .filters select, .filters input[type="search"] {
     font: var(--fs-body) var(--sans); color: var(--ink);
     background: #fff; border: 1px solid var(--field); border-radius: var(--r);
-    padding: 6px var(--s2); transition: border-color var(--t);
+    padding: var(--s2) var(--s2); transition: border-color var(--t);
   }
   .filters select:hover, .filters input[type="search"]:hover { border-color: var(--ink-3); }
   .filters input[type="search"] { min-width: 200px; flex: 0 1 250px; }
   .filters label.chk {
-    display: inline-flex; align-items: center; gap: 6px;
-    color: var(--ink-2); font-size: var(--fs-small); padding: 6px var(--s1); cursor: pointer;
+    display: inline-flex; align-items: center; gap: var(--s2);
+    color: var(--ink-2); font-size: var(--fs-small); padding: var(--s2) var(--s1); cursor: pointer;
   }
   .filters .chk input { accent-color: var(--brand); }
   .filters .reset {
     font: var(--fs-small) var(--sans); color: var(--ink-2);
-    background: none; border: none; cursor: pointer; padding: 6px var(--s2);
+    background: none; border: none; cursor: pointer; padding: var(--s2) var(--s2);
     transition: color var(--t);
   }
   .filters .reset:hover { color: var(--ink); text-decoration: underline; }
@@ -216,8 +226,8 @@
   button.stat { cursor: pointer; }
   button.stat:hover { background: var(--brand-wash); }
   .stat.active { box-shadow: inset 0 -3px 0 var(--accent); background: var(--brand-wash); }
-  .stat .slabel { color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
-  .stat .svalue { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin-top: 6px; }
+  .stat .slabel { color: var(--ink-2); display: flex; align-items: center; gap: var(--s2); }
+  .stat .svalue { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin-top: var(--s2); }
   .stat .ssub { color: var(--ink-3); font-size: var(--fs-caption); margin-top: 2px; }
 
   /* status glyph: color + icon, never color alone */
@@ -238,10 +248,10 @@
   .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); margin-bottom: var(--s4); }
   @media (max-width: 960px) { .row3 { grid-template-columns: 1fr; } }
   .card { background: #fff; border: 1px solid var(--hairline); padding: var(--pad-card); }
-  .card .cardhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--s4); margin-bottom: var(--s4); }
-  .card.flush { padding: 6px var(--s5); }
+  .card .cardhead { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); margin-bottom: var(--s4); }
+  .card.flush { padding: var(--s2) var(--s5); }
   .legend { display: flex; gap: var(--s3); margin-left: auto; flex-wrap: wrap; }
-  .legend .key { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-caption); color: var(--ink-2); }
+  .legend .key { display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-caption); color: var(--ink-2); }
 
   /* shared chart row: label | track | value.
      --label-w lets an instance widen the gutter for longer labels. */
@@ -287,14 +297,14 @@
   .colbar:hover, .colbar:focus-visible { filter: brightness(1.14); }
   .bnote { color: var(--ink-3); font-size: var(--fs-caption); margin-top: var(--s3); }
   .backlog .empty, .mix .empty, .actions .empty { color: var(--ink-3); padding: var(--s2) 0; }
-  .backlog .bsub { color: var(--ink-2); font-size: var(--fs-caption); margin: -4px 0 var(--s3); }
+  .backlog .bsub { color: var(--ink-2); font-size: var(--fs-caption); margin: -var(--s1) 0 var(--s3); }
   .backlog .bsub b { color: var(--ink); font-weight: 700; }
 
   /* capacity line — a threshold, deliberately distinct from the grid */
   /* The cut line sits inside a chart of red/amber/green bars, so it takes the
      brand hue rather than the berry accent — a structural boundary must not
      read as one more status signal. */
-  .cutline { display: flex; align-items: center; gap: var(--s2); margin: var(--s2) 0 6px; }
+  .cutline { display: flex; align-items: center; gap: var(--s2); margin: var(--s2) 0 var(--s2); }
   .cutline .cl-lab {
     white-space: nowrap;
     font: 700 var(--fs-micro)/1.2 var(--sans);
@@ -311,7 +321,7 @@
   .trend .sw { width: 10px; height: 10px; display: inline-block; flex: none; }
   .trend .sw.proj { background: #cde2fb; border: 1px solid var(--rule); }
   .trend .sw.real { background: var(--link); }
-  .qrow { display: grid; grid-template-columns: 44px 1fr auto; gap: var(--s2); align-items: center; padding: 5px 0; }
+  .qrow { display: grid; grid-template-columns: 44px 1fr auto; gap: var(--s2); align-items: center; padding: var(--s1) 0; }
   .qlab { font-size: var(--fs-caption); color: var(--ink-2); text-align: right; white-space: nowrap; }
   .qtrack {
     position: relative; height: 14px; background: #cde2fb;
@@ -323,7 +333,7 @@
   .colwrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: var(--s1); min-width: 0; }
   .colv { font-size: var(--fs-micro); color: var(--ink-2); font-variant-numeric: tabular-nums; }
   .colbar { width: 100%; max-width: 22px; background: var(--link); border-radius: var(--r) var(--r) 0 0; border: none; padding: 0; cursor: default; transition: filter var(--t); }
-  .collabs, .linemonths { display: flex; gap: var(--s3); padding-top: 5px; }
+  .collabs, .linemonths { display: flex; gap: var(--s3); padding-top: var(--s1); }
   .collabs span, .linemonths span { flex: 1; text-align: center; font-size: var(--fs-micro); color: var(--ink-3); }
   .lineplot { width: 100%; height: auto; display: block; }
   .lineplot text { fill: var(--ink-2); font: 600 var(--fs-caption) var(--sans); }
@@ -340,7 +350,7 @@
   .weekpick label { font: 600 var(--fs-micro)/1.2 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
   .weekpick select {
     font: var(--fs-body) var(--sans); color: var(--ink); background: #fff;
-    border: 1px solid var(--field); border-radius: var(--r); padding: 6px var(--s2);
+    border: 1px solid var(--field); border-radius: var(--r); padding: var(--s2) var(--s2);
   }
   .weekpick .issued { color: var(--ink-3); font-size: var(--fs-caption); }
   .ragmain {
@@ -392,7 +402,7 @@
 
   /* suggested actions, expanded beneath the use case they belong to */
   .actoggle {
-    display: block; margin-top: 5px; background: none; border: none; padding: 0;
+    display: block; margin-top: var(--s1); background: none; border: none; padding: 0;
     cursor: pointer; text-align: left;
     font: 600 var(--fs-caption) var(--sans); color: var(--link);
   }
@@ -418,12 +428,12 @@
   .attn .who { min-width: 0; flex: 1; }
   .attn .nm { font-weight: 700; font-size: var(--fs-body); }
   .attn .st { color: var(--ink-3); font-size: var(--fs-caption); }
-  .attn .chips { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: 6px; }
+  .attn .chips { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: var(--s2); }
   .attn .empty { color: var(--ink-3); padding: var(--s3) 0; }
   .chip {
     font-size: var(--fs-caption); color: var(--ink-2);
     border: 1px solid var(--hairline); border-radius: var(--r);
-    padding: 2px 7px; white-space: nowrap; background: var(--panel);
+    padding: 2px var(--s2); white-space: nowrap; background: var(--panel);
   }
 
   /* ---------- table ---------- */
@@ -443,7 +453,7 @@
     transition: color var(--t);
   }
   .port thead th:hover { color: var(--ink); }
-  .port thead th .arrow { font-size: var(--fs-nano); margin-left: 3px; color: var(--accent); }
+  .port thead th .arrow { font-size: var(--fs-nano); margin-left: var(--s1); color: var(--accent); }
   .port tbody td { border-bottom: 1px solid var(--hairline); vertical-align: top; }
   .port tbody tr:last-child td { border-bottom: none; }
   .port tbody tr { transition: background var(--t); }
@@ -460,11 +470,11 @@
   .port .waiting { color: var(--ink-2); font-size: var(--fs-caption); margin-top: 2px; }
   .port tr.closedrow td { color: var(--ink-3); }
   .port tr.closedrow .name { color: var(--ink-2); }
-  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-small); white-space: nowrap; color: var(--ink); }
+  .badge { display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-small); white-space: nowrap; color: var(--ink); }
   .badge .txt { font-weight: 500; }
   .flag {
     display: inline-block; font-size: var(--fs-micro); color: var(--ink-2);
-    border: 1px solid var(--hairline); border-radius: var(--r); padding: 0 5px; margin: 2px var(--s1) 0 0;
+    border: 1px solid var(--hairline); border-radius: var(--r); padding: 0 var(--s1); margin: 2px var(--s1) 0 0;
     background: var(--panel); letter-spacing: 0.03em;
   }
   .empty-table { color: var(--ink-3); padding: var(--s5); }
@@ -495,7 +505,7 @@
   details.ref[open] > summary::before { content: "▾ "; }
   .refbody { border: 1px solid var(--hairline); border-top: none; background: #fff; padding: var(--s1) var(--s5) var(--s5); }
   .refbody h3 { margin: var(--s5) 0 var(--s2); }
-  .refbody p { color: var(--ink-2); font-size: var(--fs-small); margin: 6px 0; }
+  .refbody p { color: var(--ink-2); font-size: var(--fs-small); margin: var(--s2) 0; }
   /* analysis is collapsed by default so the demo view stays a demo, not a report */
   .analysis .refbody { padding: var(--s4) var(--s5) var(--s5); }
   .analysis .refbody .row3 { margin-bottom: var(--s4); }
@@ -508,19 +518,24 @@
   .routines th:nth-child(3), .routines td:nth-child(3) { width: 15%; }
   .routines th:nth-child(5), .routines td:nth-child(5) { width: 13%; }
   .routines tbody td:first-child { white-space: normal; }
-  .mini th, .mini td { text-align: left; padding: 6px var(--s3) 6px 0; vertical-align: top; }
-  .mini thead th { color: var(--ink-3); border-bottom: 1px solid var(--rule); padding-bottom: 7px; }
+  .mini th, .mini td { text-align: left; padding: var(--s2) var(--s3) var(--s2) 0; vertical-align: top; }
+  .mini thead th { color: var(--ink-3); border-bottom: 1px solid var(--rule); padding-bottom: var(--s2); }
   .mini tbody td { border-bottom: 1px solid var(--hairline); color: var(--ink-2); }
   .mini tbody td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
   .mini tbody tr:last-child td { border-bottom: none; }
 
   /* ---------- operating model ---------- */
-  .mission { border-top: 3px solid var(--brand); padding: var(--s6) 0 6px; }
+  .mission { border-top: 3px solid var(--brand); padding: var(--s6) 0 var(--s2); }
   /* 46ch is the tightest measure that still holds the intended three-line rag */
-  .mission .statement { font: 400 var(--fs-hero)/1.32 var(--serif); margin: var(--s3) 0; max-width: 46ch; }
+  .mission .statement { font: 400 var(--fs-hero)/1.32 var(--serif); margin: var(--s3) 0; max-width: var(--measure-lead); }
   @media (max-width: 720px) { .mission .statement { font-size: var(--fs-h1); } }
   .mission .statement em { font-style: italic; }
-  .mission .statement-sub { color: var(--ink-2); font-size: var(--fs-lead); margin: 0; max-width: 76ch; }
+  .mission .statement-sub { color: var(--ink-2); font-size: var(--fs-lead); margin: 0; max-width: var(--measure); }
+  /* The three numbers are part of the claim, not a section under it — so they
+     sit inside the mission block with no rule and no heading, which is what
+     gets them onto the first screen. */
+  .mission .row3 { margin-top: var(--s5); }
+  .mission .result { margin-top: var(--s5); }
 
   /* Sections are chapters. The rule and the air above each one are what make
      five different kinds of content read as a single page rather than five
@@ -528,7 +543,7 @@
   .sect { margin-top: var(--s7); padding-top: var(--s6); border-top: 1px solid var(--hairline); }
   .secthead { display: flex; align-items: baseline; gap: var(--s3); margin: 0 0 var(--s1); }
   .secthead h2 { font: 400 var(--fs-h2)/1.2 var(--serif); margin: 0; }
-  .sectsub { color: var(--ink-2); font-size: var(--fs-small); margin: var(--s1) 0 var(--s5); max-width: 84ch; }
+  .sectsub { color: var(--ink-2); font-size: var(--fs-small); margin: var(--s1) 0 var(--s5); max-width: var(--measure); }
 
   /* Containers carry records and tables. Statements are set open on the page —
      that is the whole rule, and it is why the principles are set open while
@@ -539,7 +554,7 @@
   .tenet { padding: 0; background: none; border: none; }
   /* Serif titles here because these are ideas. State and routine names are
      operational records and stay sans — that is the only font rule on the page. */
-  .tenet h3 { font: 400 var(--fs-h3)/1.3 var(--serif); margin: var(--s2) 0 6px; }
+  .tenet h3 { font: 400 var(--fs-h3)/1.3 var(--serif); margin: var(--s2) 0 var(--s2); }
   .tenet p { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; margin: 0; }
 
   /* still used by the intake form's fieldset legends */
@@ -555,13 +570,13 @@
 
   /* The one rule the rest of the tab is a consequence of. Set open on the
      page like the mission statement — this is an idea, not a record. */
-  .ruleline { font: 400 var(--fs-h1)/1.3 var(--serif); margin: 0 0 var(--s5); max-width: 42ch; }
+  .ruleline { font: 400 var(--fs-h1)/1.3 var(--serif); margin: 0 0 var(--s5); max-width: var(--measure-lead); }
   @media (max-width: 720px) { .ruleline { font-size: var(--fs-h2); } }
   .ruleline em { font-style: italic; color: var(--ink-2); }
 
   /* The three measures the whole model is answerable to. Same type as the
      portfolio's stat tiles, in cards rather than a band. */
-  .drive .dvalue { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin-top: 6px; }
+  .drive .dvalue { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin-top: var(--s2); }
   .drive .dsub { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.45; margin-top: var(--s1); }
 
   .statemap { min-width: 860px; }
@@ -597,7 +612,7 @@
   .gatespec .gnumsm {
     display: inline-grid; place-items: center; width: 17px; height: 17px;
     background: var(--brand); color: #fff; font: 700 var(--fs-nano) var(--sans);
-    margin-right: 6px; vertical-align: 1px;
+    margin-right: var(--s2); vertical-align: 1px;
   }
   .gatespec td:last-child { text-align: right; white-space: nowrap; color: var(--ink-2); }
   .readyspec td:first-child { font-weight: 600; white-space: nowrap; }
@@ -605,28 +620,28 @@
 
   /* Readiness matrix: the council's grid. */
   .readyfold > summary { font: 600 var(--fs-lead) var(--sans); }
-  .readylead { color: var(--ink-2); font-size: var(--fs-small); max-width: 78ch; margin: 0 0 var(--s3); }
+  .readylead { color: var(--ink-2); font-size: var(--fs-small); max-width: var(--measure); margin: 0 0 var(--s3); }
   .ready th.rdim {
     font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--ink-3); text-align: center; vertical-align: bottom; width: 88px;
   }
   .ready td.rcell { text-align: center; }
   .ready td.rname { min-width: 220px; }
-  .ready .rid { font-weight: 700; margin-right: 6px; }
+  .ready .rid { font-weight: 700; margin-right: var(--s2); }
   .ready .rpend { color: var(--rule); font-weight: 700; }
   .raglegend { margin-bottom: var(--s3); }
   .raglegend {
-    list-style: none; display: flex; flex-wrap: wrap; gap: 6px var(--s5);
+    list-style: none; display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5);
     margin: var(--s3) 0 0; padding: 0; font-size: var(--fs-caption); color: var(--ink-3);
   }
-  .raglegend li { display: flex; align-items: center; gap: 6px; }
+  .raglegend li { display: flex; align-items: center; gap: var(--s2); }
   .raglegend b { color: var(--ink-2); font-weight: 600; }
-  .jira .jraglegend { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--s3); }
+  .jira .jraglegend { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: var(--s3); }
 
   .readyneeds { padding-top: var(--s3); }
   .needlist { list-style: none; margin: var(--s2) 0 0; padding: 0; max-width: 900px; }
   .needlist li {
-    padding: 5px 0; border-top: 1px solid var(--hairline);
+    padding: var(--s1) 0; border-top: 1px solid var(--hairline);
     font-size: var(--fs-small); color: var(--ink-2);
   }
   .needlist li:first-child { border-top: none; }
@@ -640,7 +655,7 @@
   .gates li:first-child { border-top: none; }
   .gates .g1 { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
   .gates .gnm { font-weight: 600; font-size: var(--fs-body); }
-  .gates .gstrip { display: flex; gap: 3px; margin: var(--s2) 0 6px; max-width: 420px; }
+  .gates .gstrip { display: flex; gap: var(--s1); margin: var(--s2) 0 var(--s2); max-width: 420px; }
   .gates .gseg { height: 6px; flex: 1; border-radius: 1px; background: var(--hairline); }
   .gates .gseg.done { background: var(--brand); }
   .gates .gseg.now.good { background: var(--status-good); }
@@ -661,7 +676,7 @@
      Long-form editorial. It borrows the operating model's chapter rules and its
      open-statement treatment rather than inventing a third visual system —
      the only new shapes here are the lead, the turn, and the closing result. */
-  .premise { margin-top: var(--s6); max-width: 760px; }
+  .premise { margin-top: var(--s6); max-width: var(--measure); }
   .premise .kicker { display: block; margin-bottom: var(--s2); }
   .premise p { font-size: var(--fs-lead); color: var(--ink-2); line-height: 1.6; margin: 0 0 var(--s4); }
   .premise .plead {
@@ -680,20 +695,20 @@
   .aigrid .tenet .no + h3 { margin-top: var(--s2); }
   .aigrid code {
     font-family: "SF Mono", Menlo, Consolas, monospace; font-size: var(--fs-caption);
-    background: var(--wash); padding: 1px 4px; border-radius: var(--r);
+    background: var(--wash); padding: 1px var(--s1); border-radius: var(--r);
   }
 
   /* The line each layer is arguing toward. */
   .result {
     font: italic 400 var(--fs-lead)/1.55 var(--serif); color: var(--ink);
     border-left: 2px solid var(--accent); padding-left: var(--s4);
-    margin: var(--s5) 0 0; max-width: 72ch;
+    margin: var(--s5) 0 0; max-width: var(--measure);
   }
 
   /* The layer stack. A spine rather than a diagram: three layers that build on
      each other, drawn in CSS so it reflows on a phone instead of scrolling
      sideways the way an SVG would. */
-  .stackdia { list-style: none; margin: var(--s5) 0 var(--s4); padding: 0; max-width: 780px; }
+  .stackdia { list-style: none; margin: var(--s5) 0 var(--s4); padding: 0; max-width: var(--measure); }
   .layer { position: relative; display: grid; grid-template-columns: 28px 1fr; gap: var(--s4); padding-bottom: var(--s5); }
   .layer:last-child { padding-bottom: 0; }
   /* the spine, drawn between one number and the next */
@@ -712,7 +727,7 @@
     color: var(--ink); font: italic 400 var(--fs-small)/1.55 var(--serif);
     border-left: 2px solid var(--accent); padding-left: var(--s3); margin-top: var(--s3);
   }
-  .refbody > p { max-width: 82ch; }
+  .refbody > p { max-width: var(--measure); }
   .refbody > p b { color: var(--ink); font-weight: 600; }
 
   /* ---------- Jira mock ----------
@@ -722,7 +737,7 @@
      palette, and nothing outside inherits theirs. */
   .jsect { font: 400 var(--fs-h2)/1.25 var(--serif); margin: var(--s7) 0 2px; }
   .jsect:first-of-type { margin-top: var(--s5); }
-  .jsub { color: var(--ink-2); font-size: var(--fs-small); max-width: 78ch; margin: 0 0 var(--s3); }
+  .jsub { color: var(--ink-2); font-size: var(--fs-small); max-width: var(--measure); margin: 0 0 var(--s3); }
   .jira {
     --j-ink:   #172b4d;
     --j-ink-2: #5e6c84;
@@ -750,7 +765,7 @@
   .jira .jptype { color: var(--j-ink-2); font-size: var(--fs-nano); }
   .jira .jnavlist { list-style: none; margin: 0; padding: 0; }
   .jira .jnavlist li {
-    padding: 5px var(--s3); color: var(--j-ink-2); border-left: 2px solid transparent;
+    padding: var(--s1) var(--s3); color: var(--j-ink-2); border-left: 2px solid transparent;
   }
   .jira .jnavlist li.on {
     background: var(--j-blue-w); color: var(--j-blue); font-weight: 600; border-left-color: var(--j-blue);
@@ -761,15 +776,15 @@
   .jira .jcrumb { color: var(--j-ink-2); font-size: var(--fs-nano); padding: 0 var(--s3); }
   .jira .jtitle { font: 600 var(--fs-h3)/1.3 var(--sans); margin: 2px 0 var(--s3); padding: 0 var(--s3); color: var(--j-ink); }
   .jira .jtoolbar {
-    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap;
     padding: 0 var(--s3) var(--s3);
   }
   .jira .jsearch, .jira .jsel {
     background: var(--j-bg); border: 1px solid transparent; border-radius: 3px;
-    padding: 3px var(--s2); color: var(--j-ink-2); white-space: nowrap;
+    padding: var(--s1) var(--s2); color: var(--j-ink-2); white-space: nowrap;
   }
   .jira .jsearch { min-width: 150px; }
-  .jira .jsel .jcar { color: var(--j-ink-2); margin-left: 3px; }
+  .jira .jsel .jcar { color: var(--j-ink-2); margin-left: var(--s1); }
   .jira .jcount { margin-left: auto; color: var(--j-ink-2); font-size: var(--fs-nano); white-space: nowrap; }
 
   .jira .jscroll { overflow-x: auto; }
@@ -780,7 +795,7 @@
     border-top: 1px solid var(--j-line); border-bottom: 1px solid var(--j-line);
     white-space: nowrap; font-size: var(--fs-nano); letter-spacing: 0.04em; text-transform: uppercase;
   }
-  .jira td { padding: 6px var(--s3); border-bottom: 1px solid var(--j-line); vertical-align: middle; }
+  .jira td { padding: var(--s2) var(--s3); border-bottom: 1px solid var(--j-line); vertical-align: middle; }
   .jira tbody tr:hover { background: var(--j-bg); }
   /* Jira flags a blocked issue rather than giving it a status — the row tints
      and carries a flag glyph, and the status underneath is unchanged. */
@@ -789,13 +804,13 @@
   .jira .jsum { color: var(--j-ink); min-width: 210px; }
   .jira .jnum { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .jira .jmuted { color: var(--j-ink-2); white-space: nowrap; }
-  .jira .jflagicon { color: #ff8b00; margin-right: 4px; }
+  .jira .jflagicon { color: #ff8b00; margin-right: var(--s1); }
   /* a custom issue type, which is the point: this is not a bug tracker */
   .jira .jtype {
     display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 3px;
     background: #6b2c91; color: #fff; font: 700 8px/1 var(--sans);
   }
-  .jira .jwho { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .jira .jwho { display: flex; align-items: center; gap: var(--s2); white-space: nowrap; }
   .jira .jav {
     width: 20px; height: 20px; flex: none; border-radius: 50%; color: #fff;
     display: grid; place-items: center; font: 700 8px/1 var(--sans);
@@ -805,7 +820,7 @@
   /* Atlassian lozenges — their colour language, bounded to this frame. The
      status is a control in Jira, so it carries a caret. */
   .jira .loz {
-    display: inline-flex; align-items: center; gap: 3px; border-radius: 3px; padding: 2px 5px;
+    display: inline-flex; align-items: center; gap: var(--s1); border-radius: 3px; padding: 2px var(--s1);
     white-space: nowrap; font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.03em; text-transform: uppercase;
   }
   .jira .loz.todo { background: var(--j-bg-2); color: #42526e; }
@@ -836,8 +851,8 @@
     border-bottom: 1px solid var(--j-line); border-radius: 3px 3px 0 0;
   }
   .jira .jgname { font: 600 var(--fs-body) var(--sans); color: var(--j-ink); }
-  .jira .jgwhat { color: var(--j-ink-2); font-size: var(--fs-nano); line-height: 1.5; margin-top: 3px; }
-  .jira .jglogic { font: italic 700 var(--fs-nano) var(--sans); color: var(--j-blue); margin-top: 6px; }
+  .jira .jgwhat { color: var(--j-ink-2); font-size: var(--fs-nano); line-height: 1.5; margin-top: var(--s1); }
+  .jira .jglogic { font: italic 700 var(--fs-nano) var(--sans); color: var(--j-blue); margin-top: var(--s2); }
   .jira .jgrows { list-style: none; margin: 0; padding: 0; }
   .jira .jgrow { padding: var(--s2) var(--s3); border-top: 1px solid var(--j-line); }
   .jira .jgrow:first-child { border-top: none; }
@@ -846,9 +861,9 @@
   .jira .jgcount { font: 700 var(--fs-body) var(--sans); font-variant-numeric: tabular-nums; flex: none; }
   .jira .jgjql {
     font-family: "SF Mono", Menlo, Consolas, monospace; font-size: var(--fs-nano);
-    color: var(--j-ink-2); margin-top: 3px; word-break: break-word;
+    color: var(--j-ink-2); margin-top: var(--s1); word-break: break-word;
   }
-  .jira .jgmeta { color: var(--j-ink); font-size: var(--fs-nano); margin-top: 3px; }
+  .jira .jgmeta { color: var(--j-ink); font-size: var(--fs-nano); margin-top: var(--s1); }
   .jira .jgempty { padding: var(--s3); color: var(--j-ink-2); font-size: var(--fs-nano); line-height: 1.5; }
   .jira .jgfoot {
     padding: 0 var(--s3) var(--s3); color: var(--j-ink-2);
@@ -857,16 +872,16 @@
 
   .jira .jready {
     border: 1px solid var(--j-line); border-left: 3px solid var(--j-blue);
-    border-radius: 3px; background: var(--j-bg); padding: var(--s3); margin: 4px 0 var(--s4);
+    border-radius: 3px; background: var(--j-bg); padding: var(--s3); margin: var(--s1) 0 var(--s4);
   }
   .jira .jrhead {
     font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.06em;
-    color: var(--j-ink-2); margin-bottom: 6px;
+    color: var(--j-ink-2); margin-bottom: var(--s2);
   }
-  .jira .jrline { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; padding: 2px 0; }
+  .jira .jrline { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: baseline; padding: 2px 0; }
   .jira .jrtok {
     font-family: "SF Mono", Menlo, Consolas, monospace; font-size: var(--fs-nano);
-    font-weight: 700; border-radius: 2px; padding: 1px 4px; min-width: 54px; text-align: center;
+    font-weight: 700; border-radius: 2px; padding: 1px var(--s1); min-width: 54px; text-align: center;
   }
   .jira .jrdim { color: var(--j-ink); font-weight: 600; }
   .jira .jrneed { color: var(--j-ink-2); }
@@ -877,9 +892,9 @@
 
   /* issue view */
   .jira .jbody.issue { padding-bottom: var(--s4); }
-  .jira .jacts { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 var(--s3) var(--s3); }
+  .jira .jacts { display: flex; gap: var(--s2); flex-wrap: wrap; padding: 0 var(--s3) var(--s3); }
   .jira .jbtn {
-    background: var(--j-bg); border-radius: 3px; padding: 3px var(--s2); color: var(--j-ink);
+    background: var(--j-bg); border-radius: 3px; padding: var(--s1) var(--s2); color: var(--j-ink);
     font-weight: 600; font-size: var(--fs-nano); white-space: nowrap;
   }
   .jira .jbtn.pri { background: var(--j-blue); color: #fff; }
@@ -887,13 +902,13 @@
   @media (max-width: 860px) { .jira .jissue { grid-template-columns: 1fr; } }
   .jira .jmain { min-width: 0; }
   .jira .jlab { font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--j-ink-2); }
-  .jira .jdesc { color: var(--j-ink); line-height: 1.55; margin: 4px 0 var(--s4); }
+  .jira .jdesc { color: var(--j-ink); line-height: 1.55; margin: var(--s1) 0 var(--s4); }
   /* the intake form's questions, carried into the issue as written */
   .jira .jq { font-weight: 600; color: var(--j-ink); margin-top: var(--s3); }
   .jira .jdesc > .jq:first-child { margin-top: 0; }
   .jira .ja { margin: 2px 0 0; color: var(--j-ink); }
   .jira .jtabs { display: flex; gap: var(--s3); border-bottom: 1px solid var(--j-line); margin: 0 0 var(--s2); }
-  .jira .jtabs span { padding: 0 0 6px; color: var(--j-ink-2); font-size: var(--fs-nano); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .jira .jtabs span { padding: 0 0 var(--s2); color: var(--j-ink-2); font-size: var(--fs-nano); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
   .jira .jtabs span.on { color: var(--j-blue); box-shadow: inset 0 -2px 0 var(--j-blue); }
   .jira .jc { display: grid; grid-template-columns: 26px 1fr; gap: var(--s2); margin-top: var(--s3); }
   .jira .jcwho { font-weight: 600; }
@@ -901,12 +916,12 @@
   .jira .jcbody { line-height: 1.5; margin: 2px 0 0; }
   .jira .jpanel { border: 1px solid var(--j-line); border-radius: 3px; padding: var(--s3); align-self: start; }
   .jira .jpanel .jlab { display: block; margin-bottom: var(--s2); }
-  .jira .jfields { display: grid; grid-template-columns: 106px 1fr; gap: 7px var(--s2); align-items: baseline; margin: 0; }
+  .jira .jfields { display: grid; grid-template-columns: 106px 1fr; gap: var(--s2) var(--s2); align-items: baseline; margin: 0; }
   .jira .jfields dt { color: var(--j-ink-2); font-size: var(--fs-nano); }
   .jira .jfields dd { margin: 0; color: var(--j-ink); font-size: var(--fs-caption); }
   .jira .jtag {
     display: inline-block; background: var(--j-bg-2); border-radius: 3px;
-    padding: 1px 5px; margin: 0 3px 3px 0; font-size: var(--fs-nano); color: #42526e;
+    padding: 1px var(--s1); margin: 0 var(--s1) var(--s1) 0; font-size: var(--fs-nano); color: #42526e;
   }
 
   ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
@@ -938,23 +953,23 @@
   dialog.playbook::backdrop { background: rgba(16,24,29,0.4); }
   .pbhead { padding: var(--s5) var(--s6) var(--s4); border-bottom: 1px solid var(--hairline); display: flex; align-items: flex-start; gap: var(--s3); }
   .pbhead .htext { flex: 1; }
-  .pbhead .kicker { display: block; margin-bottom: 5px; }
+  .pbhead .kicker { display: block; margin-bottom: var(--s1); }
   .pbhead h2 { font: 400 var(--fs-h2)/1.2 var(--serif); margin: 0 0 var(--s2); }
-  .pbchips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pbchips { display: flex; flex-wrap: wrap; gap: var(--s2); }
   .pbclose {
     border: 1px solid var(--field); background: none; cursor: pointer;
     width: 28px; height: 28px; font-size: var(--fs-body); color: var(--ink-2); flex: none;
     transition: background var(--t), color var(--t);
   }
   .pbclose:hover { background: var(--wash); color: var(--ink); }
-  .pbbody { padding: 6px var(--s6) var(--s5); max-height: 62vh; overflow-y: auto; }
+  .pbbody { padding: var(--s2) var(--s6) var(--s5); max-height: 62vh; overflow-y: auto; }
   .pbbody h3 { margin: var(--s4) 0 var(--s2); }
   .pbbody .pbquote {
     border-left: 2px solid var(--accent); padding: 2px 0 2px var(--s4); margin: var(--s4) 0 2px;
     font: italic 400 var(--fs-lead)/1.45 var(--serif); color: var(--ink);
   }
   .pbbody ul { margin: 0; padding-left: var(--s4); }
-  .pbbody li { color: var(--ink-2); font-size: var(--fs-body); margin: 5px 0; line-height: 1.5; }
+  .pbbody li { color: var(--ink-2); font-size: var(--fs-body); margin: var(--s1) 0; line-height: 1.5; }
   .pbbody li b { color: var(--ink); font-weight: 600; }
   .pbfoot { padding: 0 var(--s6) var(--s5); }
   .pbfoot .golink {
@@ -964,26 +979,26 @@
   .pbfoot .golink:hover { background: var(--brand-2); }
 
   /* ---------- intake ---------- */
-  .pagehead { border-top: 3px solid var(--brand); padding: var(--s6) 0 6px; margin-bottom: var(--s5); }
+  .pagehead { border-top: 3px solid var(--brand); padding: var(--s6) 0 var(--s2); margin-bottom: var(--s5); }
   .pagehead h1 { font: 400 var(--fs-h1)/1.25 var(--serif); margin: var(--s3) 0; }
   /* No lead-paragraph rule here: every page head's description is the .note,
      which carries its own type. A `.pagehead p` rule would only reach inside
      that note and override it. */
-  .metaline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--s3); }
+  .metaline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); }
   .metaline .msep { color: var(--rule); }
 
   .intakegrid { display: grid; grid-template-columns: 5fr 2fr; gap: var(--s4); align-items: start; }
   @media (max-width: 900px) { .intakegrid { grid-template-columns: 1fr; } }
 
   .iform fieldset { border: 1px solid var(--hairline); background: #fff; padding: var(--s4) var(--s5) var(--s5); margin: 0 0 var(--s4); }
-  .iform legend { display: flex; align-items: center; gap: var(--s2); padding: 0 6px; color: var(--ink); }
+  .iform legend { display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s2); color: var(--ink); }
   .fnote { color: var(--ink-3); font-size: var(--fs-caption); margin: 2px 0 var(--s3); }
   .frow { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
   .frow3 { display: grid; grid-template-columns: 2fr 1.5fr 1fr; gap: var(--s3); }
   @media (max-width: 720px) { .frow, .frow3 { grid-template-columns: 1fr; } }
   .field { margin-bottom: var(--s3); }
   .field:last-child { margin-bottom: 0; }
-  .field label { display: block; font-size: var(--fs-small); font-weight: 600; margin-bottom: 5px; }
+  .field label { display: block; font-size: var(--fs-small); font-weight: 600; margin-bottom: var(--s1); }
   .field label .opt-note { color: var(--ink-3); font-weight: 400; }
   .field input[type="text"], .field input[type="date"], .field textarea {
     width: 100%; font: var(--fs-body) var(--sans); color: var(--ink);
@@ -995,7 +1010,7 @@
 
   .coach {
     display: flex; gap: var(--s2); align-items: flex-start;
-    margin-top: 6px; padding: var(--s2) var(--s3);
+    margin-top: var(--s2); padding: var(--s2) var(--s3);
     background: var(--panel); border: 1px solid var(--hairline);
     font-size: var(--fs-small); line-height: 1.45;
   }
@@ -1004,7 +1019,7 @@
   .coach .cr { font-weight: 700; }
   .coach .ct { color: var(--ink-2); }
 
-  .optgrid { display: grid; gap: 7px; }
+  .optgrid { display: grid; gap: var(--s2); }
   .optgrid.cols2 { grid-template-columns: 1fr 1fr; }
   @media (max-width: 720px) { .optgrid.cols2 { grid-template-columns: 1fr; } }
   label.opt {
@@ -1031,10 +1046,10 @@
   .rail .card { padding: var(--pad-tight); }
   .rail h3 { margin: 0 0 var(--s2); }
   .rail ul { margin: 0; padding-left: var(--s4); }
-  .rail li { font-size: var(--fs-small); color: var(--ink-2); margin: 5px 0; line-height: 1.45; }
+  .rail li { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s1) 0; line-height: 1.45; }
   .rail li b { color: var(--ink); font-weight: 600; }
 
-  .teamonly { margin-top: 6px; border: 1px solid var(--hairline); background: var(--panel); padding: var(--s4) var(--s5) var(--s5); }
+  .teamonly { margin-top: var(--s2); border: 1px solid var(--hairline); background: var(--panel); padding: var(--s4) var(--s5) var(--s5); }
   .teamonly .tohead { display: flex; align-items: baseline; gap: var(--s3); margin-bottom: var(--s1); flex-wrap: wrap; }
   .teamonly .tohead .kicker { color: var(--ink-2); }
   .teamonly .tonote { color: var(--ink-3); font-size: var(--fs-caption); }
@@ -1056,7 +1071,7 @@
   .recsteps input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
   .recsteps span {
     display: block; border: 1px solid var(--field); background: #fff;
-    padding: 6px var(--s3); font-size: var(--fs-small); color: var(--ink-2); transition: background var(--t);
+    padding: var(--s2) var(--s3); font-size: var(--fs-small); color: var(--ink-2); transition: background var(--t);
   }
   .recsteps label:has(input:checked) span { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 600; }
   .recsteps label:has(input:focus-visible) span { outline: 2px solid var(--link); outline-offset: 2px; }
@@ -1081,7 +1096,7 @@
     .row2, .row3 { break-inside: avoid; }
     .tscroll { overflow: visible; }
     table.port { min-width: 0; font-size: var(--fs-caption); }
-    .port th, .port td { padding: 6px var(--s2); }
+    .port th, .port td { padding: var(--s2) var(--s2); }
     .tip, dialog.playbook { display: none !important; }
   }
 </style>
@@ -1120,22 +1135,18 @@
       <span class="note-lab">Mock-up</span>
       <p>How the function would run, end to end. A proposal, not something Ally operates today &mdash; and the definition every other tab on this site is generated from.</p>
     </div>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">01</span><h2>What we are driving</h2></div>
-    <p class="sectsub">Three numbers. Everything in this model exists to move one of them, and all three are computed from the record rather than reported into a deck.</p>
     <div class="row3" id="drives"></div>
+    <p class="result" id="sowhat"></p>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">02</span><h2>How we get there</h2></div>
+    <div class="secthead"><span class="kicker">01</span><h2>How we get there</h2></div>
     <p class="sectsub">One rule, one structure, six routines. That is the entire model &mdash; and each part earns its place by moving one of the three numbers above.</p>
     <div class="flowwrap"><div id="model"></div></div>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">03</span><h2>The rule</h2></div>
+    <div class="secthead"><span class="kicker">02</span><h2>The rule</h2></div>
     <p class="ruleline">One record. <em>Every other view is computed from it.</em></p>
     <p class="sectsub">Six principles follow from it. The first three decide what we build; the last three decide how it runs.</p>
     <div class="tenets">
@@ -1149,7 +1160,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>The structure</h2></div>
+    <div class="secthead"><span class="kicker">03</span><h2>The structure</h2></div>
     <p class="sectsub">Work is <strong>held as states</strong> &mdash; a use case is in exactly one, and each names the single routine that can move it out and the ways it can leave altogether, from any state rather than only the last. It is then <strong>ranked against a capacity line</strong>: committed delivery work consumes the increment&rsquo;s points first, and what is left decides how far down the ranked list we reach. Below the line is waiting for room, not rejected.</p>
     <details class="ref">
       <summary>The eight states, who can move each, and how work leaves</summary>
@@ -1166,7 +1177,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">05</span><h2>The routines</h2></div>
+    <div class="secthead"><span class="kicker">04</span><h2>The routines</h2></div>
     <p class="sectsub">Six standing routines, and none of them hands off to another. They all read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>, so nothing waits for its turn to come round. <strong>Cadence is how often we look, not how often we all sit down:</strong> where the board is green a sitting is a two-minute confirmation against the <button type="button" class="xlink" data-tab="status" title="Open the Weekly Status">weekly report</button>, and people are only in a room when something red needs a decision the data cannot make.</p>
     <div class="flowwrap"><div id="flow"></div></div>
     <p class="readynote">No routine meets less often than the state it owns can go stale. That rule, not preference, sets these cadences &mdash; and the page checks it on load.</p>
@@ -1191,7 +1202,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">06</span><h2>Once it is funded</h2></div>
+    <div class="secthead"><span class="kicker">05</span><h2>Once it is funded</h2></div>
     <p class="sectsub">An approved use case stops moving between states and starts moving between queues other teams own. Time is measured against each queue, not against the stage date &mdash; a nine-month build has one date and seven places to stall. The Portfolio Council grades readiness on six dimensions every fortnight; the Delivery &amp; Controls Review walks the gates.</p>
     <ul class="raglegend" id="raglegend2"></ul>
     <details class="ref">
@@ -1217,7 +1228,7 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">07</span><h2>Where I would start</h2></div>
+    <div class="secthead"><span class="kicker">06</span><h2>Where I would start</h2></div>
     <p class="sectsub">One owner and one date each &mdash; the same terms we ask of every use case.</p>
     <ol class="steps">
       <li><div class="stitle">Socialize how an idea gets raised</div>
@@ -2756,7 +2767,13 @@ function renderDrives() {
   const pj = closed.reduce((a, v) => a + v.projected, 0);
   const live = active.filter(u => u.stage === "value").length;
   const building = active.filter(u => u.stage === "delivery").length;
-  const est = active.reduce((a, u) => a + (u.est || 0), 0);
+  /* Speed, not size. The scored pipeline total lives on the Portfolio tab as
+     "Est. annual value" — repeating it here made the two stat bands read as
+     one band shown twice. Cycle time is an outcome the other tabs do not
+     state as a number, and it is the one that tests the theme directly. */
+  const cyc = TRENDS.cycle;
+  const now = cyc[cyc.length - 1].days, was = cyc[0].days;
+  const wk = d => Math.round(d / 7);
 
   const tiles = [
     { label: "Value realized", value: Math.round(rz / pj * 100) + "%",
@@ -2766,15 +2783,26 @@ function renderDrives() {
       sub: (live === 1 ? "capability" : "capabilities") +
            " running in the business with a before and after on the record" +
            (building ? ", and " + building + " more in delivery." : ".") },
-    { label: "Annual value in flight", value: fmtMoney(est),
-      sub: "estimated across the " + active.length +
-           " use cases now moving, and re-based from actuals every quarter." },
+    { label: "Intake to decision", value: now + " days",
+      sub: "from an idea arriving to a decision on it, down from " + was +
+           " over the last " + cyc.length + " months." },
   ];
   host.replaceChildren(...tiles.map(t => {
     const c = el("div", "card drive");
     c.append(el("div", "label", t.label), el("div", "dvalue", t.value), el("div", "dsub", t.sub));
     return c;
   }));
+
+  /* The "so what" — what changes for the business if this exists, stated in
+     weeks because an executive counts in weeks. Derived from the same trend
+     the tile reads, so the claim cannot drift from the number above it. */
+  const so = document.getElementById("sowhat");
+  if (so) {
+    so.textContent =
+      "An idea reaches a decision in about " + wk(now) + " weeks now rather than " + wk(was) +
+      ", and the ones that will not work are stopped in discovery rather than in production. " +
+      "That is the return on running it this way — not the meetings, the speed at which we can be wrong cheaply.";
+  }
 }
 
 /* The states, with the decision right and the exit attached to each. A table
