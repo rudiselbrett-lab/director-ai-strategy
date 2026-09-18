@@ -815,6 +815,46 @@
   /* A readiness block as it would be typed into the description field. The
      bracketed tokens are monospace so they read as a convention a script can
      parse, not as decoration. */
+  /* The action dashboard. Three gadgets, each declaring its own organizing
+     logic, so a reader does not try to read across them the way a matrix
+     invites. Every row is a saved filter with a live count — the board exists
+     to say what to do, not to restate what is in the queue. */
+  /* a dashboard is a full-width page in Jira — no project sidebar, so this
+     one drops the two-column frame the issue views use */
+  .jira.jdash { grid-template-columns: 1fr; }
+  .jira .jgadgets {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: var(--s3); padding: 0 var(--s3) var(--s3);
+  }
+  @media (max-width: 900px) { .jira .jgadgets { grid-template-columns: 1fr; } }
+  .jira .jgadget {
+    border: 1px solid var(--j-line); border-radius: 3px; background: #fff;
+    display: flex; flex-direction: column;
+  }
+  .jira .jghead {
+    padding: var(--s3); background: var(--j-bg);
+    border-bottom: 1px solid var(--j-line); border-radius: 3px 3px 0 0;
+  }
+  .jira .jgname { font: 600 var(--fs-body) var(--sans); color: var(--j-ink); }
+  .jira .jgwhat { color: var(--j-ink-2); font-size: var(--fs-nano); line-height: 1.5; margin-top: 3px; }
+  .jira .jglogic { font: italic 700 var(--fs-nano) var(--sans); color: var(--j-blue); margin-top: 6px; }
+  .jira .jgrows { list-style: none; margin: 0; padding: 0; }
+  .jira .jgrow { padding: var(--s2) var(--s3); border-top: 1px solid var(--j-line); }
+  .jira .jgrow:first-child { border-top: none; }
+  .jira .jgr1 { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s2); }
+  .jira .jgfilter { color: var(--j-blue); font-weight: 600; }
+  .jira .jgcount { font: 700 var(--fs-body) var(--sans); font-variant-numeric: tabular-nums; flex: none; }
+  .jira .jgjql {
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: var(--fs-nano);
+    color: var(--j-ink-2); margin-top: 3px; word-break: break-word;
+  }
+  .jira .jgmeta { color: var(--j-ink); font-size: var(--fs-nano); margin-top: 3px; }
+  .jira .jgempty { padding: var(--s3); color: var(--j-ink-2); font-size: var(--fs-nano); line-height: 1.5; }
+  .jira .jgfoot {
+    padding: 0 var(--s3) var(--s3); color: var(--j-ink-2);
+    font-size: var(--fs-nano); line-height: 1.5;
+  }
+
   .jira .jready {
     border: 1px solid var(--j-line); border-left: 3px solid var(--j-blue);
     border-radius: 3px; background: var(--j-bg); padding: var(--s3); margin: 4px 0 var(--s4);
@@ -1601,6 +1641,10 @@
     </div>
   </div>
 
+  <h2 class="jsect">Action required</h2>
+  <p class="jsub">A saved dashboard rather than a second copy of the list below. Three sets of filters, each organized on a different logic, so nothing here is the backlog sorted a different way &mdash; every row names something to do and who does it. A row only appears when it has something in it.</p>
+  <div class="jira jdash" id="jira-dash"></div>
+
   <h2 class="jsect">The backlog</h2>
   <p class="jsub">The same sixteen use cases as Jira issues. This is the export the dashboard reads.</p>
   <div class="jira" id="jira-list"></div>
@@ -2280,6 +2324,134 @@ function jiraNav(active) {
     ul.append(el("li", item === active ? "on" : null, item));
   nav.append(head, ul);
   return nav;
+}
+
+/* The action dashboard. The backlog says what exists; this says what to do
+   about it. Three gadgets, each on a different organising logic — decision
+   rights, time against a window, and the readiness framework — so none of
+   them is the issue list sorted a different way.
+
+   Every count is computed from the same data the rest of the page reads, and
+   a filter with nothing in it is dropped rather than shown at zero: a board
+   that is mostly zeroes stops being read. */
+function renderJiraActions() {
+  const host = document.getElementById("jira-dash");
+  if (!host) return;
+  const today = todayUTC();
+  const active = USE_CASES.map(u => enrich(u, today)).filter(u => !u.closed);
+  const ids = list => list.map(u => u.id).join(", ");
+
+  /* 1 — waiting on a judgment a standing routine can make. Only items with no
+     red dimension: if something is red, the routine cannot decide it yet and
+     it belongs in Prove instead. That split is what stops this column being
+     the issue list grouped by forum. */
+  const blocked = u => readiness(u).some(c => c.grade === "critical");
+  const decide = FORUMS.map(f => {
+    const items = active.filter(u => f.stages.includes(u.stage) && !blocked(u));
+    return {
+      name: f.name, n: items.length,
+      jql: "status in (" + f.stages.map(s => '"' + JIRA_STATUS[s].label + '"').join(", ") +
+           ') AND resolution = Unresolved AND description !~ "[RED]"',
+      meta: f.cadence + ", next sitting " + fmtDay(f.next()) +
+            " — nothing red, so the call can be made: " + ids(items),
+    };
+  }).filter(r => r.n);
+
+  /* 2 — no decision owed, just time passing in someone else's queue */
+  const pastGate = active.filter(u => { const g = gateState(u); return g && g.status === "critical"; });
+  const overdue  = active.filter(u => u.health === "critical");
+  const stale    = active.filter(u => u.fresh !== "fresh");
+  const flagged  = active.filter(u => u.waitingOn);
+  const unblock = [
+    { name: "Past its gate window", n: pastGate.length,
+      jql: 'labels = gate-overdue AND resolution = Unresolved',
+      meta: "escalate to the queue owner named on the issue — " + ids(pastGate) },
+    { name: "Overdue against target", n: overdue.length,
+      jql: "duedate < now() AND resolution = Unresolved",
+      meta: "re-baseline the date, or say what moved — " + ids(overdue) },
+    { name: "No update in over a cycle", n: stale.length,
+      jql: "updated <= -14d AND resolution = Unresolved",
+      meta: "the owner confirms it is still moving — " + ids(stale) },
+    { name: "Flagged as blocked", n: flagged.length,
+      jql: "flagged = Impediment",
+      meta: "a blocker needs a name and a date, or it is not a blocker — " + ids(flagged) },
+  ].filter(r => r.n);
+
+  /* 3 — red because evidence is missing, not because a decision is pending */
+  const graded = active.map(u => ({ u, r: readiness(u) }));
+  const at = (key, grade) => graded.filter(g => g.r.some(c => c.d.key === key && c.grade === grade)).map(g => g.u);
+  const prove = READINESS.map(d => {
+    const red = at(d.key, "critical"), amber = at(d.key, "warning");
+    return {
+      name: d.name, n: red.length,
+      jql: 'description ~ "[RED] ' + d.name + '"',
+      meta: "evidence owed by " + stageById[d.from].owner +
+            (amber.length ? " · " + amber.length + " also amber" : "") +
+            (red.length ? " — " + ids(red) : ""),
+    };
+  }).filter(r => r.n);
+
+  const GADGETS = [
+    { n: "1", name: "Decide", rows: decide,
+      what: "Work waiting on a judgment a standing routine can make at its next sitting.",
+      logic: "Logic: decision rights",
+      empty: "Nothing is waiting on a decision. Every sitting this cycle can be released." },
+    { n: "2", name: "Unblock", rows: unblock,
+      what: "Work that needs no decision — only someone to move it out of a queue it has sat in too long.",
+      logic: "Logic: time against the expected window",
+      empty: "Nothing is past its window. No escalation owed." },
+    { n: "3", name: "Prove", rows: prove,
+      what: "Grades that are red because evidence is missing, not because a decision is pending.",
+      logic: "Logic: the readiness framework",
+      empty: "No dimension is red. Everything due has its evidence on the record." },
+  ];
+
+  const body = el("div", "jbody");
+  body.append(el("div", "jcrumb", "Dashboards / AI Portfolio — Action Required"),
+              el("h3", "jtitle", "AI Portfolio — Action Required"));
+
+  const bar = el("div", "jtoolbar");
+  for (const c of ["Shared with: AI Portfolio Team", "Auto-refresh: 15m", "+ Add gadget"]) {
+    const chip = el("span", "jsel");
+    chip.append(document.createTextNode(c), el("span", "jcar", "▾"));
+    bar.append(chip);
+  }
+  const total = decide.length + unblock.length + prove.length;
+  bar.append(el("span", "jcount", total + (total === 1 ? " filter" : " filters") + " with items"));
+  body.append(bar);
+
+  const wrap = el("div", "jgadgets");
+  for (const g of GADGETS) {
+    const card = el("div", "jgadget");
+    const head = el("div", "jghead");
+    head.append(el("div", "jgname", g.n + ". " + g.name),
+                el("div", "jgwhat", g.what),
+                el("div", "jglogic", g.logic));
+    card.append(head);
+
+    if (!g.rows.length) {
+      card.append(el("div", "jgempty", g.empty));
+    } else {
+      const ul = el("ul", "jgrows");
+      for (const r of g.rows) {
+        const li = el("li", "jgrow");
+        const top = el("div", "jgr1");
+        top.append(el("span", "jgfilter", r.name), el("span", "jgcount", String(r.n)));
+        li.append(top, el("div", "jgjql", r.jql), el("div", "jgmeta", r.meta));
+        ul.append(li);
+      }
+      card.append(ul);
+    }
+    wrap.append(card);
+  }
+  body.append(wrap);
+  body.append(el("div", "jgfoot",
+    "Status, due date and updated are native JQL. The readiness grade is read out of the " +
+    "bracketed tokens in the description, and gate-overdue is a label written back by the " +
+    "same nightly job that computes this board — neither needs a custom field, so neither " +
+    "needs a Jira admin."));
+
+  host.replaceChildren(body);
 }
 
 function renderJira() {
@@ -4146,6 +4318,7 @@ function renderStatic() {
   renderStateMap();
   renderRoutineMap();
   renderJira();
+  renderJiraActions();
   renderTrends();
 
   // intake team criteria grid
