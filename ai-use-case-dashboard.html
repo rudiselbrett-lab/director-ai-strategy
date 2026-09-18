@@ -1141,14 +1141,14 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">01</span><h2>How we get there</h2></div>
-    <p class="sectsub">One rule, one structure, six routines. That is the entire model &mdash; and each part earns its place by moving one of the three numbers above.</p>
+    <p class="sectsub">One rule, one structure, <span data-count="routines">six</span> routines. That is the entire model &mdash; and each part earns its place by moving one of the three numbers above.</p>
     <div class="flowwrap"><div id="model"></div></div>
   </div>
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>The rule</h2></div>
     <p class="ruleline">One record. <em>Every other view is computed from it.</em></p>
-    <p class="sectsub">Six principles follow from it. The first three decide what we build; the last three decide how it runs.</p>
+    <p class="sectsub"><span data-count="principles">Six</span> principles follow from it. The first three decide what we build; the last three decide how it runs.</p>
     <div class="tenets">
       <div class="tenet"><div class="no">01</div><h3>One way in</h3><p>Every idea arrives through the same <button type="button" class="xlink" data-tab="intake" title="Open the Intake Form">fifteen-minute form</button> and becomes an issue with an ID. No side channel, so the board is the whole portfolio rather than the part that got written down.</p></div>
       <div class="tenet"><div class="no">02</div><h3>Hypothesis first</h3><p>Start with what we believe and what would disprove it. Every use case states up front what would tell us to stop.</p></div>
@@ -1161,26 +1161,26 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">03</span><h2>The structure</h2></div>
-    <p class="sectsub">Work is <strong>held as states</strong> &mdash; a use case is in exactly one, and each names the single routine that can move it out and the ways it can leave altogether, from any state rather than only the last. It is then <strong>ranked against a capacity line</strong>: committed delivery work consumes the increment&rsquo;s points first, and what is left decides how far down the ranked list we reach. Below the line is waiting for room, not rejected.</p>
+    <p class="sectsub">Work sits in <strong>exactly one stage</strong> at a time, and each stage names the single routine that can move it out, what it leaves behind, and the ways it can leave altogether &mdash; from any stage rather than only the last. It is then <strong>ranked against a capacity line</strong>: committed delivery work consumes the increment&rsquo;s points first, and what is left decides how far down the ranked list we reach. Below the line is waiting for room, not rejected.</p>
     <details class="ref">
-      <summary>The eight states, who can move each, and how work leaves</summary>
+      <summary>The <span data-count="stages">eight</span> stages, who can move each, and how work leaves</summary>
       <div class="refbody">
         <div class="tscroll">
           <table class="mini statemap">
-            <thead><tr><th>State</th><th>Who can move it</th><th>What it leaves behind</th><th>How it can leave</th></tr></thead>
+            <thead><tr><th>Stage</th><th>Who can move it</th><th>What it leaves behind</th><th>How it can leave</th></tr></thead>
             <tbody id="statemap"></tbody>
           </table>
         </div>
-        <p class="readynote">Three states carry a playbook; select the name to read it.</p>
+        <p class="readynote"><span data-count="playbooks">Three</span> stages carry a playbook; select the name to read it.</p>
       </div>
     </details>
   </div>
 
   <div class="sect">
     <div class="secthead"><span class="kicker">04</span><h2>The routines</h2></div>
-    <p class="sectsub">Six standing routines, and none of them hands off to another. They all read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>, so nothing waits for its turn to come round. <strong>Cadence is how often we look, not how often we all sit down:</strong> where the board is green a sitting is a two-minute confirmation against the <button type="button" class="xlink" data-tab="status" title="Open the Weekly Status">weekly report</button>, and people are only in a room when something red needs a decision the data cannot make.</p>
+    <p class="sectsub"><span data-count="routines">Six</span> standing routines, and none of them hands off to another. They all read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>, so nothing waits for its turn to come round. <strong>Cadence is how often we look, not how often we all sit down:</strong> where the board is green a sitting is a two-minute confirmation against the <button type="button" class="xlink" data-tab="status" title="Open the Weekly Status">weekly report</button>, and people are only in a room when something red needs a decision the data cannot make.</p>
     <div class="flowwrap"><div id="flow"></div></div>
-    <p class="readynote">No routine meets less often than the state it owns can go stale. That rule, not preference, sets these cadences &mdash; and the page checks it on load.</p>
+    <p class="readynote">No routine meets less often than the stage it owns can go stale. That rule, not preference, sets these cadences &mdash; and the page checks it on load.</p>
     <details class="ref">
       <summary>What each routine decides, produces, and records</summary>
       <div class="refbody">
@@ -1203,10 +1203,10 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">05</span><h2>Once it is funded</h2></div>
-    <p class="sectsub">An approved use case stops moving between states and starts moving between queues other teams own. Time is measured against each queue, not against the stage date &mdash; a nine-month build has one date and seven places to stall. The Portfolio Council grades readiness on six dimensions every fortnight; the Delivery &amp; Controls Review walks the gates.</p>
+    <p class="sectsub">An approved use case stops moving between stages and starts moving between queues other teams own. Time is measured against each queue, not against the stage date &mdash; a nine-month build has one date and seven places to stall. The Portfolio Council grades readiness on <span data-count="dimensions">six</span> dimensions every fortnight; the Delivery &amp; Controls Review walks the gates.</p>
     <ul class="raglegend" id="raglegend2"></ul>
     <details class="ref">
-      <summary>The seven gates, and the six readiness dimensions</summary>
+      <summary>The <span data-count="gates">seven</span> gates, and the <span data-count="dimensions">six</span> readiness dimensions</summary>
       <div class="refbody">
         <h3>Gates</h3>
         <div class="tscroll">
@@ -1222,7 +1222,7 @@
             <tbody id="readyspec"></tbody>
           </table>
         </div>
-        <p class="readynote">A dimension starts being graded only when the work reaches the state it belongs to, so an early use case is not marked down for controls it has not reached.</p>
+        <p class="readynote">A dimension starts being graded only when the work reaches the stage it belongs to, so an early use case is not marked down for controls it has not reached.</p>
       </div>
     </details>
   </div>
@@ -1381,7 +1381,7 @@
   <div class="teamonly">
     <div class="tohead">
       <span class="kicker">Intake team use only</span>
-      <span class="tonote">Completed before the forum to support the triage decision.</span>
+      <span class="tonote">Completed before the routine to support the triage decision.</span>
     </div>
     <div class="rule"></div>
     <div class="criteria" id="criteria"></div>
@@ -1411,7 +1411,7 @@
     <h1>Where every use case stands</h1>
     <div class="note">
       <span class="note-lab">Mock-up</span>
-      <p>Where each use case sits, what has slipped, and what fits our capacity. Nobody writes a status here &mdash; the board reads the record. Sixteen invented use cases, recomputed on every load.</p>
+      <p>Where each use case sits, what has slipped, and what fits our capacity. Nobody writes a status here &mdash; the board reads the record. <span data-count="usecases">Sixteen</span> invented use cases, recomputed on every load.</p>
     </div>
   </div>
 
@@ -1573,7 +1573,7 @@
       <h3>Staleness — based on last update, by stage cadence</h3>
       <p>A use case is <strong>aging</strong> past one review cycle without an update, and <strong>stale</strong> past two.</p>
       <table class="mini" id="staletable">
-        <thead><tr><th>Stage</th><th>At-risk window</th><th>Aging after</th><th>Stale after</th><th>Cadence source</th></tr></thead>
+        <thead><tr><th>Stage</th><th>At-risk window</th><th>Aging after</th><th>Stale after</th><th>Reviewed by</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -1624,7 +1624,7 @@
     <section class="card" aria-label="Upcoming meetings">
       <div class="cardhead"><h2>Upcoming meetings</h2></div>
       <ul class="meetings" id="meetings"></ul>
-      <div class="bnote">Agendas are the initiatives sitting at the stages each forum reviews.</div>
+      <div class="bnote">Agendas are the initiatives sitting at the stages each routine reviews.</div>
     </section>
 
     <section class="card" aria-label="Risks">
@@ -1657,7 +1657,7 @@
   <div class="jira jdash" id="jira-dash"></div>
 
   <h2 class="jsect">The backlog</h2>
-  <p class="jsub">The same sixteen use cases as Jira issues. This is the export the dashboard reads.</p>
+  <p class="jsub">The same <span data-count="usecases">sixteen</span> use cases as Jira issues. This is the export the dashboard reads.</p>
   <div class="jira" id="jira-list"></div>
 
   <h2 class="jsect">One issue</h2>
@@ -1781,21 +1781,21 @@
    ===================================================================== */
 
 const STAGES = [
-  { id: "intake",         name: "Intake",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly intake and triage",
+  { id: "intake",         name: "Intake",             staleDays: 7,  riskWindow: 2,
     outcome: "Define the problem and desired outcome", owner: "Business Sponsor", record: "Intake form / Jira" },
-  { id: "triage",         name: "Triage",             staleDays: 7,  riskWindow: 2,  cadence: "Weekly intake and triage — one cycle max",
+  { id: "triage",         name: "Triage",             staleDays: 7,  riskWindow: 2,
     outcome: "Assess, route, and identify reuse opportunities", owner: "AI Portfolio Team", record: "Jira backlog" },
-  { id: "discovery",      name: "Discovery & Sizing", staleDays: 10, riskWindow: 5,  cadence: "Four-week timebox",
+  { id: "discovery",      name: "Discovery & Sizing", staleDays: 10, riskWindow: 5,
     outcome: "Validate value, feasibility, and scope", owner: "Product Manager", record: "Discovery package" },
-  { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,  cadence: "Bi-weekly Portfolio Council",
+  { id: "prioritization", name: "Prioritization",     staleDays: 14, riskWindow: 7,
     outcome: "Evaluate and rank opportunities", owner: "AI Portfolio Team", record: "Portfolio backlog" },
-  { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,  cadence: "Bi-weekly Portfolio Council",
+  { id: "portfolio",      name: "Portfolio Decision", staleDays: 30, riskWindow: 7,
     outcome: "Approve, defer, or reject investment", owner: "AI Portfolio Council", record: "AI roadmap" },
-  { id: "governance",     name: "Governance",         staleDays: 30, riskWindow: 7,  cadence: "Bi-weekly risk and controls review",
+  { id: "governance",     name: "Governance",         staleDays: 30, riskWindow: 7,
     outcome: "Confirm risk, compliance, and control requirements are satisfied", owner: "Business Line Risk", record: "Archer" },
-  { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14, cadence: "Bi-weekly delivery and controls review",
+  { id: "delivery",       name: "Delivery & Scale",   staleDays: 14, riskWindow: 14,
     outcome: "Deliver, launch, and scale the solution", owner: "Product Manager", record: "Quarterly plan" },
-  { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14, cadence: "Quarterly benefits review, bi-weekly production health",
+  { id: "value",          name: "Value Realization",  staleDays: 45, riskWindow: 14,
     outcome: "Measure and realize business outcomes", owner: "Business Sponsor", record: "Benefits dashboard" },
 ];
 
@@ -1935,7 +1935,7 @@ const GATE_PATH = [
   { id: "change",   name: "Change approval",          owner: "Change Advisory Board", days: 10 },
   { id: "pilot",    name: "Pilot",                    owner: "Business Sponsor",      days: 30 },
   { id: "scale",    name: "Scale",                    owner: "Product Manager",       days: 30 },
-  { id: "benefits", name: "Benefits realised",        owner: "Business Sponsor",      days: 90 },
+  { id: "benefits", name: "Benefits realized",        owner: "Business Sponsor",      days: 90 },
 ];
 const GATE_BY_ID = Object.fromEntries(GATE_PATH.map((g, i) => [g.id, { ...g, i }]));
 /* Only work past the funding decision walks it. */
@@ -1999,7 +1999,7 @@ const RISK_FLAGS = [
    entry per material change, tagged with whether it helped or hurt. */
 const STATUS_LOG = [
   { dir: "good",     text: "AI-005 Collections outreach timing cleared discovery and entered prioritization at WSJF 7.5, the highest unstarted score." },
-  { dir: "good",     text: "Q2 '26 closed at $3.9M of $4.2M projected, taking realised value across the last three closed quarters to 92%." },
+  { dir: "good",     text: "Q2 '26 closed at $3.9M of $4.2M projected, taking realized value across the last three closed quarters to 92%." },
   { dir: "warning",  text: "AI-003 Fraud alert prioritization is the only initiative past its stage target, and is still awaiting MRM model designation." },
   { dir: "warning",  text: "AI-004 KYC document extraction reaches its discovery target this week with data access to the KYC repository still unapproved." },
   { dir: "good",     text: "AI-016 HR policy chatbot was transferred to the Enterprise AI team and closed, with the rationale recorded." },
@@ -2017,7 +2017,7 @@ const STATUS_HISTORY = [
       { name: "Flow", status: "warning", metric: "2 overdue",
         note: "AI-010 passed its intake target without a sponsor, and AI-012 returns to triage a second time." },
       { name: "Value", status: "warning", metric: "81%",
-        note: "of projected value realised. Q2 closed at $3.4M of $4.2M; Q3 is early." },
+        note: "of projected value realized. Q2 closed at $3.9M of $4.2M; Q3 is early." },
       { name: "Risk and controls", status: "warning", metric: "8 of 14",
         note: "in flight carry a risk flag. MRM designation requested for AI-003; nothing returned yet." },
     ],
@@ -2055,13 +2055,13 @@ const STATUS_HISTORY = [
       { name: "Flow", status: "warning", metric: "1 overdue",
         note: "AI-012 was deferred a cycle for incomplete prep; everything else sits inside its window." },
       { name: "Value", status: "warning", metric: "80%",
-        note: "of projected value realised. Q2 closed at $3.4M against $4.2M projected." },
+        note: "of projected value realized. Q2 closed at $3.9M against $4.2M projected." },
       { name: "Risk and controls", status: "good", metric: "7 of 13",
         note: "in flight carry a risk flag. Nothing held at the gate." },
     ],
     log: [
-      { dir: "good",    text: "Q2 closed at $3.4M realised against $4.2M projected; WSJF inputs recalibrated from actuals." },
-      { dir: "good",    text: "AI-011 Loan document pre-fill moved into value realisation." },
+      { dir: "good",    text: "Q2 closed at $3.9M realized against $4.2M projected; WSJF inputs recalibrated from actuals." },
+      { dir: "good",    text: "AI-011 Loan document pre-fill moved into value realization." },
       { dir: "warning", text: "AI-012 Teller balancing assistant deferred one cycle — arrived at triage without prep." },
       { dir: "neutral", text: "AI-013 ATM cash forecasting entered discovery." },
     ],
@@ -2079,7 +2079,7 @@ const STATUS_HISTORY = [
     ],
     risks: [
       { sev: "warning", title: "Q2 closed below projection",
-        text: "$3.4M realised against $4.2M projected. The gap sits in the estimate rather than the delivery, so WSJF inputs were recalibrated." },
+        text: "$3.9M realized against $4.2M projected. The gap sits in the estimate rather than the delivery, so WSJF inputs were recalibrated." },
       { sev: "warning", title: "Prep quality at triage",
         text: "A second submission this month arrived without prep and cost a cycle." },
     ],
@@ -2090,7 +2090,7 @@ const STATUS_HISTORY = [
       { name: "Flow", status: "good", metric: "0 overdue",
         note: "Everything sits inside its stage window." },
       { name: "Value", status: "warning", metric: "80%",
-        note: "of projected value realised. Tracking to close Q2 below projection." },
+        note: "of projected value realized. Tracking to close Q2 below projection." },
       { name: "Risk and controls", status: "good", metric: "6 of 12",
         note: "in flight carry a risk flag. Nothing held at the gate." },
     ],
@@ -2113,7 +2113,7 @@ const STATUS_HISTORY = [
     ],
     risks: [
       { sev: "warning", title: "Q2 tracking below projection",
-        text: "Realisation is running at 80% with two weeks to close." },
+        text: "Realization is running at 80% with two weeks to close." },
       { sev: "warning", title: "Discovery capacity",
         text: "Three timeboxes run concurrently against a team that comfortably carries two." },
     ],
@@ -2338,7 +2338,7 @@ function jiraNav(active) {
 }
 
 /* The action dashboard. The backlog says what exists; this says what to do
-   about it. Three gadgets, each on a different organising logic — decision
+   about it. Three gadgets, each on a different organizing logic — decision
    rights, time against a window, and the readiness framework — so none of
    them is the issue list sorted a different way.
 
@@ -2668,7 +2668,7 @@ const FRESH = {
 };
 
 /* Completeness measures a use case against what its CURRENT stage requires,
-   so an intake item isn't penalised for lacking evidence discovery produces.
+   so an intake item isn't penalized for lacking evidence discovery produces.
    Requirements are cumulative down the lifecycle. */
 const REQUIRED = {
   intake:         ["sponsor", "impact", "metric"],
@@ -2838,8 +2838,8 @@ function renderModelMap() {
     { eyebrow: "THE RULE", title: "One record",
       body: ["Every idea becomes one issue with an ID.", "Nothing exists outside it."],
       so: "so nothing is invisible and status is free" },
-    { eyebrow: "THE STRUCTURE", title: STAGES.length + " states, one capacity line",
-      body: ["One routine can move each state.", "Work can leave from any of them."],
+    { eyebrow: "THE STRUCTURE", title: STAGES.length + " stages, one capacity line",
+      body: ["One routine can move each stage.", "Work can leave from any of them."],
       so: "so capacity follows rank, not volume" },
     { eyebrow: "THE ROUTINES", title: FORUMS.length + " standing routines",
       body: ["Each holds a decision right.", "All read the same record."],
@@ -2922,7 +2922,7 @@ function renderRoutineMap() {
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label",
     "Six routines arranged around the record they all read and write. " +
-    "At the centre, one Jira issue per use case, from which health, rank, " +
+    "At the center, one Jira issue per use case, from which health, rank, " +
     "readiness and time in gate are computed. Around it: " +
     FORUMS.map(f => f.name + ", " + f.cadence.toLowerCase() + ", covering " +
       f.stages.map(id => stageById[id].name).join(" and ")).join("; ") +
@@ -2941,7 +2941,7 @@ function renderRoutineMap() {
     markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, null, defs);
   node("path", { d: "M0,0 L8,4 L0,8 z", class: "farrow" }, null, m);
 
-  // where a line leaves a box centred at (px,py), heading toward (tx,ty)
+  // where a line leaves a box centered at (px,py), heading toward (tx,ty)
   const edge = (px, py, w, h, tx, ty) => {
     const dx = tx - px, dy = ty - py;
     const sx = dx ? (w / 2) / Math.abs(dx) : Infinity;
@@ -3113,7 +3113,7 @@ function openUseCase(u) {
       : "due " + fmtDate(u.target) + ", in " + u.daysTo + days(u.daysTo)));
     st.append(detailLine("Last update", u.sinceUpdate + days(u.sinceUpdate) + " ago" +
       (u.fresh === "fresh" ? "" : ", " + FRESH[u.fresh].label.toLowerCase() +
-        " for this stage's cadence (" + stageById[u.stage].cadence.toLowerCase() + ")")));
+        " for this stage's cadence (" + cadenceFor(u.stage).join("; ") + ")")));
     if (u.next) st.append(detailLine("Next", u.next));
     if (u.waitingOn) st.append(detailLine("Waiting on", u.waitingOn));
   }
@@ -3663,10 +3663,10 @@ const CADENCE_DAYS = { Weekly: 7, "Bi-weekly": 14, Monthly: 30, Quarterly: 90 };
   for (const st of STAGES) {
     const gap = seen[st.id];
     if (gap === undefined)
-      console.warn("Cadence: no forum covers " + st.name);
+      console.warn("Cadence: no routine covers " + st.name);
     else if (gap > st.staleDays)
       console.warn("Cadence: " + st.name + " goes stale at " + st.staleDays +
-                   " days but its fastest forum sits every " + gap);
+                   " days but its fastest routine sits every " + gap);
   }
 })();
 
@@ -3699,6 +3699,20 @@ function nextQuarterly(dow, nth) {
   return d;
 }
 const fmtDay = d => d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+
+/* A stage's cadence is not a fact of its own — it is whichever routines cover
+   it, fastest first. Storing it as a string on STAGES let it drift: the rows
+   paraphrased routine names in lowercase ("bi-weekly risk and controls review"
+   for "AI Risk & Controls"), and one row answered a different question
+   entirely ("Four-week timebox" is how long discovery runs, not how often it
+   is reviewed). Derived, every row answers the same question in the same
+   words, and renaming a routine updates them all. */
+function cadenceFor(stageId) {
+  return FORUMS
+    .filter(f => f.stages.includes(stageId))
+    .sort((a, b) => CADENCE_DAYS[a.cadence] - CADENCE_DAYS[b.cadence])
+    .map(f => f.name + " \u00b7 " + f.cadence.toLowerCase());
+}
 
 function upcomingMeetings(active, n) {
   return FORUMS.map(f => {
@@ -3780,7 +3794,7 @@ function ragFor(active) {
           worst + days(worst) + ", and " + stale.length + " have gone more than a review cycle without an update.",
   };
 
-  // Value — are we realising what we projected?
+  // Value — are we realizing what we projected?
   const done = TRENDS.value.filter(v => !v.partial);
   const rz = done.reduce((a, v) => a + v.realized, 0), pj = done.reduce((a, v) => a + v.projected, 0);
   const rate = Math.round(rz / pj * 100);
@@ -3788,7 +3802,7 @@ function ragFor(active) {
   const value = {
     name: "Value", status: rate >= 90 ? "good" : rate >= 75 ? "warning" : "critical",
     metric: rate + "%",
-    note: "of projected value realised across the last " + done.length + " closed quarters. " +
+    note: "of projected value realized across the last " + done.length + " closed quarters. " +
           live.q + " is in flight at " + fmtMoney(live.realized) + " of " + fmtMoney(live.projected) + ".",
   };
 
@@ -4324,6 +4338,33 @@ function renderTable(visible) {
 }
 
 let staticRendered = false;
+/* Counts in the copy are computed like everything else. The diagram already
+   read STAGES.length and FORUMS.length while the sentence beside it said
+   "eight" and "six" in prose — the one rule this whole page argues for, broken
+   in its own description. Spelled out, because an exec reads words not digits.
+   Narrative written by a person (the weekly log, a Jira comment) is left as
+   written: it is simulating someone typing, not describing the model. */
+const NUMWORD = ["zero","one","two","three","four","five","six","seven","eight","nine","ten",
+  "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty"];
+const COUNTS = {
+  stages:     () => STAGES.length,
+  routines:   () => FORUMS.length,
+  gates:      () => GATE_PATH.length,
+  dimensions: () => READINESS.length,
+  usecases:   () => USE_CASES.length,
+  playbooks:  () => Object.keys(STAGE_DETAILS).length,
+  principles: () => document.querySelectorAll("#tab-thinking .tenets .tenet").length,
+};
+function fillCounts() {
+  for (const node of document.querySelectorAll("[data-count]")) {
+    const fn = COUNTS[node.dataset.count];
+    if (!fn) { console.warn("Unknown data-count:", node.dataset.count); continue; }
+    const n = fn(), w = NUMWORD[n] || String(n);
+    const was = node.textContent;
+    node.textContent = /^[A-Z]/.test(was) ? w[0].toUpperCase() + w.slice(1) : w;
+  }
+}
+
 function renderStatic() {
   if (staticRendered) return;
   staticRendered = true;
@@ -4336,11 +4377,12 @@ function renderStatic() {
       el("td", null, s.riskWindow + " days"),
       el("td", null, "> " + s.staleDays + " days"),
       el("td", null, "> " + s.staleDays * 2 + " days"),
-      el("td", null, s.cadence));
+      el("td", null, cadenceFor(s.id).join("; ")));
     tb.append(tr);
   }
 
   renderSpecs();
+  fillCounts();
   renderDrives();
   renderModelMap();
   renderStateMap();
