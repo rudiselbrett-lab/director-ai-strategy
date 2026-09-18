@@ -1188,12 +1188,9 @@
           <table class="mini routines">
             <thead><tr><th>Routine</th><th>Cadence</th><th>Decision right</th><th>Output</th><th>Record</th></tr></thead>
             <tbody>
-              <tr><td>AI Intake &amp; Triage</td><td>Weekly</td><td>Route or decline</td><td>Every submission routed to discovery, prototype, partner, or declined, with a named owner and date. Preliminary risk tier flagged.</td><td>Jira</td></tr>
-              <tr><td>Discovery Review</td><td>Weekly</td><td>Advance or kill</td><td>Each discovery package exited as Build, Reshape, Park, or Stop, with the evidence that drove it.</td><td>Jira</td></tr>
-              <tr><td>AI Risk &amp; Controls</td><td>Bi-weekly</td><td>Confirm tier, block launch</td><td>Risk designation confirmed and controls assigned. Second half: production health across live use cases &mdash; drift, incidents, control testing, retirement candidates.</td><td>Archer</td></tr>
-              <tr><td>AI Portfolio Council</td><td>Bi-weekly</td><td>Set rank, commit capacity, grade readiness</td><td>Ranked backlog by WSJF, reviewed every sitting with any deviation from rank recorded and attributed. Capacity committed monthly, at every second sitting. Every use case graded against the readiness framework, with an owner and a date against every red.</td><td>Jira</td></tr>
-              <tr><td>Delivery &amp; Controls Review</td><td>Bi-weekly</td><td>Unblock or re-baseline</td><td>Every approved use case walked gate by gate: time in gate against expected, who owns the queue it is sitting in, and an escalation or a new date for anything past expected.</td><td>Jira</td></tr>
-              <tr><td>Portfolio Increment Review</td><td>Quarterly</td><td>Fund and staff</td><td>Benefits measured against baseline first, WSJF inputs recalibrated from actuals, then funding and staffing committed for the increment.</td><td>Jira, benefits log</td></tr>
+              <tr><td>AI Intake &amp; Discovery</td><td>Weekly</td><td>Route, advance, or kill</td><td>Every submission routed to discovery, prototype, partner, or declined, with a named owner and date, and a preliminary risk tier flagged. Each discovery package then exited as Build, Reshape, Park, or Stop, with the evidence that drove it.</td><td>Jira</td></tr>
+              <tr><td>AI Portfolio Council</td><td>Bi-weekly</td><td>Set rank, commit capacity, grade readiness, fund the increment</td><td>Ranked backlog by WSJF, reviewed every sitting with any deviation from rank recorded and attributed. Every use case graded against the readiness framework, with an owner and a date against every red. Capacity is committed monthly, at every second sitting; every sixth sitting is the increment review, where benefits are measured against baseline, WSJF inputs are recalibrated from actuals, and funding and staffing are committed.</td><td>Jira, benefits log</td></tr>
+              <tr><td>AI Risk &amp; Controls</td><td>Bi-weekly</td><td>Confirm tier, block launch, unblock or re-baseline</td><td>Risk designation confirmed and controls assigned for new use cases. Approved work walked gate by gate: time in gate against expected, who owns the queue it is sitting in, and an escalation or a new date for anything past expected. Production health across live use cases &mdash; drift, incidents, control testing, retirement candidates.</td><td>Archer, Jira</td></tr>
             </tbody>
           </table>
         </div>
@@ -1203,7 +1200,7 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">05</span><h2>Once it is funded</h2></div>
-    <p class="sectsub">An approved use case stops moving between stages and starts moving between queues other teams own. Time is measured against each queue, not against the stage date &mdash; a nine-month build has one date and seven places to stall. The Portfolio Council grades readiness on <span data-count="dimensions">six</span> dimensions every fortnight; the Delivery &amp; Controls Review walks the gates.</p>
+    <p class="sectsub">An approved use case stops moving between stages and starts moving between queues other teams own. Time is measured against each queue, not against the stage date &mdash; a nine-month build has one date and seven places to stall. The Portfolio Council grades readiness on <span data-count="dimensions">six</span> dimensions every fortnight; the AI Risk &amp; Controls walks the gates.</p>
     <ul class="raglegend" id="raglegend2"></ul>
     <details class="ref">
       <summary>The <span data-count="gates">seven</span> gates, and the <span data-count="dimensions">six</span> readiness dimensions</summary>
@@ -1371,7 +1368,7 @@
       <div class="card">
         <h3>What happens next</h3>
         <ul>
-          <li>Reviewed at the <b>weekly AI Intake &amp; Triage</b>, routed — never queued.</li>
+          <li>Reviewed at the <b>weekly AI Intake &amp; Discovery</b>, routed — never queued.</li>
           <li>Leaves triage with <b>a decision, an owner, and a date</b>.</li>
         </ul>
       </div>
@@ -1952,7 +1949,7 @@ const APPROVED_STAGES = ["governance", "delivery", "value"];
 const ANCHOR = "2026-08-11";
 
 /* Portfolio history for the trend panels. Value figures are $K of
-   annual run-rate; realized is measured at the Portfolio Increment Review. */
+   annual run-rate; realized is measured at the AI Portfolio Council. */
 const TRENDS = {
   value: [
     { q: "Q4 '25", projected: 1800, realized: 1650 },
@@ -2035,10 +2032,9 @@ const STATUS_HISTORY = [
       { id: "AI-004", name: "KYC document extraction", act: "Confirm repository access", why: "the discovery timebox closes next week" },
     ],
     meetings: [
-      { name: "Discovery Review", when: "2026-07-29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
-      { name: "AI Intake & Triage", when: "2026-07-30", cadence: "Weekly", agenda: "3 on the agenda — AI-010, AI-012, AI-007" },
-      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Monthly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
+      { name: "AI Intake & Discovery", when: "2026-07-29", cadence: "Weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
+      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Bi-weekly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Approvals we do not control",
@@ -2072,10 +2068,9 @@ const STATUS_HISTORY = [
       { id: "AI-012", name: "Teller balancing assistant", act: "Re-prep for triage", why: "deferred a cycle for incomplete prep" },
     ],
     meetings: [
-      { name: "AI Intake & Triage", when: "2026-07-23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
-      { name: "Discovery Review", when: "2026-07-29", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-002, AI-004, AI-013" },
-      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Monthly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Monthly", agenda: "2 on the agenda — AI-005, AI-014" },
+      { name: "AI Intake & Discovery", when: "2026-07-23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
+      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Bi-weekly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-005, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 closed below projection",
@@ -2106,10 +2101,9 @@ const STATUS_HISTORY = [
       { id: "AI-001", name: "Contact center call summarization", act: "Confirm the value baseline with the sponsor", why: "benefits reporting starts next quarter" },
     ],
     meetings: [
-      { name: "AI Intake & Triage", when: "2026-07-16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
-      { name: "Discovery Review", when: "2026-07-15", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-002, AI-004" },
-      { name: "AI Risk & Controls", when: "2026-07-14", cadence: "Monthly", agenda: "2 on the agenda — AI-008, AI-011" },
-      { name: "AI Portfolio Council", when: "2026-07-16", cadence: "Monthly", agenda: "2 on the agenda — AI-006, AI-014" },
+      { name: "AI Intake & Discovery", when: "2026-07-16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
+      { name: "AI Risk & Controls", when: "2026-07-14", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-008, AI-011" },
+      { name: "AI Portfolio Council", when: "2026-07-16", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 tracking below projection",
@@ -2134,7 +2128,7 @@ const USE_CASES = [
     size: 5, impact: ["cycle", "risk"],
     metric: true, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-08-08", target: "2026-08-23", next: "Discovery Review" },
+    lastUpdate: "2026-08-08", target: "2026-08-23", next: "AI Intake & Discovery" },
 
   { id: "AI-003", name: "Fraud alert prioritization", func: "Fraud Operations",
     stage: "governance", owner: "S. Okafor", sponsor: "Fraud Ops Director", wsjf: 6.8, est: 1200,
@@ -2149,7 +2143,7 @@ const USE_CASES = [
     size: 13, impact: ["cost", "cycle", "risk"],
     metric: true, dataReady: null, baseline: false,
     risk: ["NPI", "Reg report"], waitingOn: "Data access approval for KYC repository",
-    lastUpdate: "2026-08-05", target: "2026-08-15", next: "Discovery Review" },
+    lastUpdate: "2026-08-05", target: "2026-08-15", next: "AI Intake & Discovery" },
 
   { id: "AI-005", name: "Collections outreach timing", func: "Collections",
     stage: "prioritization", owner: "D. Kim", sponsor: "Collections VP", wsjf: 7.5, est: 950,
@@ -2170,7 +2164,7 @@ const USE_CASES = [
     size: 2, impact: ["revenue", "cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-08-09", target: "2026-08-16", next: "AI Intake & Triage — fast-lane candidate" },
+    lastUpdate: "2026-08-09", target: "2026-08-16", next: "AI Intake & Discovery — fast-lane candidate" },
 
   { id: "AI-008", name: "Chat deflection FAQ assistant", func: "Digital Banking",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Digital Channels", wsjf: 5.9, est: 600,
@@ -2185,7 +2179,7 @@ const USE_CASES = [
     size: 8, impact: ["risk", "insight"],
     metric: false, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-08-10", target: "2026-08-17", next: "AI Intake & Triage" },
+    lastUpdate: "2026-08-10", target: "2026-08-17", next: "AI Intake & Discovery" },
 
   { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
     stage: "intake", owner: "Intake team", sponsor: "— (sponsor not named)", wsjf: null, est: null,
@@ -2200,7 +2194,7 @@ const USE_CASES = [
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
     gate: "benefits", gateSince: "2026-07-02",
-    lastUpdate: "2026-08-01", target: "2026-09-30", next: "Portfolio Increment Review (Q3)" },
+    lastUpdate: "2026-08-01", target: "2026-09-30", next: "AI Portfolio Council (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
     stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null, est: null,
@@ -2214,7 +2208,7 @@ const USE_CASES = [
     size: 5, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-08-07", target: "2026-08-29", next: "Discovery Review" },
+    lastUpdate: "2026-08-07", target: "2026-08-29", next: "AI Intake & Discovery" },
 
   { id: "AI-014", name: "Dispute intake summarizer", func: "Customer Care",
     stage: "prioritization", owner: "D. Kim", sponsor: "Card Services", wsjf: 3.4, est: 300,
@@ -2913,8 +2907,17 @@ function renderRoutineMap() {
   if (!host) return;
 
   const NS = "http://www.w3.org/2000/svg";
-  const W = 940, H = 462, CX = 470, CY = 233, RX = 330, RY = 170;
-  const NW = 214, NH = 64, HW = 250, HH = 86;
+  /* Geometry follows the routine count rather than assuming six. Fewer nodes
+     means each one can be wider, which matters because a routine covering
+     three stages carries a longer label than one covering a single stage —
+     merging routines is exactly what makes those labels grow. The height is
+     derived from the lowest node so the box never carries dead space. */
+  const n = FORUMS.length;
+  const NS_ANG = FORUMS.map((f, i) => (-90 + i * 360 / n) * Math.PI / 180);
+  const W = 940, CX = 470, RX = 320, RY = 170;
+  const NW = n <= 4 ? 292 : 214, NH = 64, HW = 250, HH = 86;
+  const CY = 24 + NH / 2 + RY;
+  const H = CY + RY * Math.max(...NS_ANG.map(Math.sin)) + NH / 2 + 24;
 
   const svg = document.createElementNS(NS, "svg");
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
@@ -2951,10 +2954,7 @@ function renderRoutineMap() {
   };
 
   // connectors first, so the boxes sit over them
-  const pts = FORUMS.map((f, i) => {
-    const a = (-90 + i * (360 / FORUMS.length)) * Math.PI / 180;
-    return [CX + RX * Math.cos(a), CY + RY * Math.sin(a)];
-  });
+  const pts = NS_ANG.map(a => [CX + RX * Math.cos(a), CY + RY * Math.sin(a)]);
   for (const [nx, ny] of pts) {
     const [x1, y1] = edge(nx, ny, NW, NH, CX, CY);
     const [x2, y2] = edge(CX, CY, HW, HH, nx, ny);
@@ -3542,10 +3542,9 @@ function renderMix(active) {
    competing recommendations. Computed portfolio-wide, never on a filtered
    slice, so filtering the table can't change what a rule recommends. */
 const FORUM_BY_STAGE = {
-  intake: "AI Intake & Triage", triage: "AI Intake & Triage", discovery: "Discovery Review",
-  prioritization: "AI Portfolio Council", portfolio: "AI Portfolio Council",
-  governance: "AI Risk & Controls", delivery: "Delivery & Controls Review",
-  value: "Portfolio Increment Review",
+  intake: "AI Intake & Discovery", triage: "AI Intake & Discovery", discovery: "AI Intake & Discovery",
+  prioritization: "AI Portfolio Council", portfolio: "AI Portfolio Council", value: "AI Portfolio Council",
+  governance: "AI Risk & Controls", delivery: "AI Risk & Controls",
 };
 const SEV_RANK = { critical: 0, warning: 1, opportunity: 2 };
 const SEV_DOT = { critical: ["critical", "✕"], warning: ["warning", "!"], opportunity: ["neutral", "\u2192"] };
@@ -3619,7 +3618,7 @@ function actionsFor(u, plan) {
   if (u.stage === "triage" && !u.risk.length && !u.waitingOn && (u.size || 99) <= 3) {
     out.push({ sev: "opportunity", act: "Route through the fast lane",
       why: "no risk flags and small scope, so it need not wait on the monthly Council.",
-      where: "AI Intake & Triage" });
+      where: "AI Intake & Discovery" });
   }
 
   return out.sort((x, y) => SEV_RANK[x.sev] - SEV_RANK[y.sev]);
@@ -3639,17 +3638,18 @@ function actionsFor(u, plan) {
    That rule is what set these, and it is asserted at load — add a forum or
    slow one down and the console says which stage it stranded.
 
-   Days are spread across the week so no two forums collide, and the two that
-   stay slow stay slow for a reason: the Council commits capacity monthly even
-   though it reviews rank fortnightly, and benefits cannot be measured faster
-   than a quarter. */
+   Days are spread across the week so no two routines collide.
+
+   Three standing routines, not six. The work did not go away — the sittings
+   did. AI Intake & Discovery merged into the front door because it is the same
+   people looking at the same funnel a week later. Gate-walking merged into
+   Risk & Controls because the gates are control gates. The quarterly funding
+   decision is now the Council's every-sixth sitting rather than a body of its
+   own: same people, same decision, one fewer invite. */
 const FORUMS = [
-  { name: "AI Intake & Triage",         cadence: "Weekly",    stages: ["intake", "triage"],            next: () => nextWeekly(4) },
-  { name: "Discovery Review",           cadence: "Weekly",    stages: ["discovery"],                   next: () => nextWeekly(3) },
-  { name: "AI Portfolio Council",       cadence: "Bi-weekly", stages: ["prioritization", "portfolio"], next: () => nextBiweekly(1, "2026-01-12") },
-  { name: "AI Risk & Controls",         cadence: "Bi-weekly", stages: ["governance", "value"],         next: () => nextBiweekly(2, "2026-01-06") },
-  { name: "Delivery & Controls Review", cadence: "Bi-weekly", stages: ["delivery"],                    next: () => nextBiweekly(5, "2026-01-09") },
-  { name: "Portfolio Increment Review", cadence: "Quarterly", stages: ["value"],                       next: () => nextQuarterly(4, 3) },
+  { name: "AI Intake & Discovery", cadence: "Weekly",    stages: ["intake", "triage", "discovery"],        next: () => nextWeekly(3) },
+  { name: "AI Portfolio Council",  cadence: "Bi-weekly", stages: ["prioritization", "portfolio", "value"], next: () => nextBiweekly(1, "2026-01-12") },
+  { name: "AI Risk & Controls",    cadence: "Bi-weekly", stages: ["governance", "delivery", "value"],      next: () => nextBiweekly(4, "2026-01-08") },
 ];
 const CADENCE_DAYS = { Weekly: 7, "Bi-weekly": 14, Monthly: 30, Quarterly: 90 };
 
@@ -4624,7 +4624,7 @@ document.getElementById("iform").addEventListener("submit", e => {
   document.getElementById("pb-kicker").textContent = "Mock submission";
   document.getElementById("pb-title").textContent = "Captured: " + name;
   const chips = document.getElementById("pb-chips");
-  chips.replaceChildren(el("span", "chip", "Would become " + nextId), el("span", "chip", "Next: weekly AI Intake & Triage"));
+  chips.replaceChildren(el("span", "chip", "Would become " + nextId), el("span", "chip", "Next: weekly AI Intake & Discovery"));
   const body = document.getElementById("pb-body");
   body.replaceChildren();
   body.append(el("h3", null, "What happens in production"));
