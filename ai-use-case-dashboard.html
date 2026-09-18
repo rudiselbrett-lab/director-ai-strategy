@@ -579,7 +579,16 @@
   .drive .dvalue { font: 650 var(--fs-h1)/1.15 var(--sans); letter-spacing: -0.02em; margin-top: var(--s2); }
   .drive .dsub { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.45; margin-top: var(--s1); }
 
+  .afterlist { margin: 0; padding-left: var(--s4); }
+  .afterlist li { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; margin: var(--s2) 0; }
+  .afterlist b { color: var(--ink); font-weight: 600; }
+  .afternote { color: var(--ink-3); font-size: var(--fs-caption); line-height: 1.5; margin: var(--s3) 0 0; }
+  .gatenote { color: var(--ink-3); font-size: var(--fs-caption); margin: var(--s3) 0 0; padding: 0 var(--s5) var(--s4); }
+
   .statemap { min-width: 860px; }
+  .scorecard { min-width: 620px; }
+  .scorecard th:nth-child(2), .scorecard td:nth-child(2) { width: 42%; }
+  .scorecard td:first-child { white-space: normal; }
   .statemap th:nth-child(1), .statemap td:nth-child(1) { width: 17%; }
   .statemap th:nth-child(2), .statemap td:nth-child(2) { width: 20%; }
   .statemap th:nth-child(3), .statemap td:nth-child(3) { width: 21%; }
@@ -1122,6 +1131,18 @@
     </div>
     <div class="row3" id="drives"></div>
     <p class="result" id="sowhat"></p>
+    <details class="ref">
+      <summary>All five measures, and what we do when one of them moves</summary>
+      <div class="refbody">
+        <div class="tscroll">
+          <table class="mini scorecard">
+            <thead><tr><th>Measure</th><th>What it means</th><th>Where it stands</th></tr></thead>
+            <tbody id="scorecard"></tbody>
+          </table>
+        </div>
+        <p class="readynote">Reviewed quarterly. If intake-to-decision creeps back above thirty days we look at which routine is slowing. If value realization drops below eighty-five per cent we audit the approval standard instead &mdash; the question is whether we are funding things that cannot deliver.</p>
+      </div>
+    </details>
   </div>
 
   <div class="sect">
@@ -1240,6 +1261,7 @@
           <div class="ssub">Four weeks of real use tells us which gate is ambiguous and which routine is slow. Expect small tweaks, not a redesign. Steady state by quarter end.</div>
           <div class="smeta"><b>AI Portfolio Team</b> &middot; Weeks 5+</div></li>
     </ol>
+    <p class="readynote">This model is not fixed. It is reviewed quarterly and adjusted on what we learn &mdash; if something is not working, that is the input, not a complaint.</p>
     <p class="result">Then the two standing questions, asked of the model and of every use case in it: where can more information, action, automation and AI be put to work, and where do lighter paths let work move the moment it is ready.</p>
   </div>
 
@@ -1372,12 +1394,14 @@
       </div>
       <div class="card">
         <h3>What happens next</h3>
-        <ul>
-          <li>Reviewed at the <b>weekly AI Intake &amp; Discovery</b>, routed — never queued.</li>
-          <li>Leaves triage with <b>a decision, an owner, and a date</b>.</li>
-        </ul>
+        <ol class="afterlist">
+          <li><b>Triaged within 48 hours</b> at the weekly AI Intake &amp; Discovery &mdash; routed, never queued. Accepted for discovery with a named PM, or rejected with the reason on the record.</li>
+          <li><b>Discovery runs two to three weeks.</b> The PM validates the hypothesis, sizes the scope and assesses regulatory risk, then writes a one-page summary: a go or no-go, and a reading against the seven gates.</li>
+          <li><b>The Council decides, bi-weekly.</b> Approved to delivery with a six-month window, or archived as learning.</li>
+        </ol>
+        <p class="afternote">Submit as many ideas as you like &mdash; what gets funded is what fits capacity that quarter. A rejection at intake costs a week; one in production costs two quarters.</p>
       </div>
-    </aside>
+</aside>
   </div>
 
   <div class="teamonly">
@@ -1467,7 +1491,8 @@
   <section class="card attn" aria-label="Needs attention">
     <div class="cardhead"><h2>Needs attention</h2></div>
     <ul id="attn"></ul>
-  </section>
+      <p class="gatenote">Read the board weekly, not quarterly. Anything red or amber for more than five days is raised at the next routine &mdash; staleness is the waste this model exists to remove.</p>
+</section>
 
   
   <details class="ref readyfold">
@@ -1781,15 +1806,15 @@ const STAGES = [
   { id: "discovery", name: "Discovery",         staleDays: 10, riskWindow: 5,
     outcome: "Hypothesis validated, scope sized, regulatory risk assessed", owner: "Assigned PM", record: "Discovery summary" },
   { id: "design",    name: "Design",            staleDays: 14, riskWindow: 7,
-    outcome: "Architecture specced, Risk and Legal reviewed, cost estimated", owner: "Tech Lead", record: "Design package" },
+    outcome: "Architecture specced, Risk and Legal reviewed, cost estimated", owner: "Tech Lead and Governance", record: "Design package" },
   { id: "approval",  name: "Approval",          staleDays: 14, riskWindow: 7,
     outcome: "Council votes, capacity allocated, delivery window set", owner: "AI Portfolio Council", record: "AI roadmap" },
   { id: "delivery",  name: "Delivery",          staleDays: 14, riskWindow: 14,
     outcome: "Built, tested, gates walked", owner: "Delivery Lead", record: "Quarterly plan" },
   { id: "ops",       name: "Ops / Scale",       staleDays: 14, riskWindow: 7,
-    outcome: "Running in production, value measured, optimised", owner: "Ops Lead", record: "Runbooks / monitoring" },
+    outcome: "Running in production, value measured, optimised", owner: "Ops Owner", record: "Runbooks / monitoring" },
   { id: "value",     name: "Value Realization", staleDays: 45, riskWindow: 14,
-    outcome: "Actual value measured against projection each quarter", owner: "Business Sponsor", record: "Benefits dashboard" },
+    outcome: "Actual value measured against projection each quarter", owner: "Portfolio Council and Ops", record: "Benefits dashboard" },
 ];
 
 /* Playbook content — preview depth, three stages only. */
@@ -2714,15 +2739,16 @@ function healthBadge(h) {
    vocabulary of each state, so they live here. Every state has one — work
    leaves from anywhere, which is the claim the state map has to make. */
 const OFFRAMP = {
-  intake:    "Returned to the requester for the missing piece",
-  triage:    "Reuse, partner, or decline — recorded either way",
-  discovery: "Killed with the learning recorded, or reshaped and re-run",
-  design:    "Rejected, deprioritized, or held until controls are met",
-  approval:  "Deferred with a date when capacity is full, or declined with the reason",
-  delivery:  "Paused against a named blocker, or cancelled",
-  ops:       "Shut down when it is not working, with the measurement kept",
-  value:     "Continued, iterated, or archived at the quarterly review",
+  intake:    "Approved to discovery, or rejected with the reason recorded",
+  triage:    "Approved to discovery, or rejected with the reason recorded",
+  discovery: "Approved to design, or killed with the learning recorded",
+  design:    "Approved to delivery, rejected, or deprioritized",
+  approval:  "Approved to delivery, or deferred when capacity is full",
+  delivery:  "Cleared to ops and scale, paused against a blocker, or cancelled",
+  ops:       "Value confirmed, or shut down when it is not working",
+  value:     "Continued, iterated, or archived",
 };
+
 
 
 /* The three measures the model is answerable to. Computed, like everything
@@ -2789,6 +2815,39 @@ function renderDrives() {
 /* The states, with the decision right and the exit attached to each. A table
    rather than a line: the order is real, but what matters about a state is
    who can move it and how work can leave it. */
+/* The full scorecard. Two of the five are computed from the record and move
+   on their own; the other three are a stated cost, a target and a set of
+   expectations. Labelling which is which matters on a page whose whole claim
+   is that its numbers are not typed — a target is not a measurement. */
+function renderScorecard() {
+  const tb = document.getElementById("scorecard");
+  if (!tb) return;
+  const cyc = TRENDS.cycle, closedQ = TRENDS.value.filter(v => !v.partial);
+  const rate = Math.round(closedQ.reduce((a, v) => a + v.realized, 0) /
+                          closedQ.reduce((a, v) => a + v.projected, 0) * 100);
+  const rows = [
+    ["Intake to decision", "How long from an idea arriving to a decision on it, either way.",
+     cyc[cyc.length - 1].days + " days, down from " + cyc[0].days, "computed"],
+    ["Value realization", "Share of projected value that live capabilities actually delivered.",
+     rate + "% across " + closedQ.length + " closed quarters", "computed"],
+    ["Cost of failure", "What a wrong bet costs depending on where it is caught.",
+     "Four weeks in discovery against two quarters in production", "stated"],
+    ["Portfolio visibility", "Share of Consumer Bank AI work on the board rather than off-book.",
+     "Target: 100%", "target"],
+    ["Stage cycle time", "Days spent in a stage before it moves or leaves.",
+     "Discovery 18, design 12, delivery 90", "expected"],
+  ];
+  tb.replaceChildren(...rows.map(([name, means, where, kind]) => {
+    const tr = el("tr");
+    const w = el("td", null, where);
+    w.append(el("div", "cad", kind === "computed" ? "computed from the record"
+                            : kind === "target" ? "a target, not a measurement"
+                            : kind === "stated" ? "a stated cost" : "the expectation, not an average"));
+    tr.append(el("td", null, name), el("td", null, means), w);
+    return tr;
+  }));
+}
+
 function renderStateMap() {
   const tb = document.getElementById("statemap");
   if (!tb) return;
@@ -4303,6 +4362,7 @@ function renderStatic() {
   renderSpecs();
   fillCounts();
   renderDrives();
+  renderScorecard();
   renderModelMap();
   renderStateMap();
   renderRoutineMap();
