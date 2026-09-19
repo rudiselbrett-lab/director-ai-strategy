@@ -585,6 +585,7 @@
   .afternote { color: var(--ink-3); font-size: var(--fs-caption); line-height: 1.5; margin: var(--s3) 0 0; }
   .gatenote { color: var(--ink-3); font-size: var(--fs-caption); margin: var(--s3) 0 0; padding: 0 var(--s5) var(--s4); }
 
+  .subsect { margin-top: var(--s7); }
   .statemap { min-width: 860px; }
   .scorecard { min-width: 620px; }
   .scorecard th:nth-child(2), .scorecard td:nth-child(2) { width: 42%; }
@@ -1124,7 +1125,7 @@
   <div class="mission">
     <div class="kicker">Operating model</div>
     <p class="statement">We turn Consumer Bank's AI capacity into a small number of capabilities that <em>measurably change</em> how customers bank with us and how the business runs.</p>
-    <p class="statement-sub"><strong>AI moves fast. Banks move carefully. This is how both stay true.</strong> Without one way in, ideas bypass Risk, Risk kills them in production, builders cannot see priority and Finance cannot forecast &mdash; everyone doing their job, nobody deciding together. One way in, one record, three routines that read it. <strong>More clarity, not more process:</strong> every view here is computed from what the work already leaves behind.</p>
+    <p class="statement-sub"><strong>AI moves fast. Banks move carefully. This is how both stay true.</strong> One way in, one record, three routines that read it. <strong>More clarity, not more process:</strong> every view here is computed from what the work already leaves behind.</p>
     <div class="note">
       <span class="note-lab">Mock-up</span>
       <p>How the function would run, end to end. A proposal, not something Ally operates today &mdash; and the definition every other tab on this site is generated from.</p>
@@ -1146,16 +1147,22 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">01</span><h2>How we get there</h2></div>
-    <p class="sectsub">One rule, one structure, <span data-count="routines">six</span> routines. That is the entire model &mdash; and each part earns its place by moving one of the three numbers above.</p>
-    <div class="flowwrap"><div id="model"></div></div>
+    <div class="secthead"><span class="kicker">01</span><h2>The problem</h2></div>
+    <p class="sectsub">Four things go wrong at once when there is no single way in, and each one makes the others worse. None of them is anybody&rsquo;s fault, which is exactly why none of them gets fixed.</p>
+    <div class="aigrid">
+      <div class="tenet"><h3>Risk finds out last</h3><p>Work reaches production without Risk having seen it, so Risk learns to say no late &mdash; when saying no costs two quarters instead of a week. The caution is rational; the timing is the problem.</p></div>
+      <div class="tenet"><h3>Builders guess at priority</h3><p>With no ranked list and no capacity line, effort follows whoever asked most recently or most loudly. Good teams end up building the third-best thing well.</p></div>
+      <div class="tenet"><h3>Finance cannot forecast</h3><p>What was never written down cannot be planned for, so AI spend arrives as a surprise and gets treated like one &mdash; cut across the board rather than by value.</p></div>
+      <div class="tenet"><h3>Declines leave no trace</h3><p>An idea turned down in March returns in September with the same gaps, because nothing recorded why it stopped. The organization pays twice to learn the same thing.</p></div>
+    </div>
+    <p class="result">Everyone is doing their job. Nobody is deciding together.</p>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">02</span><h2>The rule</h2></div>
+    <div class="secthead"><span class="kicker">02</span><h2>The bet</h2></div>
     <p class="ruleline">One record. <em>Every other view is computed from it.</em></p>
-    <p class="sectsub"><span data-count="principles">Six</span> principles follow from it. The first three decide what we build; the last three decide how it runs.</p>
-    <div class="tenets" id="principles">
+    <p class="sectsub">One choice answers all four. If every idea is one issue and nothing exists outside it, Risk sees work early because it is visible from the day it arrives, priority is a ranked list rather than a negotiation, Finance reads a forecast instead of asking for one, and a decline is data the next person can find. <span data-count="principles">Six</span> principles follow from it &mdash; the first three decide what we build, the last three decide how it runs.</p>
+<div class="tenets" id="principles">
       <div class="tenet"><div class="no">01</div><h3>One way in</h3><p>Every idea arrives through the same <button type="button" class="xlink" data-tab="intake" title="Open the Intake Form">fifteen-minute form</button> and becomes an issue with an ID. No side channel, so the board is the whole portfolio rather than the part that got written down.</p></div>
       <div class="tenet"><div class="no">02</div><h3>Hypothesis first</h3><p>Start with what we believe and what would disprove it. Every use case states up front what would tell us to stop.</p></div>
       <div class="tenet"><div class="no">03</div><h3>Evidence before scale</h3><p>Pilots answer a question, they do not prove we were right. A stop that cost four weeks instead of two quarters is a successful discovery, and it stays in the portfolio as data.</p></div>
@@ -1163,12 +1170,17 @@
       <div class="tenet"><div class="no">05</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner and measured value against a baseline &mdash; not shipped.</p></div>
       <div class="tenet"><div class="no">06</div><h3>Speed is a governance outcome</h3><p>Risk, Legal and MRM engage early and by tier. Controls are not the brake, they are the reason we can move at all.</p></div>
     </div>
+    <p class="sectsub subsect">That is the whole model: one rule, one structure, <span data-count="routines">three</span> routines, pointed at one outcome. Everything after this is those three parts in detail.</p>
+<div class="flowwrap"><div id="model"></div></div>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">03</span><h2>The structure</h2></div>
-    <p class="sectsub">Work sits in <strong>exactly one stage</strong> at a time, and each stage names the single routine that can move it out, what it leaves behind, and the ways it can leave altogether &mdash; from any stage rather than only the last. Work leaves when a gate is met or failed, not when it is convenient: each stage has a window, and work that hits it without being ready goes red and forces a call. It is then <strong>ranked against a capacity line</strong>: committed delivery work consumes the increment&rsquo;s points first, and what is left decides how far down the ranked list we reach. Below the line is waiting for room, not rejected.</p>
-    <details class="ref">
+    <div class="secthead"><span class="kicker">03</span><h2>How work moves</h2></div>
+    <p class="sectsub">The three parts the diagram names, in the order work meets them.</p>
+
+    <h3 class="label">The structure: one stage at a time</h3>
+    <p class="sectsub">Work sits in <strong>exactly one stage</strong>, and each stage names the single routine that can move it out, what it leaves behind, and the ways it can leave altogether &mdash; from any stage, not only the last. Work leaves when a gate is met or failed, not when it is convenient: each stage has a window, and work that hits it without being ready goes red and forces a call. It is then <strong>ranked against a capacity line</strong>, so what gets built is what fits, in order.</p>
+<details class="ref">
       <summary>The <span data-count="stages">eight</span> stages, who can move each, and how work leaves</summary>
       <div class="refbody">
         <div class="tscroll">
@@ -1180,12 +1192,10 @@
         <p class="readynote"><span data-count="playbooks">Three</span> stages carry a playbook; select the name to read it.</p>
       </div>
     </details>
-  </div>
 
-  <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>The routines</h2></div>
-    <p class="sectsub"><span data-count="routines">Six</span> standing routines, and none of them hands off to another. They all read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>, so nothing waits for its turn to come round. <strong>Cadence is how often we look, not how often we all sit down:</strong> where the board is green a sitting is a two-minute confirmation against the <button type="button" class="xlink" data-tab="status" title="Open the Weekly Status">weekly report</button>, and people are only in a room when something red needs a decision the data cannot make.</p>
-    <div class="flowwrap"><div id="flow"></div></div>
+    <h3 class="label subsect">The routines: three, all reading the same record</h3>
+    <p class="sectsub">None of them hands off to another. They read and write the same record in Jira, so nothing waits for its turn to come round. <strong>Cadence is how often we look, not how often we all sit down:</strong> where the board is green a sitting is a two-minute confirmation, and people are only in a room when something red needs a decision the data cannot make.</p>
+<div class="flowwrap"><div id="flow"></div></div>
     <p class="readynote">No routine meets less often than the stage it owns can go stale. That rule, not preference, sets these cadences &mdash; and the page checks it on load.</p>
     <details class="ref">
       <summary>What each routine decides, produces, and records</summary>
@@ -1202,12 +1212,10 @@
         </div>
       </div>
     </details>
-  </div>
 
-  <div class="sect">
-    <div class="secthead"><span class="kicker">05</span><h2>The seven gates</h2></div>
-    <p class="sectsub">Before work moves on, it clears a gate. Gates are binary &mdash; met or not met, with no gray &mdash; and each one is graded from the record rather than argued in the room. A gate starts counting only when the work reaches the stage it belongs to, so an early use case is not marked down for a control it has not reached.</p>
-    <ul class="raglegend" id="raglegend2"></ul>
+    <h3 class="label subsect">The gates: seven, and binary</h3>
+    <p class="sectsub">Met or not met, with no gray, and each graded from the record rather than argued in the room. A gate starts counting only when work reaches the stage it belongs to, so an early idea is not marked down for a control it has not reached.</p>
+<ul class="raglegend" id="raglegend2"></ul>
     <details class="ref">
       <summary>The <span data-count="gates">seven</span> gates, what each asks, and who owns it</summary>
       <div class="refbody">
@@ -1222,9 +1230,9 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">06</span><h2>Who owns what</h2></div>
-    <p class="sectsub">Six roles. Every gate and every stage above names one of them, so there is no work on this page without a person attached to it.</p>
-    <div class="tenets">
+    <div class="secthead"><span class="kicker">04</span><h2>Who owns it</h2></div>
+    <p class="sectsub">Six roles, and every stage and gate above names one of them. There is no work anywhere on this page without a person attached to it &mdash; which is the difference between a model and a diagram.</p>
+<div class="tenets">
       <div class="tenet"><h3>Portfolio Team Lead</h3><p>Owns intake and triage. Reviews every new idea, makes the accept or reject call, assigns PM leads. Ensures nothing sits in intake longer than 48 hours.</p></div>
       <div class="tenet"><h3>Assigned PM</h3><p>Owns discovery. Validates the hypothesis, sizes the scope, assesses risk, writes the go/no-go, and presents to the Council if it advances.</p></div>
       <div class="tenet"><h3>Tech Lead</h3><p>Owns the technically-feasible gate at design and the build-complete gate at delivery. Specs the architecture, maps dependencies, estimates effort.</p></div>
@@ -1245,9 +1253,9 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">07</span><h2>Where I would start</h2></div>
-    <p class="sectsub">One owner and one date each &mdash; the same terms we ask of every use case.</p>
-    <ol class="steps">
+    <div class="secthead"><span class="kicker">05</span><h2>What I would do first</h2></div>
+    <p class="sectsub">Four weeks to a board that moves, on the same terms the model asks of every use case: one owner and one date each.</p>
+<ol class="steps">
       <li><div class="stitle">Socialize the model and the intake form</div>
           <div class="ssub">Q&amp;A on how intake works, what happens when an idea is rejected, and how to write a stop condition. Everyone leaves with the form link and access to the board.</div>
           <div class="smeta"><b>AI Portfolio Team</b> &middot; Weeks 1&ndash;2</div></li>
@@ -1261,8 +1269,8 @@
           <div class="ssub">Four weeks of real use tells us which gate is ambiguous and which routine is slow. Expect small tweaks, not a redesign. Steady state by quarter end.</div>
           <div class="smeta"><b>AI Portfolio Team</b> &middot; Weeks 5+</div></li>
     </ol>
-    <p class="readynote">This model is not fixed. It is reviewed quarterly and adjusted on what we learn &mdash; if something is not working, that is the input, not a complaint.</p>
-    <p class="result">Then the two standing questions, asked of the model and of every use case in it: where can more information, action, automation and AI be put to work, and where do lighter paths let work move the moment it is ready.</p>
+    <p class="readynote">The model is not fixed. It is reviewed quarterly against two standing questions &mdash; where can more information, action, automation and AI be put to work, and where do lighter paths let work move the moment it is ready. If something is not working, that is the input, not a complaint.</p>
+    <p class="result">Ninety days in, the test is not whether the routines are meeting. It is whether someone outside this team can open the board, see where every idea is and why it is there, and challenge a decision on the record.</p>
   </div>
 
 </section>
@@ -1812,7 +1820,7 @@ const STAGES = [
   { id: "delivery",  name: "Delivery",          staleDays: 14, riskWindow: 14,
     outcome: "Built, tested, gates walked", owner: "Delivery Lead", record: "Quarterly plan" },
   { id: "ops",       name: "Ops / Scale",       staleDays: 14, riskWindow: 7,
-    outcome: "Running in production, value measured, optimised", owner: "Ops Owner", record: "Runbooks / monitoring" },
+    outcome: "Running in production, value measured, optimized", owner: "Ops Owner", record: "Runbooks / monitoring" },
   { id: "value",     name: "Value Realization", staleDays: 45, riskWindow: 14,
     outcome: "Actual value measured against projection each quarter", owner: "Portfolio Council and Ops", record: "Benefits dashboard" },
 ];
