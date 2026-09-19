@@ -18,9 +18,12 @@ what's worth building. Built as a single self-contained HTML page with six views
 - **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog
   against a capacity line, per-use-case suggested actions, and a filterable use
   case table.
-- **Weekly Status** — RAG for the portfolio and its three elements, what changed
-  since last week, which use cases and routines the coming week turns on, and
-  the portfolio-level risks. Previous weeks are kept as issued.
+- **Weekly Status** — RAG for the portfolio and its three elements, then the
+  week as its three sittings produced it: what the front door took in and
+  decided, what the standup found and escalated, and the Council's what's new,
+  what we need to know, and what needs a decision or discussion. Each routine's
+  sections come from its own definition, so renaming a routine or moving a
+  stage rewrites the report. Previous weeks are kept as issued.
 - **Jira** — the same use cases as Jira issues, styled as Jira: an Action
   Required dashboard whose three gadgets each grade the portfolio on a
   different logic (decision rights, time against the expected window, and the
