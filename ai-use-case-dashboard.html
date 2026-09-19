@@ -477,6 +477,16 @@
     border: 1px solid var(--hairline); border-radius: var(--r); padding: 0 var(--s1); margin: 2px var(--s1) 0 0;
     background: var(--panel); letter-spacing: 0.03em;
   }
+  /* The tier rides with the risk flags because it is derived from them, but it
+     is the governing fact rather than one input, so it leads and carries the
+     weight. Same rule as the tier cards: no status colour, the scale is ink. */
+  .tierchip {
+    display: inline-block; font-size: var(--fs-micro); font-weight: 600; color: var(--ink-2);
+    border: 1px solid var(--rule); border-left-width: 3px; border-radius: var(--r);
+    padding: 0 var(--s1); margin: 2px var(--s1) 0 0; background: var(--page); letter-spacing: 0.03em;
+  }
+  .tierchip.t-med  { border-left-color: var(--ink-3); }
+  .tierchip.t-high { border-left-color: var(--ink); color: var(--ink); }
   .empty-table { color: var(--ink-3); padding: var(--s5); }
 
   /* ---------- tooltip ---------- */
@@ -620,7 +630,74 @@
   .dia .fline  { stroke: var(--rule); stroke-width: 1; fill: none; }
   .dia .farrow { fill: var(--rule); }
   .readyspec td:first-child { font-weight: 600; white-space: nowrap; }
-  .readyspec td:nth-child(3), .readyspec td:last-child { white-space: nowrap; color: var(--ink-3); }
+  .readyspec td:last-child { color: var(--ink-3); }
+
+  /* ---------- the eight stages, as cards ----------
+     Four across, so the eight read as two passes: what happens before we
+     commit, and what happens after. Each card carries the three things that
+     have to be true to leave the stage — the gate, stated as work rather than
+     as a verdict. */
+  .stagegrid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: var(--s2); margin-top: var(--s5);
+  }
+  .stagecard { border: 1px solid var(--hairline); border-radius: var(--r); background: var(--page); }
+  .schead {
+    display: flex; align-items: baseline; gap: var(--s2);
+    padding: var(--s2) var(--s3); background: var(--panel);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .schead .sno { font: 700 var(--fs-caption) var(--sans); color: var(--brand); }
+  .schead .snm { font: 600 var(--fs-body) var(--sans); color: var(--ink); }
+  /* how much of the live portfolio is sitting in this stage right now — the
+     one number on the card that is not a definition */
+  .schead .scount { margin-left: auto; font-size: var(--fs-nano); color: var(--ink-3); white-space: nowrap; }
+  .sowner {
+    padding: var(--s2) var(--s3) 0; font: 700 var(--fs-nano) var(--sans);
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+  }
+  .sexits { list-style: none; margin: 0; padding: var(--s1) var(--s3) var(--s3); }
+  .sexits li {
+    position: relative; padding-left: var(--s3); margin-top: var(--s2);
+    font-size: var(--fs-caption); line-height: 1.45; color: var(--ink-2);
+  }
+  .sexits li::before {
+    content: ""; position: absolute; left: 0; top: 6px;
+    width: 5px; height: 5px; border-radius: 1px; background: var(--rule);
+  }
+  @media (max-width: 1000px) { .stagegrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px)  { .stagegrid { grid-template-columns: 1fr; } }
+
+  /* ---------- risk tiers ----------
+     A tier is not a health reading, so it does not get the status palette:
+     green/amber/red mean "how is this going", and a high-tier use case that is
+     going perfectly well would read as on fire. The scale is carried by weight
+     and by a rule that thickens instead. */
+  .tiergrid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: var(--s3); margin-top: var(--s4);
+  }
+  .tiercard {
+    border: 1px solid var(--hairline); border-left: 3px solid var(--rule);
+    border-radius: var(--r); padding: var(--s4); background: var(--page);
+  }
+  .tiercard.t-med  { border-left-color: var(--ink-3); }
+  .tiercard.t-high { border-left-width: 6px; border-left-color: var(--ink); }
+  .tlab {
+    font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .tband {
+    font: 650 var(--fs-h2)/1.1 var(--sans); color: var(--ink);
+    letter-spacing: -0.02em; margin: var(--s1) 0 var(--s2);
+  }
+  .t-high .tband { color: var(--brand); }
+  .twhat { font-size: var(--fs-small); line-height: 1.5; color: var(--ink-2); }
+  .tnow {
+    margin-top: var(--s3); padding-top: var(--s2); border-top: 1px solid var(--hairline);
+    font-size: var(--fs-caption); color: var(--ink-3);
+  }
+  @media (max-width: 720px) { .tiergrid { grid-template-columns: 1fr; } }
 
   /* Readiness matrix: the council's grid. */
   .readyfold > summary { font: 600 var(--fs-lead) var(--sans); }
@@ -681,6 +758,12 @@
      column would set them too narrow to read comfortably. */
   .aigrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s4) var(--s6); }
   @media (max-width: 780px) { .aigrid { grid-template-columns: 1fr; } }
+  /* Four short items read across in one band; two columns of three-line cards
+     is half a screen of white space for no gain. The two-column default stays
+     for the failure modes, whose cards actually carry a paragraph. */
+  .aigrid.four { grid-template-columns: repeat(4, 1fr); gap: var(--s4); }
+  @media (max-width: 1000px) { .aigrid.four { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px)  { .aigrid.four { grid-template-columns: 1fr; } }
   .aigrid .tenet h3 { margin-top: 0; }
   .aigrid .tenet .no + h3 { margin-top: var(--s2); }
   .aigrid code {
@@ -1099,7 +1182,7 @@
   <div class="mission">
     <div class="kicker">Operating model</div>
     <p class="statement">We turn Consumer Bank's AI capacity into a small number of capabilities that <em>measurably change</em> how customers bank with us and how the business runs.</p>
-    <p class="statement-sub"><strong>AI moves fast. Banks move carefully. This is how both stay true.</strong> One way in, one record, three routines that read it. <strong>More clarity, not more process:</strong> every view here is computed from what the work already leaves behind.</p>
+    <p class="statement-sub"><strong>AI moves fast. Banks move carefully. This is how both stay true.</strong> One record, <span data-count="stages">eight</span> stages, <span data-count="routines">three</span> routines, disciplined triage. <strong>More clarity, not more process:</strong> every view here is computed from what the work already leaves behind.</p>
     <div class="note">
       <span class="note-lab">Mock-up</span>
       <p>How the function would run, end to end. A proposal, not something Ally operates today &mdash; and the definition every other tab on this site is generated from.</p>
@@ -1115,7 +1198,7 @@
             <tbody id="scorecard"></tbody>
           </table>
         </div>
-        <p class="readynote">Reviewed quarterly. If intake-to-decision creeps back above thirty days we look at which routine is slowing. If value realization drops below eighty-five per cent we audit the approval standard instead &mdash; the question is whether we are funding things that cannot deliver.</p>
+        <p class="readynote">Reviewed quarterly. If intake-to-decision creeps back above forty-five days, or any tier misses its window twice running, we look at which routine is slowing. If value realization drops below eighty-five per cent we audit the approval standard instead &mdash; the question is whether we are funding things that cannot deliver.</p>
       </div>
     </details>
   </div>
@@ -1134,8 +1217,9 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>The bet</h2></div>
-    <p class="ruleline">One record. <em>Every other view is computed from it.</em></p>
-    <p class="sectsub">One choice answers all four: if every idea is one issue and nothing exists outside it, work is visible from day one, priority is a list rather than a negotiation, and a decline is data. <span data-count="principles">Six</span> principles follow &mdash; the first three decide what we build, the last three how it runs.</p>
+    <p class="ruleline">Smooth is fast and fast is smooth. <em>Clarity is what makes both possible.</em></p>
+    <p class="sectsub">Every gate buys one piece of clarity, so that everyone can move on the same picture. Intake: is this worth exploring. Triage: what would count as it working. Discovery: is the problem real. Design: can we build it <em>and</em> govern it. By Approval, Risk, PM and Finance are looking at the same thing &mdash; which is why Approval is a decision rather than a discovery.</p>
+    <p class="sectsub">Things change during discovery and design, and when they do everyone sees it at once: Risk owns the design gate, so a shift in requirements lands before build starts rather than after. We escalate or re-tier as a portfolio instead of reworking in silos. <span data-count="principles">Six</span> principles follow from it.</p>
 <div class="tenets" id="principles">
       <div class="tenet"><div class="no">01</div><h3>One way in</h3><p>One <button type="button" class="xlink" data-tab="intake" title="Open the Intake Form">fifteen-minute form</button>, one issue with an ID, no side channel &mdash; so the board is the whole portfolio.</p></div>
       <div class="tenet"><div class="no">02</div><h3>Hypothesis first</h3><p>Every use case states up front what we believe and what would tell us to stop.</p></div>
@@ -1144,18 +1228,39 @@
       <div class="tenet"><div class="no">05</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner and measured value against a baseline &mdash; not shipped.</p></div>
       <div class="tenet"><div class="no">06</div><h3>Speed is a governance outcome</h3><p>Risk, Legal and MRM engage early and by tier. Controls are why we can move, not what stops us.</p></div>
     </div>
-    <p class="sectsub subsect">That is the whole model: one rule, one structure, <span data-count="routines">three</span> routines, pointed at one outcome. Everything after this is those three parts in detail.</p>
+    <p class="sectsub subsect">One rule, one structure, <span data-count="routines">three</span> routines, pointed at one outcome.</p>
 <div class="flowwrap"><div id="model"></div></div>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">03</span><h2>How work moves</h2></div>
-    <p class="sectsub">The three parts the diagram names, in the order work meets them.</p>
+    <div class="secthead"><span class="kicker">03</span><h2>What gets in</h2></div>
+    <p class="sectsub"><strong>Two gates before anything is built.</strong> Intake decides whether an idea is worth exploring at all. Triage decides what would count as it working. Most of what a portfolio wastes is spent past this point on things that should not have cleared it.</p>
 
-    <h3 class="label">The structure: one stage at a time</h3>
-    <p class="sectsub"><strong>Exactly one stage at a time.</strong> Each names the one routine that can move it and the ways work can leave &mdash; from any stage, not just the last. Work leaves when a gate is met or failed, not when convenient. Then it is <strong>ranked against a capacity line</strong>, so what gets built is what fits, in order.</p>
-<details class="ref">
-      <summary>The <span data-count="stages">eight</span> stages, who can move each, and how work leaves</summary>
+    <h3 class="label">Intake asks four questions</h3>
+    <div class="aigrid four">
+      <div class="tenet"><h3>Clear problem</h3><p>A specific customer or operational pain, measurable, with someone who owns it. Not &ldquo;we want to use AI.&rdquo;</p></div>
+      <div class="tenet"><h3>AI is the answer</h3><p>Could process, rules or a simpler tool solve this? If yes, that is the path. AI only where it is clearly the right lever.</p></div>
+      <div class="tenet"><h3>Measurable outcome</h3><p>How will we know it worked &mdash; revenue, cost, risk reduction? Quantifiable, not aspirational.</p></div>
+      <div class="tenet"><h3>Owner and runway</h3><p>An accountable PM with the capacity to carry it. Ownership, not interest.</p></div>
+    </div>
+
+    <h3 class="label subsect">Triage defines the value</h3>
+    <p class="sectsub">Four things written down before discovery starts, so that the argument at Approval is about evidence rather than about what we meant.</p>
+    <div class="aigrid four">
+      <div class="tenet"><h3>Hypothesis</h3><p>What we expect to happen. Finance and Risk have to agree it is testable.</p></div>
+      <div class="tenet"><h3>Baseline</h3><p>How we measure today. Set by Finance, and the number every use case is judged against at Value.</p></div>
+      <div class="tenet"><h3>Success criteria</h3><p>Explicit numbers, not hopes &mdash; adoption thresholds, revenue lift, risk reduction.</p></div>
+      <div class="tenet"><h3>Stop condition</h3><p>What would tell us to pivot or stop. Written at triage, before anyone is invested in the answer.</p></div>
+    </div>
+    <p class="result">A bad idea is cheapest before anyone builds it. These eight questions are where that saving is available.</p>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">04</span><h2>How work moves</h2></div>
+    <p class="sectsub"><strong>Eight stages, one at a time, three things true to leave each.</strong> Work leaves a stage when its gate is met or failed, not when convenient &mdash; and it leaves from anywhere, not just the last stage.</p>
+    <div class="stagegrid" id="stagegrid"></div>
+    <details class="ref">
+      <summary>Who owns each stage, and how work can leave it</summary>
       <div class="refbody">
         <div class="tscroll">
           <table class="mini statemap">
@@ -1167,36 +1272,22 @@
       </div>
     </details>
 
-    <h3 class="label subsect">The routines: three, all reading the same record</h3>
-    <p class="sectsub">None hands off to another; all three read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>. <strong>Cadence is how often we look, not how often we all sit down:</strong> a green board makes a sitting a two-minute confirmation against the <button type="button" class="xlink" data-tab="status" title="Open the Weekly Status">weekly report</button>.</p>
+    <h3 class="label subsect">How fast: the tier sets the clock</h3>
+    <p class="sectsub">Not every use case deserves the same governance. The tier is <strong>computed from the risk the work already carries</strong> &mdash; the data it touches, whether a human stays in the loop, the function it lands in &mdash; never chosen by the person filing it. It sets one promise: how long intake to approval should take.</p>
+    <div class="tiergrid" id="tiergrid"></div>
+    <p class="readynote">Seventy days for high-risk work is real governance rigor, and everyone knows it upfront. That is the point of stating it: twenty-one days for low risk <em>means</em> twenty-one days, and nobody has to guess which kind of thing they are holding.</p>
+
+    <h3 class="label subsect">The routines: <span data-count="routines">three</span>, all reading the same record</h3>
+    <p class="sectsub">None hands off to another; all three read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>. <strong>Two hours a week in total</strong>, deliberately unequal &mdash; a quarter-hour to decide what gets in, half an hour for everyone in flight to say where they are, and one long room where money is actually committed.</p>
 <div class="flowwrap"><div id="flow"></div></div>
     <p class="readynote">No routine meets less often than the stage it owns can go stale. That rule, not preference, sets these cadences &mdash; and the page checks it on load.</p>
     <details class="ref">
-      <summary>What each routine decides, produces, and records</summary>
+      <summary>What each routine decides, produces, and the clock it runs on</summary>
       <div class="refbody">
         <div class="tscroll">
           <table class="mini routines">
-            <thead><tr><th>Routine</th><th>Cadence</th><th>Who is in the room</th><th>Decides</th><th>Reads and writes</th></tr></thead>
-            <tbody>
-              <tr><td>AI Intake &amp; Discovery</td><td>Weekly</td><td>Portfolio Team Lead, one or two assigned PMs, a technical reviewer when the question is technical</td><td>Accept or reject a new idea. Approve a discovery package to design, or kill it. Assign the PM lead and size the work.</td><td>Every new issue. Writes discovery findings, the go/no-go, and the PM assignment.</td></tr>
-              <tr><td>AI Portfolio Council</td><td>Bi-weekly</td><td>Product Director, Finance Lead, Strategic Sponsor, one or two PMs, Risk Lead as needed</td><td>Rank and fund <strong>across spaces</strong> &mdash; what a product owner can decide inside their own function does not come here. Approve to delivery. Grade whether a live capability is performing. Every sixth sitting is the increment review, where funding and staffing are committed.</td><td>Everything in design, approval, ops and value, across every function. Writes rank, capacity points and delivery windows.</td></tr>
-              <tr><td>AI Risk &amp; Controls</td><td>Bi-weekly</td><td>Governance Lead, Risk Lead, Compliance and MRM, one or two PMs, Tech Lead for design detail</td><td>Sign off the compliance gate at design. Walk the delivery and ops gates. Clear escalations and blockers, same day when something comes in red.</td><td>Everything in design, delivery and ops. Writes gate status, readiness gaps and compliance decisions.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </details>
-
-    <h3 class="label subsect">The gates: seven, and binary</h3>
-    <p class="sectsub">Met or not met, no gray, each graded from the record rather than argued in the room. A gate counts only once work reaches the stage it belongs to.</p>
-<ul class="raglegend" id="raglegend2"></ul>
-    <details class="ref">
-      <summary>The <span data-count="gates">seven</span> gates, what each asks, and who owns it</summary>
-      <div class="refbody">
-        <div class="tscroll">
-          <table class="mini readyspec">
-            <thead><tr><th>Gate</th><th>What it asks</th><th>Owner</th><th>Due from</th></tr></thead>
-            <tbody id="readyspec"></tbody>
+            <thead><tr><th>Routine</th><th>When</th><th>Who is in the room</th><th>Decides</th><th>Reads and writes</th><th>Clock</th></tr></thead>
+            <tbody id="routinespec"></tbody>
           </table>
         </div>
       </div>
@@ -1204,32 +1295,55 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>Who decides what</h2></div>
-    <p class="sectsub"><strong>Owned locally, ranked centrally.</strong> A product owner owns what gets raised in their space, what gets killed there, and the value case behind it. The portfolio owns only what crosses spaces &mdash; rank, capacity, and the call when two good things cannot both be funded this quarter. <span data-count="roles">Seven</span> roles, and every stage and gate above names one.</p>
-<div class="tenets" id="roles">
+    <div class="secthead"><span class="kicker">05</span><h2>Who decides what</h2></div>
+    <p class="sectsub"><strong>Owned locally, ranked centrally.</strong> A product owner owns what gets raised in their space, what gets killed there, and the value case behind it. The portfolio owns only what crosses spaces &mdash; rank, capacity, and the call when two good things cannot both be funded this quarter. <span data-count="roles">Seven</span> roles: every stage above names one, and every gate is met or not met, graded from the record rather than argued in the room.</p>
+<ul class="raglegend" id="raglegend2"></ul>
+    <details class="ref">
+      <summary>The <span data-count="gates">eight</span> gates, what each decides, and who owns it</summary>
+      <div class="refbody">
+        <div class="tscroll">
+          <table class="mini readyspec">
+            <thead><tr><th>Gate</th><th>Decision criteria</th><th>Owner</th></tr></thead>
+            <tbody id="readyspec"></tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+    <div class="tenets subsect" id="roles">
       <div class="tenet"><h3>Product Owner</h3><p>Owns the AI roadmap for one function &mdash; what to raise, what to stop locally, and the value case. Brings to the Council only what needs capacity or crosses a boundary.</p></div>
-      <div class="tenet"><h3>Portfolio Team Lead</h3><p>Owns intake and triage. Accept or reject on every new idea, a PM assigned, nothing sitting longer than 48 hours.</p></div>
-      <div class="tenet"><h3>Assigned PM</h3><p>Owns discovery. Validates the hypothesis, sizes the scope, writes the go/no-go.</p></div>
-      <div class="tenet"><h3>Tech Lead</h3><p>Owns the technically-feasible gate at design and build-complete at delivery.</p></div>
-      <div class="tenet"><h3>Governance Lead</h3><p>Owns the compliance gate &mdash; cleared at design rather than at go-live, with regulatory blockers escalated the same day.</p></div>
-      <div class="tenet"><h3>AI Portfolio Council</h3><p>Owns the business-case gate. Ranks, commits capacity, and makes the trade-off call when it is full.</p></div>
-      <div class="tenet"><h3>Ops Lead</h3><p>Owns the ops-ready gate and, with the PM, value-confirmed. Runs it in production.</p></div>
+      <div class="tenet"><h3>Portfolio Lead</h3><p>Owns the intake gate. Accept, reject or defer on every new idea, with the tier assigned and a PM named inside 48 hours.</p></div>
+      <div class="tenet"><h3>PM Owner</h3><p>Owns triage and discovery &mdash; the business case, the hypothesis, the baseline, and the stop condition.</p></div>
+      <div class="tenet"><h3>Model Risk &amp; Monitoring</h3><p>Owns the design and scale gates. Governance lands before build starts, and monitoring is live before anything scales.</p></div>
+      <div class="tenet"><h3>Tech Lead</h3><p>Owns the delivery gate &mdash; build, audit trail, and a rollout plan that can actually be run.</p></div>
+      <div class="tenet"><h3>Director / Portfolio Council</h3><p>Owns the approval gate. Ranks, commits capacity, and breaks the tie when PM and Risk disagree.</p></div>
+      <div class="tenet"><h3>Governance &amp; Audit</h3><p>Owns the value gate. Measures performance against the baseline Finance set at triage and documents the variance.</p></div>
     </div>
     <details class="ref">
       <summary>What happens when something goes wrong</summary>
       <div class="refbody">
+        <p><b>Anything red escalates to the Council.</b> The Director decides one of three things: unblock it, re-tier it, or accept the delay on the record. The blocker owner brings options, not a status.</p>
         <p><b>An idea is rejected.</b> It stays in the record with the reason, visible to anyone. It can be resubmitted with new evidence, which resets the intake clock. Rejection at intake costs a week; rejection in production costs two quarters.</p>
-        <p><b>Discovery is running long.</b> Amber at two and a half weeks, red at three and a half. At red the weekly routine makes a call: one more week against a named blocker, or kill it. Either way there is a decision rather than silence.</p>
-        <p><b>Delivery is past its date and still amber.</b> Risk &amp; Controls calls the blocker, and the work either gets a reset timeline or is descoped. Gates are staggered on purpose &mdash; build complete, then ops ready, then value confirmed &mdash; so being mid-way through them is normal; being past the date is not.</p>
+        <p><b>Discovery is running long.</b> Amber at two and a half weeks, red at three and a half. At red the standup surfaces it and the Council makes a call: one more week against a named blocker, or kill it. Either way there is a decision rather than silence.</p>
+        <p><b>Work is past its tier window.</b> The tier is a promise, so missing it is a portfolio problem rather than a PM&rsquo;s problem. Either the work is re-tiered because the risk was misread, or the blocker gets removed, or the promise was wrong and we say so.</p>
         <p><b>A live capability is missing its projection.</b> Thirty days to make it work or recommend shutdown. Off by ten or twenty per cent is expected. Off by half means the bet was wrong, and it stops before it costs more.</p>
-        <p><b>A red card has sat in delivery for three weeks.</b> That is a blocker decision and Risk &amp; Controls owns it: remove the blocker, or the work is deprioritized into a later quarter. Nothing is stuck indefinitely.</p>
       </div>
     </details>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><span class="kicker">06</span><h2>What this means operationally</h2></div>
+    <div class="aigrid four">
+      <div class="tenet"><h3>Risk is not a launch gate</h3><p>Model Risk &amp; Monitoring owns the design gate outright. Governance happens before we build, not after, so delivery never surfaces a control gap.</p></div>
+      <div class="tenet"><h3>One record, one status, no re-reviews</h3><p>A use case walks the eight stages once. Risk does not re-evaluate at launch what it decided at design. Finance does not re-baseline at value what it set at triage.</p></div>
+      <div class="tenet"><h3>Blockers are portfolio problems</h3><p>Escalation is not a PM asking permission. It is a Director unblocking someone or re-tiering the work, inside 24 hours.</p></div>
+      <div class="tenet"><h3>Speed comes from predictability</h3><p>You know your timeline the day you file. Twenty-one days for low risk means twenty-one days. Seventy for high risk means full governance. No surprises.</p></div>
+    </div>
     <p class="readynote">The model is not fixed. It is reviewed quarterly against two standing questions &mdash; where can more information, action, automation and AI be put to work, and where do lighter paths let work move the moment it is ready. If something is not working, that is the input, not a complaint.</p>
     <p class="result">The test is not whether the routines are meeting. It is whether someone outside this team can open the board, see where every idea is and why it is there, and challenge a decision on the record.</p>
   </div>
 
 </section>
+
 
 <!-- ================= INTAKE FORM TAB ================= -->
 <section id="tab-intake" role="tabpanel" aria-labelledby="tabbtn-intake" hidden>
@@ -1359,9 +1473,10 @@
       <div class="card">
         <h3>What happens next</h3>
         <ol class="afterlist">
-          <li><b>Triaged within 48 hours</b> at the weekly AI Intake &amp; Discovery &mdash; routed, never queued. Accepted for discovery with a named PM, or rejected with the reason on the record.</li>
-          <li><b>Discovery runs two to three weeks.</b> The PM validates the hypothesis, sizes the scope and assesses regulatory risk, then writes a one-page summary: a go or no-go, and a reading against the seven gates.</li>
-          <li><b>The Council decides, bi-weekly.</b> Approved to delivery with a six-month window, or archived as learning.</li>
+          <li><b>Triaged within 48 hours</b> at Monday&rsquo;s Weekly Intake &mdash; routed, never queued. Accepted with a risk tier and a named PM, or rejected with the reason on the record.</li>
+          <li><b>The tier sets your clock.</b> Low risk is twenty-one days to approval, medium forty-five, high seventy or more. It is assigned from what the idea touches, not chosen, and you are told it on day one.</li>
+          <li><b>Discovery runs two to three weeks.</b> The PM validates the hypothesis, sizes the scope and assesses regulatory impact, then writes a one-page summary: a go or no-go, and a reading against the <span data-count="gates">eight</span> gates.</li>
+          <li><b>The Council decides on Thursdays.</b> Approved to delivery with a six-month window, or archived as learning.</li>
         </ol>
         <p class="afternote">Submit as many ideas as you like &mdash; what gets funded is what fits capacity that quarter. A rejection at intake costs a week; one in production costs two quarters.</p>
       </div>
@@ -1756,30 +1871,124 @@
 
 /* =====================================================================
    DATA — edit this section (or generate it from a Jira export).
-   Dates are YYYY-MM-DD. `target` is the expected completion date of the
-   CURRENT stage. `lastUpdate` drives staleness. `est` is the estimated
-   annual value in $K for scored use cases. `closed` marks Declined or
-   Transferred outcomes.
+   Dates are YYYY-MM-DD. `opened` is the day the issue was created — Jira's
+   Created field — and starts the risk-tier clock. `target` is the expected
+   completion date of the CURRENT stage. `lastUpdate` drives staleness. `est`
+   is the estimated annual value in $K for scored use cases. `closed` marks
+   Declined or Transferred outcomes.
+
+   The risk tier is deliberately absent: it is computed from `risk`, `func`
+   and `impact` so that nobody can file a customer-facing credit model as low
+   tier. See TIERS above.
    ===================================================================== */
 
+/* Eight stages, and one gate per stage. They used to be two lists — stages
+   work sat in, and a separate readiness framework graded against — which meant
+   two places to disagree about the same question. A stage is now defined by
+   the three things that have to be true to leave it (`exits`), what the gate
+   owner is deciding (`asks`), and how that decision is read off the record
+   (`grade`). READINESS below is derived from this list, so a gate cannot drift
+   from the stage it belongs to. */
 const STAGES = [
-  { id: "intake",    name: "Intake",            staleDays: 7,  riskWindow: 2,
-    outcome: "Form submitted, issue created, triaged within 48 hours", owner: "Portfolio Team", record: "Intake form / Jira" },
-  { id: "triage",    name: "Triage",            staleDays: 7,  riskWindow: 2,
-    outcome: "Reviewed for feasibility, complexity and strategic fit", owner: "Portfolio Team", record: "Jira backlog" },
-  { id: "discovery", name: "Discovery",         staleDays: 10, riskWindow: 5,
-    outcome: "Hypothesis validated, scope sized, regulatory risk assessed", owner: "Assigned PM", record: "Discovery summary" },
-  { id: "design",    name: "Design",            staleDays: 14, riskWindow: 7,
-    outcome: "Architecture specced, Risk and Legal reviewed, cost estimated", owner: "Tech Lead and Governance", record: "Design package" },
-  { id: "approval",  name: "Approval",          staleDays: 14, riskWindow: 7,
-    outcome: "Council votes, capacity allocated, delivery window set", owner: "AI Portfolio Council", record: "AI roadmap" },
-  { id: "delivery",  name: "Delivery",          staleDays: 14, riskWindow: 14,
-    outcome: "Built, tested, gates walked", owner: "Delivery Lead", record: "Quarterly plan" },
-  { id: "ops",       name: "Ops / Scale",       staleDays: 14, riskWindow: 7,
-    outcome: "Running in production, value measured, optimized", owner: "Ops Owner", record: "Runbooks / monitoring" },
-  { id: "value",     name: "Value Realization", staleDays: 45, riskWindow: 14,
-    outcome: "Actual value measured against projection each quarter", owner: "Portfolio Council and Ops", record: "Benefits dashboard" },
+  { id: "intake",    name: "Intake",    staleDays: 7,  riskWindow: 2,
+    owner: "Portfolio Lead", record: "Intake form / Jira",
+    exits: ["Idea documented", "Risk tier assigned", "PM owner named"],
+    asks: "Clear problem. AI is the answer. Measurable outcome. PM is named.",
+    grade: u => /not named|^—/.test(u.sponsor || "") || !u.sponsor
+              ? ["critical", "Name a sponsor accountable for the value"]
+              : ["good", null] },
+
+  { id: "triage",    name: "Triage",    staleDays: 7,  riskWindow: 2,
+    owner: "PM Owner", record: "Jira backlog",
+    exits: ["Business case drafted", "Governance model type identified", "Baseline and success metrics set"],
+    asks: "Business case is solid. Hypothesis is testable. Baseline is set. Stop condition is real.",
+    grade: u => !u.metric   ? ["critical", "State the success metric and the stop condition"]
+              : !u.baseline ? ["warning",  "Set the baseline the benefit will be measured against"]
+              : ["good", null] },
+
+  { id: "discovery", name: "Discovery", staleDays: 10, riskWindow: 5,
+    owner: "PM Owner", record: "Discovery summary",
+    exits: ["Hypothesis validated", "Regulatory impact assessed", "Model risk controls defined"],
+    asks: "Hypothesis validated against data. Regulatory impact clear. Risk controls outlined.",
+    grade: u => !u.dataReady              ? ["critical", "Assess data readiness and regulatory impact"]
+              : u.dataReady === "partial" ? ["warning",  "Close the known data gaps"]
+              : u.dataReady === "ready"   ? ["good", null]
+              : ["critical", "Data is not available; reshape or park"] },
+
+  { id: "design",    name: "Design",    staleDays: 14, riskWindow: 7,
+    owner: "Model Risk & Monitoring", record: "Design package",
+    exits: ["Tech architecture specified", "Governance framework mapped", "Audit trail and monitoring designed"],
+    asks: "Architecture is sound. Governance framework applied. Monitoring is designable.",
+    grade: (u, past) => {
+      if (/mrm|model|risk|legal|complian/i.test(u.waitingOn || ""))
+        return ["critical", "Awaiting " + softLower(u.waitingOn)];
+      if (past) return ["good", null];
+      if (u.waitingOn) return ["critical", "Held at the design gate — " + softLower(u.waitingOn)];
+      return ["warning", "Governance framework not yet mapped for its tier"];
+    } },
+
+  { id: "approval",  name: "Approval",  staleDays: 14, riskWindow: 7,
+    owner: "Director / Portfolio Council", record: "AI roadmap",
+    exits: ["Business case finalized", "PM and Risk both sign off", "Capacity locked in"],
+    asks: "Business case holds. PM ready. Risk ready. Capacity allocated. The Director breaks the tie if PM and Risk disagree.",
+    grade: u => u.est == null  ? ["critical", "Size the annual benefit"]
+              : u.wsjf == null ? ["warning",  "Score it so it can be ranked against capacity"]
+              : ["good", null] },
+
+  { id: "delivery",  name: "Delivery",  staleDays: 14, riskWindow: 14,
+    owner: "Tech Lead", record: "Quarterly plan",
+    exits: ["Build and testing complete", "Audit trail live and validated", "Rollout plan operationalized"],
+    asks: "Build is complete. The audit trail works. The rollout plan is executable.",
+    grade: (u, past) => past ? ["good", null]
+              : u.waitingOn  ? ["critical", "Build held — " + softLower(u.waitingOn)]
+              : ["warning", "In build, not yet through test"] },
+
+  { id: "scale",     name: "Scale",     staleDays: 14, riskWindow: 7,
+    owner: "Model Risk & Monitoring", record: "Runbooks / monitoring",
+    exits: ["Model monitoring live", "Risk oversight ready", "Third-party review scheduled"],
+    asks: "Monitoring is live. Controls are testable. Third-party review is scheduled.",
+    grade: (u, past) => past ? ["good", null]
+              : u.waitingOn  ? ["critical", "Not ready to scale — " + softLower(u.waitingOn)]
+              : ["warning", "Monitoring and third-party review not yet signed off"] },
+
+  { id: "value",     name: "Value",     staleDays: 45, riskWindow: 14,
+    owner: "Governance & Audit", record: "Benefits dashboard",
+    exits: ["Baseline performance confirmed", "Actual performance measured", "Variance documented"],
+    asks: "Performance measured against the baseline. Controls held. Variance documented.",
+    grade: u => u.baseline ? ["good", null]
+              : ["critical", "Live without a measured baseline to judge it against"] },
 ];
+
+/* ---------- risk tiers ----------
+   Not every use case deserves the same governance. An employee-facing policy
+   lookup and a wire fraud model are not the same bet, and walking them through
+   the same eight gates at the same speed is how a bank ends up slow on the
+   small things and shallow on the large ones.
+
+   The tier sets the promised intake-to-approval window. It is computed from
+   the record — the risk flags the use case already carries and the function it
+   lands in — rather than typed by whoever filed it, because a tier someone
+   chooses is a tier someone negotiates. */
+const TIERS = [
+  { key: "low",  name: "Low",    days: 21, band: "21 days",
+    what: "Internal tools, employee-only access, minimal regulatory exposure." },
+  { key: "med",  name: "Medium", days: 45, band: "45 days",
+    what: "Revenue impact, internal process, regulatory review required." },
+  { key: "high", name: "High",   days: 70, band: "70+ days",
+    what: "Customer-facing, credit decisions, compliance-critical, regulatory gated." },
+];
+const TIER = Object.fromEntries(TIERS.map(t => [t.key, t]));
+
+/* Where the money and the regulator are. A model that decides, prices or
+   moves customer funds is high tier wherever it sits in the org chart. */
+const TIER_FUNCS = ["Consumer Lending", "Collections", "Payments", "Fraud Operations"];
+
+function tierOf(u) {
+  if (u.risk.includes("Reg report") || u.risk.includes("No human review") ||
+      TIER_FUNCS.includes(u.func)) return "high";
+  if (u.risk.length || u.impact.includes("revenue")) return "med";
+  return "low";
+}
 
 /* Playbook content — preview depth, three stages only. */
 const STAGE_DETAILS = {
@@ -1823,71 +2032,17 @@ const STAGE_DETAILS = {
   },
 };
 
-/* ---------- readiness framework ----------
-   What the Portfolio Council grades. The gate path says where a use case sits
-   in a queue; this says whether it is actually ready, across the gates that
-   move independently — a use case can be building fine and still be red on
-   model validation.
-
-   `from` is the stage at which a gate starts being graded. Before that it
-   reads as not yet due rather than red: grading a use case at intake against
+/* ---------- the gates ----------
+   One gate per stage, derived from STAGES rather than listed again. A gate is
+   due at its own stage and not before: grading a use case at intake against
    controls it has not reached yet produces a wall of red that nobody trusts,
    and the point of a framework is that a red means something.
 
    Every grade is computed from the record. Nothing here is a stored opinion. */
-/* The seven gates. One framework, not two: these replaced a separate list of
-   queues approved work walked through, because a gate that is "met or not met"
-   and a queue that work "sits in" were two names for the same question. Each
-   gate names when it is due, what it means, and who owns it — and is graded
-   from the record rather than argued in the room. */
-const READINESS = [
-  { key: "hypothesis", name: "Hypothesis validated", from: "discovery", owner: "Assigned PM",
-    asks: "Is the core assumption tested against real data, with a stop condition written down?",
-    grade: u => !u.sponsor ? ["critical", "Name a sponsor accountable for the value"]
-              : !u.metric  ? ["critical", "State the success metric and the stop condition"]
-              : ["good", null] },
+const READINESS = STAGES.map(s => ({
+  key: s.id, name: s.name, from: s.id, owner: s.owner, asks: s.asks, grade: s.grade,
+}));
 
-  { key: "technical", name: "Technically feasible", from: "design", owner: "Tech Lead",
-    asks: "Is the spike done, the architecture reviewed and the dependencies mapped?",
-    grade: u => !u.dataReady               ? ["critical", "Assess data readiness and dependencies"]
-              : u.dataReady === "partial"  ? ["warning",  "Close the known data gaps"]
-              : u.dataReady === "ready"    ? ["good", null]
-              : ["critical", "Data is not available; reshape or park"] },
-
-  { key: "compliant", name: "Compliant and risk-managed", from: "design", owner: "Governance Lead",
-    asks: "Have Legal, Risk and MRM signed off, with monitoring and an escalation path in place?",
-    grade: u => {
-      if (/mrm|model|risk|legal|complian/i.test(u.waitingOn || ""))
-        return ["critical", "Awaiting " + softLower(u.waitingOn)];
-      if (stageOrder[u.stage] > stageOrder.design) return ["good", null];
-      if (u.waitingOn) return ["critical", "Blocked at the risk gate — " + softLower(u.waitingOn)];
-      return ["warning", "Sign-off not yet cleared for its tier"];
-    } },
-
-  { key: "business", name: "Business case approved", from: "approval", owner: "AI Portfolio Council",
-    asks: "Is the return sized against a baseline, and has capacity been committed to it?",
-    grade: u => u.est == null ? ["critical", "Size the annual benefit"]
-              : !u.baseline   ? ["warning",  "Capture the baseline the benefit is measured against"]
-              : u.wsjf == null ? ["warning", "Score it so it can be ranked"]
-              : ["good", null] },
-
-  { key: "build", name: "Build complete", from: "delivery", owner: "Tech Lead",
-    asks: "Is it code reviewed, integration tested and performance validated?",
-    grade: u => stageOrder[u.stage] > stageOrder.delivery ? ["good", null]
-              : u.waitingOn ? ["critical", "Build held — " + softLower(u.waitingOn)]
-              : ["warning", "In build, not yet through test"] },
-
-  { key: "opsready", name: "Ops ready", from: "ops", owner: "Ops Lead",
-    asks: "Is support trained, are runbooks live and is monitoring set, so this runs without dev on call?",
-    grade: u => stageOrder[u.stage] > stageOrder.ops ? ["good", null]
-              : u.waitingOn ? ["critical", "Not ready to hand over — " + softLower(u.waitingOn)]
-              : ["warning", "Runbooks and monitoring not yet signed off"] },
-
-  { key: "confirmed", name: "Value confirmed", from: "value", owner: "PM and Ops Lead",
-    asks: "Do actual metrics match projection, and if not, has a corrective or shutdown call been made?",
-    grade: u => u.baseline ? ["good", null]
-              : ["critical", "Live without a measured baseline to judge it against"] },
-];
 
 /* The scale, stated rather than assumed. Red is not "bad", it is "blocked and
    someone owns unblocking it"; amber is in progress. */
@@ -1898,11 +2053,15 @@ const RAG_SCALE = [
   ["pending",  "Not due", "The work has not reached this stage yet"],
 ];
 
-/* A gate is graded only once the work has reached the stage it belongs to. */
+/* A gate is graded only once the work has reached the stage it belongs to.
+   `past` says the work has already left that stage — the model's "one record,
+   one status, no re-reviews" rule means a gate cleared at Design is not
+   re-argued at launch, so each grade decides for itself what a passed gate
+   reads as rather than re-running the current-stage test on old work. */
 function readiness(u) {
   return READINESS.map(d => {
     if (stageOrder[u.stage] < stageOrder[d.from]) return { d, grade: "pending", need: null };
-    const [grade, need] = d.grade(u);
+    const [grade, need] = d.grade(u, stageOrder[u.stage] > stageOrder[d.from]);
     return { d, grade, need };
   });
 }
@@ -1934,8 +2093,8 @@ const TRENDS = {
     { m: "Jul", n: 11, mix: { Approve: 3, "Rapid Prototype": 3, Partner: 1, Decline: 4 } },
   ],
   cycle: [
-    { m: "Feb", days: 34 }, { m: "Mar", days: 31 }, { m: "Apr", days: 28 },
-    { m: "May", days: 26 }, { m: "Jun", days: 23 }, { m: "Jul", days: 21 },
+    { m: "Feb", days: 68 }, { m: "Mar", days: 61 }, { m: "Apr", days: 55 },
+    { m: "May", days: 49 }, { m: "Jun", days: 44 }, { m: "Jul", days: 41 },
   ],
 };
 
@@ -1968,7 +2127,7 @@ const STATUS_LOG = [
   { dir: "warning",  text: "AI-003 Fraud alert prioritization is the only initiative past its stage target, and is still awaiting MRM model designation." },
   { dir: "warning",  text: "AI-004 KYC document extraction reaches its discovery target this week with data access to the KYC repository still unapproved." },
   { dir: "good",     text: "AI-016 HR policy chatbot was transferred to the Enterprise AI team and closed, with the rationale recorded." },
-  { dir: "good",     text: "Median intake-to-decision fell to 21 days, from 23 the week before." },
+  { dir: "good",     text: "Median intake-to-decision fell to 41 days, from 44 the week before." },
 ];
 
 /* Issued reports, kept as issued. A status report is a point-in-time
@@ -2000,9 +2159,9 @@ const STATUS_HISTORY = [
       { id: "AI-004", name: "KYC document extraction", act: "Confirm repository access", why: "the discovery timebox closes next week" },
     ],
     meetings: [
-      { name: "AI Intake & Discovery", when: "2026-07-29", cadence: "Weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
-      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Bi-weekly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Bi-weekly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
+      { name: "Weekly Intake", when: "2026-07-29", cadence: "Weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
+      { name: "Tactical Standup", when: "2026-08-11", cadence: "Weekly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Weekly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Approvals we do not control",
@@ -2025,7 +2184,7 @@ const STATUS_HISTORY = [
     ],
     log: [
       { dir: "good",    text: "Q2 closed at $3.9M realized against $4.2M projected; WSJF inputs recalibrated from actuals." },
-      { dir: "good",    text: "AI-011 Loan document pre-fill moved into value realization." },
+      { dir: "good",    text: "AI-011 Loan document pre-fill cleared the scale gate and entered value measurement." },
       { dir: "warning", text: "AI-012 Teller balancing assistant deferred one cycle — arrived at triage without prep." },
       { dir: "neutral", text: "AI-013 ATM cash forecasting entered discovery." },
     ],
@@ -2036,9 +2195,9 @@ const STATUS_HISTORY = [
       { id: "AI-012", name: "Teller balancing assistant", act: "Re-prep for triage", why: "deferred a cycle for incomplete prep" },
     ],
     meetings: [
-      { name: "AI Intake & Discovery", when: "2026-07-23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
-      { name: "AI Risk & Controls", when: "2026-08-11", cadence: "Bi-weekly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-005, AI-014" },
+      { name: "Weekly Intake", when: "2026-07-23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
+      { name: "Tactical Standup", when: "2026-08-11", cadence: "Weekly", agenda: "1 on the agenda — AI-003" },
+      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Weekly", agenda: "2 on the agenda — AI-005, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 closed below projection",
@@ -2069,9 +2228,9 @@ const STATUS_HISTORY = [
       { id: "AI-001", name: "Contact center call summarization", act: "Confirm the value baseline with the sponsor", why: "benefits reporting starts next quarter" },
     ],
     meetings: [
-      { name: "AI Intake & Discovery", when: "2026-07-16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
-      { name: "AI Risk & Controls", when: "2026-07-14", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-008, AI-011" },
-      { name: "AI Portfolio Council", when: "2026-07-16", cadence: "Bi-weekly", agenda: "2 on the agenda — AI-006, AI-014" },
+      { name: "Weekly Intake", when: "2026-07-16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
+      { name: "Tactical Standup", when: "2026-07-14", cadence: "Weekly", agenda: "2 on the agenda — AI-008, AI-011" },
+      { name: "AI Portfolio Council", when: "2026-07-16", cadence: "Weekly", agenda: "2 on the agenda — AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 tracking below projection",
@@ -2084,109 +2243,109 @@ const STATUS_HISTORY = [
 
 const USE_CASES = [
   { id: "AI-001", name: "Contact center call summarization", func: "Contact Center",
-    stage: "ops", owner: "M. Alvarez", sponsor: "Contact Center Ops", wsjf: 4.2, est: 850,
+    stage: "scale", owner: "M. Alvarez", sponsor: "Contact Center Ops", wsjf: 4.2, est: 850,
     size: 8, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-08-07", target: "2026-09-25", next: "Benefits baseline capture" },
+    opened: "2026-02-10", lastUpdate: "2026-08-07", target: "2026-09-25", next: "Benefits baseline capture" },
 
   { id: "AI-002", name: "Complaint triage and routing", func: "Customer Care",
     stage: "discovery", owner: "J. Whitfield", sponsor: "Head of Customer Care", wsjf: null, est: null,
     size: 5, impact: ["cycle", "risk"],
     metric: true, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-08-08", target: "2026-08-23", next: "AI Intake & Discovery" },
+    opened: "2026-07-05", lastUpdate: "2026-08-08", target: "2026-08-23", next: "Weekly Intake" },
 
   { id: "AI-003", name: "Fraud alert prioritization", func: "Fraud Operations",
     stage: "design", owner: "S. Okafor", sponsor: "Fraud Ops Director", wsjf: 6.8, est: 1200,
     size: 8, impact: ["risk", "insight"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: "MRM model designation",
-    lastUpdate: "2026-08-09", target: "2026-08-08", next: "AI Risk & Controls" },
+    opened: "2026-06-10", lastUpdate: "2026-08-09", target: "2026-08-08", next: "Tactical Standup" },
 
   { id: "AI-004", name: "KYC document extraction", func: "Onboarding",
     stage: "discovery", owner: "R. Patel", sponsor: "Deposits Operations", wsjf: null, est: null,
     size: 13, impact: ["cost", "cycle", "risk"],
     metric: true, dataReady: null, baseline: false,
     risk: ["NPI", "Reg report"], waitingOn: "Data access approval for KYC repository",
-    lastUpdate: "2026-08-05", target: "2026-08-15", next: "AI Intake & Discovery" },
+    opened: "2026-05-20", lastUpdate: "2026-08-05", target: "2026-08-15", next: "Weekly Intake" },
 
   { id: "AI-005", name: "Collections outreach timing", func: "Collections",
     stage: "approval", owner: "D. Kim", sponsor: "Collections VP", wsjf: 7.5, est: 950,
     size: 5, impact: ["revenue", "insight", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-08-08", target: "2026-08-27", next: "AI Portfolio Council" },
+    opened: "2026-06-25", lastUpdate: "2026-08-08", target: "2026-08-27", next: "AI Portfolio Council" },
 
   { id: "AI-006", name: "Branch staffing forecast", func: "Branch Network",
     stage: "approval", owner: "L. Nguyen", sponsor: "Retail Distribution", wsjf: 5.1, est: 400,
     size: 8, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: true,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-07-30", target: "2026-08-20", next: "AI Portfolio Council" },
+    opened: "2026-06-30", lastUpdate: "2026-07-30", target: "2026-08-20", next: "AI Portfolio Council" },
 
   { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
     stage: "triage", owner: "Intake team", sponsor: "Consumer Marketing", wsjf: null, est: null,
     size: 2, impact: ["revenue", "cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-08-09", target: "2026-08-16", next: "AI Intake & Discovery — fast-lane candidate" },
+    opened: "2026-08-01", lastUpdate: "2026-08-09", target: "2026-08-16", next: "Weekly Intake — fast-lane candidate" },
 
   { id: "AI-008", name: "Chat deflection FAQ assistant", func: "Digital Banking",
     stage: "delivery", owner: "M. Alvarez", sponsor: "Digital Channels", wsjf: 5.9, est: 600,
     size: 5, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["No human review"], waitingOn: null,
-    lastUpdate: "2026-08-06", target: "2026-09-01", next: "Pilot exit review" },
+    opened: "2026-03-15", lastUpdate: "2026-08-06", target: "2026-09-01", next: "Pilot exit review" },
 
   { id: "AI-009", name: "Wire fraud anomaly detection", func: "Payments",
     stage: "intake", owner: "Intake team", sponsor: "Payments Risk", wsjf: null, est: null,
     size: 8, impact: ["risk", "insight"],
     metric: false, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-08-10", target: "2026-08-17", next: "AI Intake & Discovery" },
+    opened: "2026-08-06", lastUpdate: "2026-08-10", target: "2026-08-17", next: "Weekly Intake" },
 
   { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
     stage: "intake", owner: "Intake team", sponsor: "— (sponsor not named)", wsjf: null, est: null,
     size: 3, impact: ["insight"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Named business sponsor",
-    lastUpdate: "2026-08-02", target: "2026-08-13", next: "Blocked at intake — awaiting a named sponsor" },
+    opened: "2026-07-21", lastUpdate: "2026-08-02", target: "2026-08-13", next: "Blocked at intake — awaiting a named sponsor" },
 
   { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
     stage: "value", owner: "T. Brooks", sponsor: "Lending Operations", wsjf: 8.9, est: 1400,
     size: 3, impact: ["revenue", "cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-08-01", target: "2026-09-30", next: "AI Portfolio Council (Q3)" },
+    opened: "2026-01-20", lastUpdate: "2026-08-01", target: "2026-09-30", next: "AI Portfolio Council (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
     stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null, est: null,
     size: 3, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Prep incomplete — deferred one cycle",
-    lastUpdate: "2026-08-03", target: "2026-08-19", next: "Second triage return — decision due this cycle" },
+    opened: "2026-07-24", lastUpdate: "2026-08-03", target: "2026-08-19", next: "Second triage return — decision due this cycle" },
 
   { id: "AI-013", name: "ATM cash forecasting", func: "Branch Network",
     stage: "discovery", owner: "R. Patel", sponsor: "Treasury Services", wsjf: null, est: null,
     size: 5, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-08-07", target: "2026-08-29", next: "AI Intake & Discovery" },
+    opened: "2026-07-28", lastUpdate: "2026-08-07", target: "2026-08-29", next: "Weekly Intake" },
 
   { id: "AI-014", name: "Dispute intake summarizer", func: "Customer Care",
     stage: "approval", owner: "D. Kim", sponsor: "Card Services", wsjf: 3.4, est: 300,
     size: 8, impact: ["cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    lastUpdate: "2026-08-05", target: "2026-09-04", next: "AI Portfolio Council" },
+    opened: "2026-06-20", lastUpdate: "2026-08-05", target: "2026-09-04", next: "AI Portfolio Council" },
 
   { id: "AI-015", name: "RM email auto-drafting", func: "Small Business",
     stage: "triage", owner: "Intake team", sponsor: "Small Business Banking", wsjf: null, est: null,
     size: 2, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-07-24", target: "2026-07-22", next: "—",
+    opened: "2026-07-08", lastUpdate: "2026-07-24", target: "2026-07-22", next: "—",
     closed: { outcome: "Declined", reason: "Low quantifiable value; duplicates enterprise CRM assistant", date: "2026-07-22" } },
 
   { id: "AI-016", name: "HR policy chatbot", func: "Human Resources",
@@ -2194,7 +2353,7 @@ const USE_CASES = [
     size: 3, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
-    lastUpdate: "2026-07-15", target: "2026-07-15", next: "—",
+    opened: "2026-07-01", lastUpdate: "2026-07-15", target: "2026-07-15", next: "—",
     closed: { outcome: "Transferred", reason: "Employee-facing chat belongs to the Enterprise AI team", date: "2026-07-15" } },
 ];
 
@@ -2227,6 +2386,7 @@ function slide(dstr) { return SHIFT && dstr ? iso(utc(dstr) + SHIFT * DAY) : dst
 
 if (SHIFT) {
   for (const u of USE_CASES) {
+    u.opened = slide(u.opened);
     u.lastUpdate = slide(u.lastUpdate);
     u.target = slide(u.target);
   }
@@ -2255,7 +2415,7 @@ const JIRA_STATUS = {
   design:    { label: "In Design",           cat: "prog" },
   approval:  { label: "Awaiting Approval",   cat: "todo" },
   delivery:  { label: "In Progress",         cat: "prog" },
-  ops:       { label: "In Ops / Scale",      cat: "prog" },
+  scale:     { label: "In Scale",            cat: "prog" },
   value:     { label: "In Benefits Review",  cat: "prog" },
 };
 
@@ -2549,8 +2709,8 @@ function renderJira() {
 
   for (const c of [
     { who: "S. Okafor", when: "2 days ago",
-      body: "Still held at AI Risk & Controls awaiting MRM model designation. Nothing on our side is blocking; " +
-            "we are on the agenda for the next sitting." },
+      body: "Still held at the design gate awaiting MRM model designation. Nothing on our side is blocking; " +
+            "Model Risk is in Tuesday's standup and it is on Thursday's Council agenda." },
     { who: "R. Patel", when: "9 days ago",
       body: "Discovery package accepted. Value estimate $1.2M, size 8, WSJF 6.8. Moving to Governance." },
   ]) {
@@ -2584,6 +2744,8 @@ function renderJira() {
   flagDd.append(el("span", "jflagicon", "⚑"), document.createTextNode("Flagged — " + u.waitingOn));
   if (u.waitingOn) add("Impediment", flagDd);
 
+  add("Risk Tier", TIER[tierOf(u)].name + " \u00b7 " + TIER[tierOf(u)].band + " to approval");
+  add("Opened", fmtDate(u.opened));
   add("Business Sponsor", u.sponsor || "—");
   add("Consumer Bank function", u.func);
   add("Story Points", u.size != null ? String(u.size) : "—");
@@ -2633,7 +2795,7 @@ const REQUIRED = {
   discovery:      ["sponsor", "impact", "metric", "size", "dataReady", "est", "baseline"],
   approval: ["sponsor", "impact", "metric", "size", "dataReady", "est", "baseline", "wsjf"],
 };
-REQUIRED.design = REQUIRED.delivery = REQUIRED.ops = REQUIRED.value = REQUIRED.approval;
+REQUIRED.design = REQUIRED.delivery = REQUIRED.scale = REQUIRED.value = REQUIRED.approval;
 
 const FIELD_LABEL = {
   sponsor: "named sponsor", impact: "impact type", metric: "success metric",
@@ -2672,7 +2834,16 @@ function enrich(uc, today) {
     if (sinceUpdate > st.staleDays * 2) fresh = "stale";
     else if (sinceUpdate > st.staleDays) fresh = "aging";
   }
-  return { ...uc, stageName: st.name, daysTo, sinceUpdate, health, fresh, complete: completeness(uc) };
+  /* The tier promise runs intake to approval, so the clock is only meaningful
+     while a use case is still short of it. Past approval the tier still says
+     how it is governed; it no longer says anything about elapsed time. */
+  const tier = tierOf(uc);
+  const inFlight = !uc.closed && stageOrder[uc.stage] <= stageOrder.approval;
+  const age = Math.round((today - utc(uc.opened)) / DAY);
+  return { ...uc, stageName: st.name, daysTo, sinceUpdate, health, fresh,
+    tier, tierDays: TIER[tier].days, age,
+    overTier: inFlight && age > TIER[tier].days,
+    complete: completeness(uc) };
 }
 
 /* ---------- tiny DOM helper (textContent only — data is untrusted) ---------- */
@@ -2708,8 +2879,8 @@ const OFFRAMP = {
   discovery: "Approved to design, or killed with the learning recorded",
   design:    "Approved to delivery, rejected, or deprioritized",
   approval:  "Approved to delivery, or deferred when capacity is full",
-  delivery:  "Cleared to ops and scale, paused against a blocker, or cancelled",
-  ops:       "Value confirmed, or shut down when it is not working",
+  delivery:  "Cleared to scale, paused against a blocker, or cancelled",
+  scale:     "Value confirmed, or shut down when it is not working",
   value:     "Continued, iterated, or archived",
 };
 
@@ -2789,6 +2960,9 @@ function renderScorecard() {
   const cyc = TRENDS.cycle, closedQ = TRENDS.value.filter(v => !v.partial);
   const rate = Math.round(closedQ.reduce((a, v) => a + v.realized, 0) /
                           closedQ.reduce((a, v) => a + v.projected, 0) * 100);
+  const flight = USE_CASES.map(u => enrich(u, todayUTC()))
+    .filter(u => !u.closed && stageOrder[u.stage] <= stageOrder.approval);
+  const preApproval = flight.length, inTier = flight.filter(u => !u.overTier).length;
   const rows = [
     ["Intake to decision", "How long from an idea arriving to a decision on it, either way.",
      cyc[cyc.length - 1].days + " days, down from " + cyc[0].days, "computed"],
@@ -2798,8 +2972,11 @@ function renderScorecard() {
      "Four weeks in discovery against two quarters in production", "stated"],
     ["Portfolio visibility", "Share of Consumer Bank AI work on the board rather than off-book.",
      "Target: 100%", "target"],
-    ["Stage cycle time", "Days spent in a stage before it moves or leaves.",
-     "Discovery 18, design 12, delivery 90", "expected"],
+    /* The tier promise, graded against itself. A standard nobody scores is a
+       slogan, so this row is the one place the model is marked on its own
+       homework — and it is computed, so it cannot be rounded up. */
+    ["Intake to approval, by tier", "Low 21 days, medium 45, high 70+. The tier is assigned at intake and the clock starts there.",
+     inTier + " of " + preApproval + " in flight are inside their window", "computed"],
   ];
   tb.replaceChildren(...rows.map(([name, means, where, kind]) => {
     const tr = el("tr");
@@ -2924,7 +3101,7 @@ function renderRoutineMap() {
      derived from the lowest node so the box never carries dead space. */
   const n = FORUMS.length;
   const NS_ANG = FORUMS.map((f, i) => (-90 + i * 360 / n) * Math.PI / 180);
-  const W = 940, CX = 470, RX = 320, RY = n <= 3 ? 132 : 170;
+  const W = 940, CX = 470, RX = 320, RY = n <= 3 ? 104 : 170;
   const NW = n <= 4 ? 292 : 214, NH = 64, HW = 250, HH = 86;
   const CY = 24 + NH / 2 + RY;
   const H = CY + RY * Math.max(...NS_ANG.map(Math.sin)) + NH / 2 + 24;
@@ -2934,10 +3111,10 @@ function renderRoutineMap() {
   svg.setAttribute("class", "dia ring");
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label",
-    "Six routines arranged around the record they all read and write. " +
+    FORUMS.length + " routines arranged around the record they all read and write. " +
     "At the center, one Jira issue per use case, from which health, rank, " +
     "gate status and time in stage are computed. Around it: " +
-    FORUMS.map(f => f.name + ", " + f.cadence.toLowerCase() + ", covering " +
+    FORUMS.map(f => f.name + ", " + f.day.toLowerCase() + "s for " + f.mins + " minutes, covering " +
       f.stages.map(id => stageById[id].name).join(" and ")).join("; ") +
     ". No routine hands off to another.");
 
@@ -2987,7 +3164,7 @@ function renderRoutineMap() {
     node("rect", { x: nx - NW / 2, y: ny - NH / 2, width: NW, height: NH, rx: 2, class: "fbox" });
     node("text", { x: nx, y: ny - 12, class: "rname", "text-anchor": "middle", "data-cap": NW - 14 }, f.name);
     node("text", { x: nx, y: ny + 4, class: "rcad", "text-anchor": "middle" },
-      f.cadence.toUpperCase());
+      (f.day.slice(0, 3) + " \u00b7 " + f.mins + " MIN").toUpperCase());
     node("text", { x: nx, y: ny + 20, class: "rst", "text-anchor": "middle", "data-cap": NW - 14 },
       f.stages.map(id => stageById[id].name).join(" · "));
   });
@@ -3551,9 +3728,9 @@ function renderMix(active) {
    competing recommendations. Computed portfolio-wide, never on a filtered
    slice, so filtering the table can't change what a rule recommends. */
 const FORUM_BY_STAGE = {
-  intake: "AI Intake & Discovery", triage: "AI Intake & Discovery", discovery: "AI Intake & Discovery",
-  design: "AI Risk & Controls", delivery: "AI Risk & Controls", ops: "AI Risk & Controls",
-  approval: "AI Portfolio Council", value: "AI Portfolio Council",
+  intake: "Weekly Intake", triage: "Weekly Intake",
+  discovery: "Tactical Standup", delivery: "Tactical Standup", scale: "Tactical Standup",
+  design: "AI Portfolio Council", approval: "AI Portfolio Council", value: "AI Portfolio Council",
 };
 const SEV_RANK = { critical: 0, warning: 1, opportunity: 2 };
 const SEV_DOT = { critical: ["critical", "✕"], warning: ["warning", "!"], opportunity: ["neutral", "\u2192"] };
@@ -3649,16 +3826,36 @@ function actionsFor(u, plan) {
 
    Days are spread across the week so no two routines collide.
 
-   Three standing routines, not six. The work did not go away — the sittings
-   did. AI Intake & Discovery merged into the front door because it is the same
-   people looking at the same funnel a week later. Gate-walking merged into
-   Risk & Controls because the gates are control gates. The quarterly funding
-   decision is now the Council's every-sixth sitting rather than a body of its
-   own: same people, same decision, one fewer invite. */
+   Three standing routines, one rhythm, two hours a week in total. They are
+   deliberately unequal: fifteen minutes to decide what gets in, thirty for
+   everyone in flight to say where they are, seventy-five for the only room
+   that spends money.
+
+   There is no separate risk forum. Model Risk & Monitoring owns the Design and
+   Scale gates outright and sits in the standup, so governance happens inside
+   the work rather than in a meeting that reviews it afterwards. A risk body
+   that meets on its own schedule is how risk ends up finding out last. */
 const FORUMS = [
-  { name: "AI Intake & Discovery", cadence: "Weekly",    stages: ["intake", "triage", "discovery"],        next: () => nextWeekly(3) },
-  { name: "AI Portfolio Council",  cadence: "Bi-weekly", stages: ["design", "approval", "ops", "value"],   next: () => nextBiweekly(1, "2026-01-12") },
-  { name: "AI Risk & Controls",    cadence: "Bi-weekly", stages: ["design", "delivery", "ops"],            next: () => nextBiweekly(4, "2026-01-08") },
+  { name: "Weekly Intake", cadence: "Weekly", mins: 15, day: "Monday",
+    stages: ["intake", "triage"], next: () => nextWeekly(1),
+    who: "Portfolio Lead, PM Lead",
+    decides: "Accept, reject, or defer — every new idea gets one of the three. Assigns the risk tier and names the PM owner.",
+    reads: "Every new issue. Writes the tier, the owner and the triage backlog.",
+    sla: "A PM owner named within 48 hours, or it escalates to skip-level." },
+
+  { name: "Tactical Standup", cadence: "Weekly", mins: 30, day: "Tuesday",
+    stages: ["discovery", "design", "delivery", "scale"], next: () => nextWeekly(2),
+    who: "Every active PM, Tech Lead, Model Risk & Monitoring",
+    decides: "Nothing, on purpose. Each PM gives status, blocker and ask in two to three minutes; what cannot be cleared here becomes Council agenda.",
+    reads: "Everything in flight. Writes blockers and work-stream health.",
+    sla: "Red surfaces Tuesday; the Director decides by Wednesday end of day or it escalates." },
+
+  { name: "AI Portfolio Council", cadence: "Weekly", mins: 75, day: "Thursday",
+    stages: ["triage", "design", "approval", "value"], next: () => nextWeekly(4),
+    who: "Director, PM Lead, Risk Lead, Finance, Tech Lead",
+    decides: "What’s new (15 min): intake backlog and tier review. What we know (25 min): design reviews, feasibility, governance gaps, blockers from the standup. What we decide (35 min): approve to delivery, capacity trade-offs, kill or advance red.",
+    reads: "Everything at triage, design, approval and value, across every function. Writes rank, capacity points and delivery windows.",
+    sla: "Any red item escalated here leaves with a call: unblock, re-tier, or accept the delay." },
 ];
 const CADENCE_DAYS = { Weekly: 7, "Bi-weekly": 14, Monthly: 30, Quarterly: 90 };
 
@@ -3988,8 +4185,60 @@ function renderSpecs() {
     r.replaceChildren();
     for (const d of READINESS)
       r.append(el("tr", null, null,
-        el("td", null, d.name), el("td", null, d.asks),
-        el("td", null, d.owner), el("td", null, stageById[d.from].name)));
+        el("td", null, d.name), el("td", null, d.asks), el("td", null, d.owner)));
+  }
+
+  /* The eight stages as cards, each carrying the three things that have to be
+     true to leave it, plus how much of the live portfolio is sitting there.
+     Drawn from STAGES, so a stage cannot appear here with criteria the gate
+     does not actually grade. */
+  const sg = document.getElementById("stagegrid");
+  if (sg) {
+    const here = {};
+    for (const u of USE_CASES) if (!u.closed) here[u.stage] = (here[u.stage] || 0) + 1;
+    sg.replaceChildren(...STAGES.map((s, i) => {
+      const card = el("div", "stagecard");
+      const n = here[s.id] || 0;
+      const head = el("div", "schead", null,
+        el("span", "sno", String(i + 1)), el("span", "snm", s.name));
+      head.append(el("span", "scount", n ? n + " here" : "—"));
+      card.append(head, el("div", "sowner", s.owner));
+      const ul = el("ul", "sexits");
+      for (const e of s.exits) ul.append(el("li", null, e));
+      card.append(ul);
+      return card;
+    }));
+  }
+
+  /* Tiers, with the live count in each. The counts are computed from the same
+     rule the board applies to every use case, so the model page cannot claim a
+     spread the portfolio does not have. */
+  const tg = document.getElementById("tiergrid");
+  if (tg) {
+    const active = USE_CASES.filter(u => !u.closed);
+    tg.replaceChildren(...TIERS.map(t => {
+      const n = active.filter(u => tierOf(u) === t.key).length;
+      return el("div", "tiercard t-" + t.key, null,
+        el("div", "tlab", t.name + " risk"),
+        el("div", "tband", t.band),
+        el("div", "twhat", t.what),
+        el("div", "tnow", n + " of " + active.length + " open " +
+          (n === 1 ? "use case is" : "use cases are") + " in this tier"));
+    }));
+  }
+
+  /* The routines table, rendered from FORUMS. It used to be hand-written, and
+     twice an edit to it silently changed nothing because the columns had moved
+     underneath. A table generated from the definition cannot go stale. */
+  const rs = document.getElementById("routinespec");
+  if (rs) {
+    rs.replaceChildren(...FORUMS.map(f => el("tr", null, null,
+      el("td", null, f.name),
+      el("td", null, f.day + ", " + f.mins + " min"),
+      el("td", null, f.who),
+      el("td", null, f.decides),
+      el("td", null, f.reads),
+      el("td", null, f.sla))));
   }
 
   const leg = document.getElementById("raglegend2");
@@ -4162,11 +4411,23 @@ function renderTable(visible) {
     tdName.append(nameBtn);
     const acts = actionsFor(u, plan);
     tdName.append(el("div", "sub", u.func));
-    if (u.risk.length) {
+    if (u.risk.length || !u.closed) {
       const fl = el("div");
+      if (!u.closed) {
+        const t = TIER[u.tier];
+        const chip = el("span", "tierchip t-" + u.tier, t.name + " risk · " + t.band);
+        chip.title = t.what;
+        fl.append(chip);
+      }
       for (const r of u.risk) fl.append(el("span", "flag", r));
       tdName.append(fl);
     }
+    /* The tier window is a different clock from the stage target: this is how
+       long the whole idea has been alive against what its tier promised, which
+       is the number the Council is answerable for. */
+    if (u.overTier)
+      tdName.append(el("div", "waiting", "Day " + u.age + " of a " + u.tierDays +
+        "-day " + TIER[u.tier].name.toLowerCase() + "-risk window"));
     if (!u.closed && u.waitingOn) tdName.append(el("div", "waiting", "Waiting on: " + u.waitingOn));
     if (u.closed) tdName.append(el("div", "waiting", u.closed.outcome + " — " + u.closed.reason));
     tr.append(tdName);
@@ -4292,7 +4553,6 @@ const COUNTS = {
   stages:     () => STAGES.length,
   routines:   () => FORUMS.length,
   gates:      () => READINESS.length,
-  dimensions: () => READINESS.length,
   usecases:   () => USE_CASES.length,
   playbooks:  () => Object.keys(STAGE_DETAILS).length,
   principles: () => document.querySelectorAll("#principles .tenet").length,
