@@ -9,7 +9,7 @@ what's worth building. Built as a single self-contained HTML page with six views
   a diagram of how the rule, the structure and the routines produce them, six
   principles, the eight states work is held in, the six standing routines drawn
   as a ring around the record they all read, the gates and readiness framework
-  approved work is graded against, and where I would start. The diagrams are
+  approved work is graded against, and who decides what. The diagrams are
   drawn from the same state and routine definitions the rest of the page reads,
   so they cannot drift from them.
 - **Intake Form** — a mock of the fifteen-minute use case intake form with

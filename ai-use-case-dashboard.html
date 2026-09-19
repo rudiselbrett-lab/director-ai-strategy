@@ -652,6 +652,8 @@
   .needlist .nid { font-weight: 700; color: var(--ink); margin-right: var(--s2); }
   .needlist b { color: var(--ink); font-weight: 600; }
   .readynote { color: var(--ink-3); font-size: var(--fs-small); margin: 0; }
+  /* inside a fold the note sits flush; standing on its own after one it needs air */
+  details.ref + .readynote { margin-top: var(--s4); max-width: var(--measure); }
 
 
   /* The full table is operator detail. It folds away so the exec view leads
@@ -910,34 +912,6 @@
   .jira .jtag {
     display: inline-block; background: var(--j-bg-2); border-radius: 3px;
     padding: 1px var(--s1); margin: 0 var(--s1) var(--s1) 0; font-size: var(--fs-nano); color: #42526e;
-  }
-
-  ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
-  ol.steps li {
-    counter-increment: step;
-    display: grid; grid-template-columns: 22px 1fr auto; gap: var(--s1) var(--s4);
-    align-items: baseline; padding: var(--s3) 0; border-top: 1px solid var(--hairline);
-  }
-  ol.steps li:first-child { border-top: none; padding-top: 0; }
-  ol.steps li::before {
-    content: counter(step); width: 22px; height: 22px;
-    background: var(--brand); color: #fff;
-    display: grid; place-items: center; font: 700 var(--fs-caption) var(--sans);
-  }
-  ol.steps .stitle { font-weight: 600; font-size: var(--fs-body); }
-  /* the page asks for one owner and one date everywhere else; this list obliges */
-  /* the step body now carries a line of detail under its title, so the title
-     and that line share column 2 and the meta stays in column 3 */
-  ol.steps .stitle { grid-column: 2; }
-  ol.steps .ssub {
-    grid-column: 2; font-size: var(--fs-small); color: var(--ink-2);
-    line-height: 1.5; margin-top: var(--s1); max-width: var(--measure);
-  }
-  ol.steps .smeta { grid-column: 3; grid-row: 1; font-size: var(--fs-caption); color: var(--ink-3); text-align: right; white-space: nowrap; }
-  ol.steps .smeta b { color: var(--ink-2); font-weight: 600; }
-  @media (max-width: 620px) {
-    ol.steps li { grid-template-columns: 22px 1fr; gap: var(--s3); }
-    ol.steps .smeta { grid-column: 2; grid-row: auto; text-align: left; margin-top: 2px; }
   }
 
   /* ---------- playbook modal ---------- */
@@ -1251,27 +1225,8 @@
         <p><b>A red card has sat in delivery for three weeks.</b> That is a blocker decision and Risk &amp; Controls owns it: remove the blocker, or the work is deprioritized into a later quarter. Nothing is stuck indefinitely.</p>
       </div>
     </details>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">05</span><h2>What I would do first</h2></div>
-    <p class="sectsub">Four weeks to a board that moves, on the same terms the model asks of every use case: one owner and one date each.</p>
-<ol class="steps">
-      <li><div class="stitle">Socialize the model and the intake form</div>
-          <div class="ssub">How intake works, what a rejection means, how to write a stop condition.</div>
-          <div class="smeta"><b>AI Portfolio Team</b> &middot; Weeks 1&ndash;2</div></li>
-      <li><div class="stitle">Consumer Bank D&amp;A builds the intake form</div>
-          <div class="ssub">Five questions, creates the issue, assigns it to triage. The board goes live with it.</div>
-          <div class="smeta"><b>Consumer Bank D&amp;A</b> &middot; Week 3</div></li>
-      <li><div class="stitle">All three routines sit for the first time</div>
-          <div class="ssub">Against real submissions, seeded where there are none, so the model is exercised before it matters.</div>
-          <div class="smeta"><b>AI Portfolio Team</b> &middot; Week 4</div></li>
-      <li><div class="stitle">Review cycle times and gate clarity, then adjust</div>
-          <div class="ssub">Real use shows which gate is ambiguous and which routine is slow. Small tweaks, not a redesign.</div>
-          <div class="smeta"><b>AI Portfolio Team</b> &middot; Weeks 5+</div></li>
-    </ol>
     <p class="readynote">The model is not fixed. It is reviewed quarterly against two standing questions &mdash; where can more information, action, automation and AI be put to work, and where do lighter paths let work move the moment it is ready. If something is not working, that is the input, not a complaint.</p>
-    <p class="result">Ninety days in, the test is not whether the routines are meeting. It is whether someone outside this team can open the board, see where every idea is and why it is there, and challenge a decision on the record.</p>
+    <p class="result">The test is not whether the routines are meeting. It is whether someone outside this team can open the board, see where every idea is and why it is there, and challenge a decision on the record.</p>
   </div>
 
 </section>
