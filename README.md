@@ -16,20 +16,21 @@ what's worth building. Built as a single self-contained HTML page with six views
 - **Intake Form** — a mock of the fifteen-minute use case intake form with
   live answer coaching.
 - **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog
-  against a capacity line, per-use-case suggested actions, the readiness matrix
-  grading every use case against the eight gates, and a filterable use case
-  table carrying each one's risk tier.
+  against a capacity line, per-use-case suggested actions, a filterable use case
+  table carrying each one's risk tier, and the trend panels.
 - **Weekly Status** — RAG for the portfolio and its three elements, then the
   week as its three sittings produced it: what the front door took in and
   decided, what the standup found and escalated, and the Council's what's new,
   what we need to know, and what needs a decision or discussion. Each routine's
   sections come from its own definition, so renaming a routine or moving a
   stage rewrites the report. Previous weeks are kept as issued.
-- **Jira** — the same use cases as Jira issues, styled as Jira: the backlog
-  view with workflow statuses and flagged rows, and one issue opened with its
-  full field set and comment stream. Nothing here says what to do about any of
-  it — that is the weekly status's job, produced by the routines that actually
-  meet.
+- **Jira** — the same use cases as Jira issues, styled as Jira: the eight
+  stages with every issue sitting in one of them, graded against the gate for
+  the stage it is in — which is how redness is decided, not a score across all
+  eight at once. Then the backlog view with workflow statuses and flagged rows,
+  and one issue opened with its full field set and comment stream. Nothing here
+  says what to do about any of it; that is the weekly status's job, produced by
+  the routines that actually meet.
 - **AI First** — *The AI Operating System*: a written piece on running the work
   with AI as infrastructure rather than as a search box, in three layers —
   information, action, automation.
