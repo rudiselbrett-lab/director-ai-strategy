@@ -558,9 +558,6 @@
   /* Containers carry records and tables. Statements are set open on the page —
      that is the whole rule, and it is why the principles are set open while
      states and routines sit in a table. */
-  .tenets { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4) var(--s6); }
-  @media (max-width: 900px) { .tenets { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .tenets { grid-template-columns: 1fr; } }
   .tenet { padding: 0; background: none; border: none; }
   /* Serif titles here because these are ideas. State and routine names are
      operational records and stay sans — that is the only font rule on the page. */
@@ -580,9 +577,6 @@
 
   /* The one rule the rest of the tab is a consequence of. Set open on the
      page like the mission statement — this is an idea, not a record. */
-  .ruleline { font: 400 var(--fs-h1)/1.3 var(--serif); margin: 0 0 var(--s5); max-width: var(--measure-lead); }
-  @media (max-width: 720px) { .ruleline { font-size: var(--fs-h2); } }
-  .ruleline em { font-style: italic; color: var(--ink-2); }
 
   /* The three measures the whole model is answerable to. Same type as the
      portfolio's stat tiles, in cards rather than a band. */
@@ -596,39 +590,16 @@
   .gatenote { color: var(--ink-3); font-size: var(--fs-caption); margin: var(--s3) 0 0; padding: 0 var(--s5) var(--s4); }
 
   .subsect { margin-top: var(--s6); }
-  .statemap { min-width: 860px; }
-  .scorecard { min-width: 620px; }
-  .scorecard th:nth-child(2), .scorecard td:nth-child(2) { width: 42%; }
-  .scorecard td:first-child { white-space: normal; }
-  .statemap th:nth-child(1), .statemap td:nth-child(1) { width: 17%; }
-  .statemap th:nth-child(2), .statemap td:nth-child(2) { width: 20%; }
-  .statemap th:nth-child(3), .statemap td:nth-child(3) { width: 21%; }
-  .statemap td:first-child { white-space: normal; }
-  .statemap .cad { color: var(--ink-3); font-size: var(--fs-caption); }
-  .statemap .exit { color: var(--ink-3); }
 
   /* Diagrams. One shared vocabulary for every drawing on the page, styled
      through the page's own tokens rather than presentation attributes, so they
      inherit the palette and cannot drift from it or from each other. Each
      scrolls inside its own box at narrow widths, the same as the tables. */
-  .flowwrap { overflow-x: auto; padding-bottom: var(--s2); }
-  .dia { display: block; width: 100%; height: auto; }
   .model { min-width: 720px; }
   .ring  { min-width: 820px; }
   .stack { min-width: 620px; }
-  .dia .fbox { fill: #fff; stroke: var(--rule); stroke-width: 1; }
   /* the record and the outcome are the two structural ideas the drawings exist
      to make, so both take the brand hue — never a status colour, reserved */
-  .dia .rhub { fill: var(--brand-wash); stroke: var(--brand); stroke-width: 1; }
-  .dia .rname  { fill: var(--ink); font: 700 12px var(--sans); }
-  .dia .rcad   { fill: var(--brand); font: 700 9px var(--sans); letter-spacing: 0.1em; }
-  .dia .rst, .dia .rhubs { fill: var(--ink-2); font: 400 10.5px var(--sans); }
-  .dia .rhubt  { fill: var(--ink); font: 700 13px var(--sans); }
-  .dia .rbig   { fill: var(--ink); font: 650 19px var(--sans); letter-spacing: -0.02em; }
-  .dia .dso    { fill: var(--ink-3); font: italic 400 10px var(--sans); }
-  .dia .fhead  { fill: var(--accent); font: 700 9px var(--sans); letter-spacing: 0.12em; }
-  .dia .fline  { stroke: var(--rule); stroke-width: 1; fill: none; }
-  .dia .farrow { fill: var(--rule); }
   .readyspec td:first-child { font-weight: 600; white-space: nowrap; }
   .readyspec td:last-child { color: var(--ink-3); }
 
@@ -649,22 +620,95 @@
   }
   .schead .sno { font: 700 var(--fs-caption) var(--sans); color: var(--brand); }
   .schead .snm { font: 600 var(--fs-body) var(--sans); color: var(--ink); }
-  /* how much of the live portfolio is sitting in this stage right now — the
-     one number on the card that is not a definition */
-  .schead .scount { margin-left: auto; font-size: var(--fs-nano); color: var(--ink-3); white-space: nowrap; }
-  .sowner {
-    padding: var(--s2) var(--s3) 0; font: 700 var(--fs-nano) var(--sans);
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
-  }
-  .sexits { list-style: none; margin: 0; padding: var(--s1) var(--s3) var(--s3); }
+  .sexits { list-style: none; margin: 0; padding: 0; }
   .sexits li {
-    position: relative; padding-left: var(--s3); margin-top: var(--s2);
-    font-size: var(--fs-caption); line-height: 1.45; color: var(--ink-2);
+    display: flex; align-items: flex-start; gap: var(--s2);
+    padding: var(--s2) var(--s3); border-top: 1px solid var(--hairline);
+    font-size: var(--fs-caption); line-height: 1.4; color: var(--ink-2);
   }
-  .sexits li::before {
-    content: ""; position: absolute; left: 0; top: 6px;
-    width: 5px; height: 5px; border-radius: 1px; background: var(--rule);
+  /* The one place the status palette is used for something other than
+     per-use-case health: these say how far the model itself is stood up, and
+     the legend under the grid names the scale so the two cannot be confused. */
+  .sdot { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; margin-top: 4px; }
+  .sdot.i-done  { background: var(--status-good); }
+  .sdot.i-prog  { background: var(--status-warning); }
+  .sdot.i-block { background: var(--status-critical); }
+  .statuslegend {
+    list-style: none; display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5);
+    margin: var(--s4) 0 0; padding: 0; font-size: var(--fs-caption); color: var(--ink-3);
   }
+  .statuslegend li { display: flex; align-items: center; gap: var(--s2); }
+  .statuslegend .sdot { margin-top: 0; }
+
+  /* ---------- the document's plain boxes ---------- */
+  .boxgrid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: var(--s3); margin-top: var(--s4);
+  }
+  .dbox {
+    background: var(--page); border: 1px solid var(--hairline);
+    border-radius: var(--r); padding: var(--s4);
+  }
+  .dbox h3 {
+    font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink); margin: 0 0 var(--s2);
+  }
+  .dbox h3.vlab { color: var(--ink-3); }
+  .dbox p { font-size: var(--fs-small); line-height: 1.6; color: var(--ink-2); margin: 0; }
+  .opbox { margin-top: var(--s4); max-width: var(--measure); }
+  .opbox p + p { margin-top: var(--s4); }
+  .opbox strong { color: var(--ink); font-weight: 700; }
+
+  /* ---------- the principle, as the document opens ---------- */
+  .principle {
+    background: var(--page); border: 1px solid var(--hairline);
+    border-left: 4px solid var(--brand); border-radius: var(--r);
+    padding: var(--s6); margin-top: var(--s5); max-width: var(--measure);
+  }
+  .principle p { font-size: var(--fs-small); line-height: 1.75; color: var(--ink-2); margin: 0; }
+  .principle p + p { margin-top: var(--s4); }
+  .principle strong { color: var(--ink); font-size: var(--fs-lead); font-weight: 700; }
+
+  /* ---------- the three routines ---------- */
+  .routinegrid { display: grid; gap: var(--s4); margin-top: var(--s4); }
+  .routinebox {
+    background: var(--page); border: 1px solid var(--hairline);
+    border-radius: var(--r); padding: var(--s5);
+  }
+  .rtitle {
+    font: 600 var(--fs-body) var(--sans); letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .rcadence { font: 600 var(--fs-small) var(--sans); color: var(--link); margin: var(--s2) 0 var(--s3); }
+  .ritem { font-size: var(--fs-small); line-height: 1.6; color: var(--ink-2); }
+  .ritem + .ritem { margin-top: var(--s2); }
+  .ritem strong { color: var(--ink); font-weight: 600; }
+  .escbox {
+    background: var(--page); border: 1px solid var(--hairline);
+    border-left: 3px solid var(--status-warning); border-radius: var(--r);
+    padding: var(--s4); margin-top: var(--s4);
+  }
+  .esctitle { font-weight: 600; color: var(--ink); font-size: var(--fs-body); margin-bottom: var(--s2); }
+  .esctext { font-size: var(--fs-small); line-height: 1.6; color: var(--ink-2); margin: 0; }
+
+  /* ---------- results ---------- */
+  .metricgrid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--s3); margin-top: var(--s4);
+  }
+  .metric {
+    background: var(--page); border: 1px solid var(--hairline);
+    border-radius: var(--r); padding: var(--s4); text-align: center;
+  }
+  .mvalue { font: 650 var(--fs-h1)/1.1 var(--sans); color: var(--ink); letter-spacing: -0.02em; }
+  .mlabel {
+    font: 700 var(--fs-nano) var(--sans); letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-3); margin-top: var(--s1);
+  }
+  .mnote { font-size: var(--fs-nano); color: var(--ink-3); margin-top: var(--s2); line-height: 1.4; }
+
+  .readyspec .gname { font-weight: 600; white-space: nowrap; }
+  .readyspec .gowner, .readyspec .gcrit { color: var(--ink-3); }
   @media (max-width: 1000px) { .stagegrid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px)  { .stagegrid { grid-template-columns: 1fr; } }
 
@@ -693,10 +737,6 @@
   }
   .t-high .tband { color: var(--brand); }
   .twhat { font-size: var(--fs-small); line-height: 1.5; color: var(--ink-2); }
-  .tnow {
-    margin-top: var(--s3); padding-top: var(--s2); border-top: 1px solid var(--hairline);
-    font-size: var(--fs-caption); color: var(--ink-3);
-  }
   @media (max-width: 720px) { .tiergrid { grid-template-columns: 1fr; } }
 
   /* Readiness matrix: the council's grid. */
@@ -729,8 +769,6 @@
   .needlist .nid { font-weight: 700; color: var(--ink); margin-right: var(--s2); }
   .needlist b { color: var(--ink); font-weight: 600; }
   .readynote { color: var(--ink-3); font-size: var(--fs-small); margin: 0; }
-  /* inside a fold the note sits flush; standing on its own after one it needs air */
-  details.ref + .readynote { margin-top: var(--s4); max-width: var(--measure); }
 
 
   /* The full table is operator detail. It folds away so the exec view leads
@@ -758,12 +796,6 @@
      column would set them too narrow to read comfortably. */
   .aigrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s4) var(--s6); }
   @media (max-width: 780px) { .aigrid { grid-template-columns: 1fr; } }
-  /* Four short items read across in one band; two columns of three-line cards
-     is half a screen of white space for no gain. The two-column default stays
-     for the failure modes, whose cards actually carry a paragraph. */
-  .aigrid.four { grid-template-columns: repeat(4, 1fr); gap: var(--s4); }
-  @media (max-width: 1000px) { .aigrid.four { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px)  { .aigrid.four { grid-template-columns: 1fr; } }
   .aigrid .tenet h3 { margin-top: 0; }
   .aigrid .tenet .no + h3 { margin-top: var(--s2); }
   .aigrid code {
@@ -1176,174 +1208,94 @@
 
 <main class="wrap">
 
-<!-- ================= OPERATING MODEL TAB ================= -->
+<!-- ================= OPERATING MODEL TAB =================
+     This tab is the operating model document, rendered section for section.
+     The stage cards, tier cards, routine boxes and gate table are drawn from
+     STAGES, TIERS and FORUMS so the document and the rest of the site cannot
+     say different things; the copy in them is the document's own. -->
 <section id="tab-thinking" role="tabpanel" aria-labelledby="tabbtn-thinking">
 
   <div class="mission">
     <div class="kicker">Operating model</div>
-    <p class="statement">We turn Consumer Bank's AI capacity into a small number of capabilities that <em>measurably change</em> how customers bank with us and how the business runs.</p>
-    <p class="statement-sub"><strong>AI moves fast. Banks move carefully. This is how both stay true.</strong> One record, <span data-count="stages">eight</span> stages, <span data-count="routines">three</span> routines, disciplined triage. <strong>More clarity, not more process:</strong> every view here is computed from what the work already leaves behind.</p>
+    <p class="statement">Consumer Bank AI Portfolio</p>
+    <p class="statement-sub">Director of AI Strategy operating model. One record. Eight stages. Three routines. Disciplined triage.</p>
     <div class="note">
       <span class="note-lab">Mock-up</span>
       <p>How the function would run, end to end. A proposal, not something Ally operates today &mdash; and the definition every other tab on this site is generated from.</p>
     </div>
-    <div class="row3" id="drives"></div>
-    <p class="result" id="sowhat"></p>
-    <details class="ref">
-      <summary>All five measures, and what we do when one of them moves</summary>
-      <div class="refbody">
-        <div class="tscroll">
-          <table class="mini scorecard">
-            <thead><tr><th>Measure</th><th>What it means</th><th>Where it stands</th></tr></thead>
-            <tbody id="scorecard"></tbody>
-          </table>
-        </div>
-        <p class="readynote">Reviewed quarterly. If intake-to-decision creeps back above forty-five days, or any tier misses its window twice running, we look at which routine is slowing. If value realization drops below eighty-five per cent we audit the approval standard instead &mdash; the question is whether we are funding things that cannot deliver.</p>
-      </div>
-    </details>
+    <div class="principle">
+      <p><strong>Smooth is fast and fast is smooth. Clarity is what makes both possible.</strong></p>
+      <p>This model builds clarity at every gate so everyone can move together. Intake clarifies whether an idea is worth exploring. Triage clarifies what success looks like. Discovery clarifies whether the problem is real. Design clarifies whether we can build it and govern it well. By Approval, Risk, PM, and Finance are all seeing the same picture.</p>
+      <p>That shared clarity is what keeps things moving forward. When things change during Discovery or Design (and they will), everyone sees it at the same time. Risk owns the Design gate, so if governance requirements shift, we address it together before build starts, not after. If conditions change, we escalate or re-tier as a portfolio, not rework in silos. The 70 days for high-risk work reflects real governance rigor, and everyone knows that upfront.</p>
+    </div>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">01</span><h2>The problem</h2></div>
-    <p class="sectsub">Four things go wrong at once when there is no single way in, and each one makes the others worse. None of them is anybody&rsquo;s fault, which is exactly why none of them gets fixed.</p>
-    <div class="aigrid">
-      <div class="tenet"><h3>Risk finds out last</h3><p>Work reaches production without Risk having seen it, so Risk learns to say no late &mdash; when saying no costs two quarters instead of a week. The caution is rational; the timing is the problem.</p></div>
-      <div class="tenet"><h3>Builders guess at priority</h3><p>With no ranked list and no capacity line, effort follows whoever asked most recently or most loudly. Good teams end up building the third-best thing well.</p></div>
-      <div class="tenet"><h3>Finance cannot forecast</h3><p>What was never written down cannot be planned for, so AI spend arrives as a surprise and gets treated like one &mdash; cut across the board rather than by value.</p></div>
-      <div class="tenet"><h3>Declines leave no trace</h3><p>An idea turned down in March returns in September with the same gaps, because nothing recorded why it stopped. The organization pays twice to learn the same thing.</p></div>
-    </div>
-    <p class="result">Everyone is doing their job. Nobody is deciding together.</p>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">02</span><h2>The bet</h2></div>
-    <p class="ruleline">Smooth is fast and fast is smooth. <em>Clarity is what makes both possible.</em></p>
-    <p class="sectsub">Every gate buys one piece of clarity, so that everyone can move on the same picture. Intake: is this worth exploring. Triage: what would count as it working. Discovery: is the problem real. Design: can we build it <em>and</em> govern it. By Approval, Risk, PM and Finance are looking at the same thing &mdash; which is why Approval is a decision rather than a discovery.</p>
-    <p class="sectsub">Things change during discovery and design, and when they do everyone sees it at once: Risk owns the design gate, so a shift in requirements lands before build starts rather than after. We escalate or re-tier as a portfolio instead of reworking in silos. <span data-count="principles">Six</span> principles follow from it.</p>
-<div class="tenets" id="principles">
-      <div class="tenet"><div class="no">01</div><h3>One way in</h3><p>One <button type="button" class="xlink" data-tab="intake" title="Open the Intake Form">fifteen-minute form</button>, one issue with an ID, no side channel &mdash; so the board is the whole portfolio.</p></div>
-      <div class="tenet"><div class="no">02</div><h3>Hypothesis first</h3><p>Every use case states up front what we believe and what would tell us to stop.</p></div>
-      <div class="tenet"><div class="no">03</div><h3>Evidence before scale</h3><p>Pilots answer a question. A stop that cost four weeks instead of two quarters is a successful discovery.</p></div>
-      <div class="tenet"><div class="no">04</div><h3>Nobody writes a status</h3><p>Health, rank, gate status and time in stage are derived, never typed &mdash; so nobody can quietly massage the <button type="button" class="xlink" data-tab="portfolio" title="Open the Portfolio Dashboard">board</button>.</p></div>
-      <div class="tenet"><div class="no">05</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner and measured value against a baseline &mdash; not shipped.</p></div>
-      <div class="tenet"><div class="no">06</div><h3>Speed is a governance outcome</h3><p>Risk, Legal and MRM engage early and by tier. Controls are why we can move, not what stops us.</p></div>
-    </div>
-    <p class="sectsub subsect">One rule, one structure, <span data-count="routines">three</span> routines, pointed at one outcome.</p>
-<div class="flowwrap"><div id="model"></div></div>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">03</span><h2>What gets in</h2></div>
-    <p class="sectsub"><strong>Two gates before anything is built.</strong> Intake decides whether an idea is worth exploring at all. Triage decides what would count as it working. Most of what a portfolio wastes is spent past this point on things that should not have cleared it.</p>
-
-    <h3 class="label">Intake asks four questions</h3>
-    <div class="aigrid four">
-      <div class="tenet"><h3>Clear problem</h3><p>A specific customer or operational pain, measurable, with someone who owns it. Not &ldquo;we want to use AI.&rdquo;</p></div>
-      <div class="tenet"><h3>AI is the answer</h3><p>Could process, rules or a simpler tool solve this? If yes, that is the path. AI only where it is clearly the right lever.</p></div>
-      <div class="tenet"><h3>Measurable outcome</h3><p>How will we know it worked &mdash; revenue, cost, risk reduction? Quantifiable, not aspirational.</p></div>
-      <div class="tenet"><h3>Owner and runway</h3><p>An accountable PM with the capacity to carry it. Ownership, not interest.</p></div>
-    </div>
-
-    <h3 class="label subsect">Triage defines the value</h3>
-    <p class="sectsub">Four things written down before discovery starts, so that the argument at Approval is about evidence rather than about what we meant.</p>
-    <div class="aigrid four">
-      <div class="tenet"><h3>Hypothesis</h3><p>What we expect to happen. Finance and Risk have to agree it is testable.</p></div>
-      <div class="tenet"><h3>Baseline</h3><p>How we measure today. Set by Finance, and the number every use case is judged against at Value.</p></div>
-      <div class="tenet"><h3>Success criteria</h3><p>Explicit numbers, not hopes &mdash; adoption thresholds, revenue lift, risk reduction.</p></div>
-      <div class="tenet"><h3>Stop condition</h3><p>What would tell us to pivot or stop. Written at triage, before anyone is invested in the answer.</p></div>
-    </div>
-    <p class="result">A bad idea is cheapest before anyone builds it. These eight questions are where that saving is available.</p>
-  </div>
-
-  <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>How work moves</h2></div>
-    <p class="sectsub"><strong>Eight stages, one at a time, three things true to leave each.</strong> Work leaves a stage when its gate is met or failed, not when convenient &mdash; and it leaves from anywhere, not just the last stage.</p>
+    <div class="secthead"><h2>Eight Stages. One Record.</h2></div>
     <div class="stagegrid" id="stagegrid"></div>
-    <details class="ref">
-      <summary>Who owns each stage, and how work can leave it</summary>
-      <div class="refbody">
-        <div class="tscroll">
-          <table class="mini statemap">
-            <thead><tr><th>Stage</th><th>Who can move it</th><th>What it leaves behind</th><th>How it can leave</th></tr></thead>
-            <tbody id="statemap"></tbody>
-          </table>
-        </div>
-        <p class="readynote"><span data-count="playbooks">Three</span> stages carry a playbook; select the name to read it.</p>
-      </div>
-    </details>
+    <ul class="statuslegend" id="statuslegend"></ul>
+  </div>
 
-    <h3 class="label subsect">How fast: the tier sets the clock</h3>
-    <p class="sectsub">Not every use case deserves the same governance. The tier is <strong>computed from the risk the work already carries</strong> &mdash; the data it touches, whether a human stays in the loop, the function it lands in &mdash; never chosen by the person filing it. It sets one promise: how long intake to approval should take.</p>
+  <div class="sect">
+    <div class="secthead"><h2>Intake Gate: What Gets In</h2></div>
+    <div class="boxgrid">
+      <div class="dbox"><h3>Clear Problem</h3><p>Specific customer or operational pain. Measurable. Not &ldquo;we want to use AI.&rdquo; Someone owns it.</p></div>
+      <div class="dbox"><h3>AI as the Answer</h3><p>Why AI? Could this be solved with process, rules, or simpler tools? If yes, that&rsquo;s the path. AI only when it&rsquo;s clearly the right lever.</p></div>
+      <div class="dbox"><h3>Measurable Outcome</h3><p>How will we know if this works? Revenue, cost, risk reduction. Must be quantifiable. Not aspirational.</p></div>
+      <div class="dbox"><h3>Owner &amp; Timeline</h3><p>Accountable PM identified. Have they got runway? Not interest. Ownership.</p></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><h2>Triage Gate: Define Value</h2></div>
+    <div class="boxgrid">
+      <div class="dbox"><h3 class="vlab">Hypothesis</h3><p>What we expect to happen. Stated at Triage. Finance and Risk must agree it&rsquo;s testable.</p></div>
+      <div class="dbox"><h3 class="vlab">Baseline</h3><p>How we measure today. Set by Finance. Every use case measured against it at Value stage.</p></div>
+      <div class="dbox"><h3 class="vlab">Success Criteria</h3><p>Explicit numbers, not hopes. Adoption thresholds, revenue lift, risk reduction. Stated upfront.</p></div>
+      <div class="dbox"><h3 class="vlab">Stop Condition</h3><p>What triggers a pivot or restart. Stated at Triage. Prevents rework chasing a dead direction.</p></div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><h2>Cycle Time by Risk Tier</h2></div>
     <div class="tiergrid" id="tiergrid"></div>
-    <p class="readynote">Seventy days for high-risk work is real governance rigor, and everyone knows it upfront. That is the point of stating it: twenty-one days for low risk <em>means</em> twenty-one days, and nobody has to guess which kind of thing they are holding.</p>
-
-    <h3 class="label subsect">The routines: <span data-count="routines">three</span>, all reading the same record</h3>
-    <p class="sectsub">None hands off to another; all three read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>. <strong>Two hours a week in total</strong>, deliberately unequal &mdash; a quarter-hour to decide what gets in, half an hour for everyone in flight to say where they are, and one long room where money is actually committed.</p>
-<div class="flowwrap"><div id="flow"></div></div>
-    <p class="readynote">No routine meets less often than the stage it owns can go stale. That rule, not preference, sets these cadences &mdash; and the page checks it on load.</p>
-    <details class="ref">
-      <summary>What each routine decides, produces, and the clock it runs on</summary>
-      <div class="refbody">
-        <div class="tscroll">
-          <table class="mini routines">
-            <thead><tr><th>Routine</th><th>When</th><th>Who is in the room</th><th>Decides</th><th>Reads and writes</th><th>Clock</th></tr></thead>
-            <tbody id="routinespec"></tbody>
-          </table>
-        </div>
-      </div>
-    </details>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">05</span><h2>Who decides what</h2></div>
-    <p class="sectsub"><strong>Owned locally, ranked centrally.</strong> A product owner owns what gets raised in their space, what gets killed there, and the value case behind it. The portfolio owns only what crosses spaces &mdash; rank, capacity, and the call when two good things cannot both be funded this quarter. <span data-count="roles">Seven</span> roles: every stage above names one, and every gate is met or not met, graded from the record rather than argued in the room.</p>
-<ul class="raglegend" id="raglegend2"></ul>
-    <details class="ref">
-      <summary>The <span data-count="gates">eight</span> gates, what each decides, and who owns it</summary>
-      <div class="refbody">
-        <div class="tscroll">
-          <table class="mini readyspec">
-            <thead><tr><th>Gate</th><th>Decision criteria</th><th>Owner</th></tr></thead>
-            <tbody id="readyspec"></tbody>
-          </table>
-        </div>
-      </div>
-    </details>
-    <div class="tenets subsect" id="roles">
-      <div class="tenet"><h3>Product Owner</h3><p>Owns the AI roadmap for one function &mdash; what to raise, what to stop locally, and the value case. Brings to the Council only what needs capacity or crosses a boundary.</p></div>
-      <div class="tenet"><h3>Portfolio Lead</h3><p>Owns the intake gate. Accept, reject or defer on every new idea, with the tier assigned and a PM named inside 48 hours.</p></div>
-      <div class="tenet"><h3>PM Owner</h3><p>Owns triage and discovery &mdash; the business case, the hypothesis, the baseline, and the stop condition.</p></div>
-      <div class="tenet"><h3>Model Risk &amp; Monitoring</h3><p>Owns the design and scale gates. Governance lands before build starts, and monitoring is live before anything scales.</p></div>
-      <div class="tenet"><h3>Tech Lead</h3><p>Owns the delivery gate &mdash; build, audit trail, and a rollout plan that can actually be run.</p></div>
-      <div class="tenet"><h3>Director / Portfolio Council</h3><p>Owns the approval gate. Ranks, commits capacity, and breaks the tie when PM and Risk disagree.</p></div>
-      <div class="tenet"><h3>Governance &amp; Audit</h3><p>Owns the value gate. Measures performance against the baseline Finance set at triage and documents the variance.</p></div>
+    <div class="secthead"><h2>Three Routines. Weekly Rhythm.</h2></div>
+    <div class="routinegrid" id="routinegrid"></div>
+    <div class="escbox">
+      <div class="esctitle">Escalation</div>
+      <p class="esctext">Any red item escalates to Portfolio Council. Director decides: unblock, re-tier, or accept the delay. Blocker owner must surface options within the decision window.</p>
     </div>
-    <details class="ref">
-      <summary>What happens when something goes wrong</summary>
-      <div class="refbody">
-        <p><b>Anything red escalates to the Council.</b> The Director decides one of three things: unblock it, re-tier it, or accept the delay on the record. The blocker owner brings options, not a status.</p>
-        <p><b>An idea is rejected.</b> It stays in the record with the reason, visible to anyone. It can be resubmitted with new evidence, which resets the intake clock. Rejection at intake costs a week; rejection in production costs two quarters.</p>
-        <p><b>Discovery is running long.</b> Amber at two and a half weeks, red at three and a half. At red the standup surfaces it and the Council makes a call: one more week against a named blocker, or kill it. Either way there is a decision rather than silence.</p>
-        <p><b>Work is past its tier window.</b> The tier is a promise, so missing it is a portfolio problem rather than a PM&rsquo;s problem. Either the work is re-tiered because the risk was misread, or the blocker gets removed, or the promise was wrong and we say so.</p>
-        <p><b>A live capability is missing its projection.</b> Thirty days to make it work or recommend shutdown. Off by ten or twenty per cent is expected. Off by half means the bet was wrong, and it stops before it costs more.</p>
-      </div>
-    </details>
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">06</span><h2>What this means operationally</h2></div>
-    <div class="aigrid four">
-      <div class="tenet"><h3>Risk is not a launch gate</h3><p>Model Risk &amp; Monitoring owns the design gate outright. Governance happens before we build, not after, so delivery never surfaces a control gap.</p></div>
-      <div class="tenet"><h3>One record, one status, no re-reviews</h3><p>A use case walks the eight stages once. Risk does not re-evaluate at launch what it decided at design. Finance does not re-baseline at value what it set at triage.</p></div>
-      <div class="tenet"><h3>Blockers are portfolio problems</h3><p>Escalation is not a PM asking permission. It is a Director unblocking someone or re-tiering the work, inside 24 hours.</p></div>
-      <div class="tenet"><h3>Speed comes from predictability</h3><p>You know your timeline the day you file. Twenty-one days for low risk means twenty-one days. Seventy for high risk means full governance. No surprises.</p></div>
+    <div class="secthead"><h2>Gate Ownership and Criteria</h2></div>
+    <div class="tscroll">
+      <table class="mini readyspec">
+        <thead><tr><th>Gate</th><th>Owner</th><th>Decision Criteria</th></tr></thead>
+        <tbody id="readyspec"></tbody>
+      </table>
     </div>
-    <p class="readynote">The model is not fixed. It is reviewed quarterly against two standing questions &mdash; where can more information, action, automation and AI be put to work, and where do lighter paths let work move the moment it is ready. If something is not working, that is the input, not a complaint.</p>
-    <p class="result">The test is not whether the routines are meeting. It is whether someone outside this team can open the board, see where every idea is and why it is there, and challenge a decision on the record.</p>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><h2>Results</h2></div>
+    <div class="metricgrid" id="metricgrid"></div>
+  </div>
+
+  <div class="sect">
+    <div class="secthead"><h2>What This Means Operationally</h2></div>
+    <div class="dbox opbox">
+      <p><strong>Risk is not a launch gate.</strong> It owns the Design gate. Governance happens before you build, not after. Delivery doesn&rsquo;t surface control gaps.</p>
+      <p><strong>One record. One status. No re-reviews.</strong> A use case moves through eight stages once. Risk doesn&rsquo;t re-evaluate at launch what it decided at Design. Finance doesn&rsquo;t re-baseline at Value what it set at Triage.</p>
+      <p><strong>Blockers are portfolio problems, not PM problems.</strong> Escalation isn&rsquo;t a PM asking permission. It&rsquo;s a Director unblocking someone or re-tiering work. Happens within 24 hours.</p>
+      <p><strong>Speed comes from predictability.</strong> You know your timeline upfront. 21 days for low risk means 21 days. 70+ for high risk means full governance. No surprises.</p>
+    </div>
   </div>
 
 </section>
-
 
 <!-- ================= INTAKE FORM TAB ================= -->
 <section id="tab-intake" role="tabpanel" aria-labelledby="tabbtn-intake" hidden>
@@ -1577,7 +1529,7 @@
   <details class="ref readyfold">
     <summary>Readiness by use case <span class="tablecount" id="readycount"></span></summary>
     <div class="refbody">
-      <p class="readylead">What the AI Portfolio Council grades each sitting. A gate is only graded once
+      <p class="readylead">What the Portfolio Council grades each sitting. A gate is only graded once
         the work reaches the stage it belongs to &mdash; anything earlier reads as not yet due, not as a failure.
         Every grade is computed from the record.</p>
       <div class="tscroll">
@@ -1900,8 +1852,8 @@ const STAGES = [
 
   { id: "triage",    name: "Triage",    staleDays: 7,  riskWindow: 2,
     owner: "PM Owner", record: "Jira backlog",
-    exits: ["Business case drafted", "Governance model type identified", "Baseline and success metrics set"],
-    asks: "Business case is solid. Hypothesis is testable. Baseline is set. Stop condition is real.",
+    exits: ["Business case drafted", "Governance model type ID’d", "Baseline & success metrics set"],
+    asks: "Business case solid. Hypothesis is testable. Baseline is set. Stop condition is real.",
     grade: u => !u.metric   ? ["critical", "State the success metric and the stop condition"]
               : !u.baseline ? ["warning",  "Set the baseline the benefit will be measured against"]
               : ["good", null] },
@@ -1909,7 +1861,7 @@ const STAGES = [
   { id: "discovery", name: "Discovery", staleDays: 10, riskWindow: 5,
     owner: "PM Owner", record: "Discovery summary",
     exits: ["Hypothesis validated", "Regulatory impact assessed", "Model risk controls defined"],
-    asks: "Hypothesis validated against data. Regulatory impact clear. Risk controls outlined.",
+    asks: "Hypothesis validated with data. Regulatory impact clear. Risk controls outlined.",
     grade: u => !u.dataReady              ? ["critical", "Assess data readiness and regulatory impact"]
               : u.dataReady === "partial" ? ["warning",  "Close the known data gaps"]
               : u.dataReady === "ready"   ? ["good", null]
@@ -1917,7 +1869,7 @@ const STAGES = [
 
   { id: "design",    name: "Design",    staleDays: 14, riskWindow: 7,
     owner: "Model Risk & Monitoring", record: "Design package",
-    exits: ["Tech architecture specified", "Governance framework mapped", "Audit trail and monitoring designed"],
+    exits: ["Tech architecture specified", "Governance framework mapped", "Audit trail & monitoring designed"],
     asks: "Architecture is sound. Governance framework applied. Monitoring is designable.",
     grade: (u, past) => {
       if (/mrm|model|risk|legal|complian/i.test(u.waitingOn || ""))
@@ -1929,16 +1881,16 @@ const STAGES = [
 
   { id: "approval",  name: "Approval",  staleDays: 14, riskWindow: 7,
     owner: "Director / Portfolio Council", record: "AI roadmap",
-    exits: ["Business case finalized", "PM and Risk both sign off", "Capacity locked in"],
-    asks: "Business case holds. PM ready. Risk ready. Capacity allocated. The Director breaks the tie if PM and Risk disagree.",
+    exits: ["Business case finalized", "PM & Risk both sign off", "Capacity locked in"],
+    asks: "Business case holds. PM ready. Risk ready. Capacity allocated. Director breaks ties if PM and Risk disagree.",
     grade: u => u.est == null  ? ["critical", "Size the annual benefit"]
               : u.wsjf == null ? ["warning",  "Score it so it can be ranked against capacity"]
               : ["good", null] },
 
   { id: "delivery",  name: "Delivery",  staleDays: 14, riskWindow: 14,
     owner: "Tech Lead", record: "Quarterly plan",
-    exits: ["Build and testing complete", "Audit trail live and validated", "Rollout plan operationalized"],
-    asks: "Build is complete. The audit trail works. The rollout plan is executable.",
+    exits: ["Build & testing complete", "Audit trail live & validated", "Rollout plan operationalized"],
+    asks: "Build complete. Audit trail works. Rollout plan is executable.",
     grade: (u, past) => past ? ["good", null]
               : u.waitingOn  ? ["critical", "Build held — " + softLower(u.waitingOn)]
               : ["warning", "In build, not yet through test"] },
@@ -1954,9 +1906,27 @@ const STAGES = [
   { id: "value",     name: "Value",     staleDays: 45, riskWindow: 14,
     owner: "Governance & Audit", record: "Benefits dashboard",
     exits: ["Baseline performance confirmed", "Actual performance measured", "Variance documented"],
-    asks: "Performance measured against the baseline. Controls held. Variance documented.",
+    asks: "Performance vs. baseline measured. Controls held. Variance documented.",
     grade: u => u.baseline ? ["good", null]
               : ["critical", "Live without a measured baseline to judge it against"] },
+];
+
+/* Where the rollout stands, as the operating model document states it: the
+   front door is running, discovery is being worked, and the stages past it are
+   not stood up yet. This is a status of the model, not of any use case — the
+   per-use-case health on the other tabs is computed and unrelated. */
+const STAGE_STATUS = {
+  intake: "done", triage: "done", discovery: "prog",
+  design: "block", approval: "block", delivery: "block", scale: "block", value: "block",
+};
+
+/* The Results band, as stated in the operating model document. */
+const RESULTS = [
+  { value: "21\u201370", label: "Days Intake to Approval", note: "By risk tier, predictable" },
+  { value: "0",        label: "Late-Stage Blockers",     note: "Risk in, then blockers surface early" },
+  { value: "92%",      label: "Value Realization",       note: "vs. hypothesis at Approval, baseline set at Triage" },
+  { value: "3",        label: "Live Capabilities",       note: "With monitoring in place" },
+  { value: "12",       label: "PMs Using Board",         note: "of 14 active" },
 ];
 
 /* ---------- risk tiers ----------
@@ -2076,7 +2046,7 @@ function readiness(u) {
 const ANCHOR = "2026-08-11";
 
 /* Portfolio history for the trend panels. Value figures are $K of
-   annual run-rate; realized is measured at the AI Portfolio Council. */
+   annual run-rate; realized is measured at the Portfolio Council. */
 const TRENDS = {
   value: [
     { q: "Q4 '25", projected: 1800, realized: 1650 },
@@ -2161,7 +2131,7 @@ const STATUS_HISTORY = [
     meetings: [
       { name: "Weekly Intake", when: "2026-07-29", cadence: "Weekly", agenda: "3 on the agenda — AI-004, AI-002, AI-013" },
       { name: "Tactical Standup", when: "2026-08-11", cadence: "Weekly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Weekly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
+      { name: "Portfolio Council", when: "2026-08-20", cadence: "Weekly", agenda: "3 on the agenda — AI-005, AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Approvals we do not control",
@@ -2197,7 +2167,7 @@ const STATUS_HISTORY = [
     meetings: [
       { name: "Weekly Intake", when: "2026-07-23", cadence: "Weekly", agenda: "2 on the agenda — AI-012, AI-015" },
       { name: "Tactical Standup", when: "2026-08-11", cadence: "Weekly", agenda: "1 on the agenda — AI-003" },
-      { name: "AI Portfolio Council", when: "2026-08-20", cadence: "Weekly", agenda: "2 on the agenda — AI-005, AI-014" },
+      { name: "Portfolio Council", when: "2026-08-20", cadence: "Weekly", agenda: "2 on the agenda — AI-005, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 closed below projection",
@@ -2230,7 +2200,7 @@ const STATUS_HISTORY = [
     meetings: [
       { name: "Weekly Intake", when: "2026-07-16", cadence: "Weekly", agenda: "3 on the agenda — AI-013, AI-014, AI-016" },
       { name: "Tactical Standup", when: "2026-07-14", cadence: "Weekly", agenda: "2 on the agenda — AI-008, AI-011" },
-      { name: "AI Portfolio Council", when: "2026-07-16", cadence: "Weekly", agenda: "2 on the agenda — AI-006, AI-014" },
+      { name: "Portfolio Council", when: "2026-07-16", cadence: "Weekly", agenda: "2 on the agenda — AI-006, AI-014" },
     ],
     risks: [
       { sev: "warning", title: "Q2 tracking below projection",
@@ -2275,14 +2245,14 @@ const USE_CASES = [
     size: 5, impact: ["revenue", "insight", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: [], waitingOn: null,
-    opened: "2026-06-25", lastUpdate: "2026-08-08", target: "2026-08-27", next: "AI Portfolio Council" },
+    opened: "2026-06-25", lastUpdate: "2026-08-08", target: "2026-08-27", next: "Portfolio Council" },
 
   { id: "AI-006", name: "Branch staffing forecast", func: "Branch Network",
     stage: "approval", owner: "L. Nguyen", sponsor: "Retail Distribution", wsjf: 5.1, est: 400,
     size: 8, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: true,
     risk: [], waitingOn: null,
-    opened: "2026-06-30", lastUpdate: "2026-07-30", target: "2026-08-20", next: "AI Portfolio Council" },
+    opened: "2026-06-30", lastUpdate: "2026-07-30", target: "2026-08-20", next: "Portfolio Council" },
 
   { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
     stage: "triage", owner: "Intake team", sponsor: "Consumer Marketing", wsjf: null, est: null,
@@ -2317,7 +2287,7 @@ const USE_CASES = [
     size: 3, impact: ["revenue", "cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    opened: "2026-01-20", lastUpdate: "2026-08-01", target: "2026-09-30", next: "AI Portfolio Council (Q3)" },
+    opened: "2026-01-20", lastUpdate: "2026-08-01", target: "2026-09-30", next: "Portfolio Council (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
     stage: "triage", owner: "Intake team", sponsor: "Branch Operations", wsjf: null, est: null,
@@ -2338,7 +2308,7 @@ const USE_CASES = [
     size: 8, impact: ["cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
-    opened: "2026-06-20", lastUpdate: "2026-08-05", target: "2026-09-04", next: "AI Portfolio Council" },
+    opened: "2026-06-20", lastUpdate: "2026-08-05", target: "2026-09-04", next: "Portfolio Council" },
 
   { id: "AI-015", name: "RM email auto-drafting", func: "Small Business",
     stage: "triage", owner: "Intake team", sponsor: "Small Business Banking", wsjf: null, est: null,
@@ -2690,7 +2660,7 @@ function renderJira() {
                 good: ["rag-green", "GREEN"], pending: ["rag-na", "N/A"] };
   const rb = el("div", "jready");
   rb.append(el("div", "jrhead",
-    "READINESS \u00b7 graded " + fmtDate(iso(todayUTC())) + " \u00b7 AI Portfolio Council"));
+    "READINESS \u00b7 graded " + fmtDate(iso(todayUTC())) + " \u00b7 Portfolio Council"));
   for (const c of readiness(u)) {
     const line = el("div", "jrline");
     const [cls, tok] = rag[c.grade];
@@ -2873,305 +2843,14 @@ function healthBadge(h) {
    Exits are the one thing the data does not carry: they are the outcome
    vocabulary of each state, so they live here. Every state has one — work
    leaves from anywhere, which is the claim the state map has to make. */
-const OFFRAMP = {
-  intake:    "Approved to discovery, or rejected with the reason recorded",
-  triage:    "Approved to discovery, or rejected with the reason recorded",
-  discovery: "Approved to design, or killed with the learning recorded",
-  design:    "Approved to delivery, rejected, or deprioritized",
-  approval:  "Approved to delivery, or deferred when capacity is full",
-  delivery:  "Cleared to scale, paused against a blocker, or cancelled",
-  scale:     "Value confirmed, or shut down when it is not working",
-  value:     "Continued, iterated, or archived",
-};
 
 
 
-/* The three measures the model is answerable to. Computed, like everything
-   else — these are the portfolio's own numbers, not a slice of a filter. */
-function renderDrives() {
-  const host = document.getElementById("drives");
-  if (!host) return;
-  const active = USE_CASES.map(uc => enrich(uc, todayUTC())).filter(u => !u.closed);
-  const closed = TRENDS.value.filter(v => !v.partial);
-  const rz = closed.reduce((a, v) => a + v.realized, 0);
-  const pj = closed.reduce((a, v) => a + v.projected, 0);
-  const live = active.filter(u => u.stage === "value").length;
-  const building = active.filter(u => u.stage === "delivery").length;
-  /* Speed, not size. The scored pipeline total lives on the Portfolio tab as
-     "Est. annual value" — repeating it here made the two stat bands read as
-     one band shown twice. Cycle time is an outcome the other tabs do not
-     state as a number, and it is the one that tests the theme directly. */
-  const cyc = TRENDS.cycle;
-  const now = cyc[cyc.length - 1].days, was = cyc[0].days;
-  const wk = d => Math.round(d / 7);
 
-  const exits = USE_CASES.filter(u => u.closed);
-  const late = exits.filter(u => stageOrder[u.stage] > stageOrder.approval);
-  const lateKills = late.length, allExits = exits.length;
-  const ids = list => list.map(u => u.id).join(", ");
-  const earlyAt = [...new Set(exits.map(u => stageById[u.stage].name.toLowerCase()))].join(" and ");
 
-  const tiles = [
-    { label: "Value realized", value: Math.round(rz / pj * 100) + "%",
-      sub: "of what was projected, across the last " + closed.length +
-           " closed quarters. Measured against a baseline, not self-reported." },
-    { label: "Intake to decision", value: now + " days",
-      sub: "from an idea arriving to a decision on it, down from " + was +
-           " over the last " + cyc.length + " months." },
-    /* The governance claim, computed rather than asserted: exits should happen
-       before anything is built. Counting where work actually died is a harder
-       number to argue with than counting how many are live. */
-    { label: "Killed late", value: String(lateKills),
-      sub: lateKills
-        ? lateKills + " stopped after approval — " + ids(late) + "."
-        : "use cases stopped after approval. " + allExits +
-          (allExits === 1 ? " exit so far, at " : " exits so far, both at ") +
-          earlyAt + " — a week spent, not two quarters." },
-  ];
-  host.replaceChildren(...tiles.map(t => {
-    const c = el("div", "card drive");
-    c.append(el("div", "label", t.label), el("div", "dvalue", t.value), el("div", "dsub", t.sub));
-    return c;
-  }));
 
-  /* The "so what" — what changes for the business if this exists, stated in
-     weeks because an executive counts in weeks. Derived from the same trend
-     the tile reads, so the claim cannot drift from the number above it. */
-  const so = document.getElementById("sowhat");
-  if (so) {
-    so.textContent =
-      "An idea reaches a decision in about " + wk(now) + " weeks now rather than " + wk(was) +
-      ", " + live + " " + (live === 1 ? "capability is" : "capabilities are") + " live with a measured before and after, and " +
-      building + " more " + (building === 1 ? "is" : "are") + " in delivery. " +
-      "That is the return on running it this way — not the meetings, the speed at which we can be wrong cheaply.";
-  }
-}
 
-/* The states, with the decision right and the exit attached to each. A table
-   rather than a line: the order is real, but what matters about a state is
-   who can move it and how work can leave it. */
-/* The full scorecard. Two of the five are computed from the record and move
-   on their own; the other three are a stated cost, a target and a set of
-   expectations. Labelling which is which matters on a page whose whole claim
-   is that its numbers are not typed — a target is not a measurement. */
-function renderScorecard() {
-  const tb = document.getElementById("scorecard");
-  if (!tb) return;
-  const cyc = TRENDS.cycle, closedQ = TRENDS.value.filter(v => !v.partial);
-  const rate = Math.round(closedQ.reduce((a, v) => a + v.realized, 0) /
-                          closedQ.reduce((a, v) => a + v.projected, 0) * 100);
-  const flight = USE_CASES.map(u => enrich(u, todayUTC()))
-    .filter(u => !u.closed && stageOrder[u.stage] <= stageOrder.approval);
-  const preApproval = flight.length, inTier = flight.filter(u => !u.overTier).length;
-  const rows = [
-    ["Intake to decision", "How long from an idea arriving to a decision on it, either way.",
-     cyc[cyc.length - 1].days + " days, down from " + cyc[0].days, "computed"],
-    ["Value realization", "Share of projected value that live capabilities actually delivered.",
-     rate + "% across " + closedQ.length + " closed quarters", "computed"],
-    ["Cost of failure", "What a wrong bet costs depending on where it is caught.",
-     "Four weeks in discovery against two quarters in production", "stated"],
-    ["Portfolio visibility", "Share of Consumer Bank AI work on the board rather than off-book.",
-     "Target: 100%", "target"],
-    /* The tier promise, graded against itself. A standard nobody scores is a
-       slogan, so this row is the one place the model is marked on its own
-       homework — and it is computed, so it cannot be rounded up. */
-    ["Intake to approval, by tier", "Low 21 days, medium 45, high 70+. The tier is assigned at intake and the clock starts there.",
-     inTier + " of " + preApproval + " in flight are inside their window", "computed"],
-  ];
-  tb.replaceChildren(...rows.map(([name, means, where, kind]) => {
-    const tr = el("tr");
-    const w = el("td", null, where);
-    w.append(el("div", "cad", kind === "computed" ? "computed from the record"
-                            : kind === "target" ? "a target, not a measurement"
-                            : kind === "stated" ? "a stated cost" : "the expectation, not an average"));
-    tr.append(el("td", null, name), el("td", null, means), w);
-    return tr;
-  }));
-}
 
-function renderStateMap() {
-  const tb = document.getElementById("statemap");
-  if (!tb) return;
-  tb.replaceChildren(...STAGES.map(s => {
-    const tr = el("tr");
-    const forum = FORUMS.find(f => f.name === FORUM_BY_STAGE[s.id]);
-    const who = el("td", null, FORUM_BY_STAGE[s.id]);
-    if (forum) who.append(el("div", "cad", forum.cadence.toLowerCase()));
-    tr.append(el("td", null, stageLink(s.id, s.name)), who,
-      el("td", null, s.record), el("td", "exit", OFFRAMP[s.id]));
-    return tr;
-  }));
-}
-
-/* The whole model in one picture: three parts, each feeding the outcome, each
-   captioned with what it prevents. Counts come from the same config the rest
-   of the page reads, so the picture cannot overstate what is actually there. */
-function renderModelMap() {
-  const host = document.getElementById("model");
-  if (!host) return;
-
-  const NS = "http://www.w3.org/2000/svg";
-  const W = 940, BW = 288, BH = 138, GAP = 38, BY = 20, OY = 198, OH = 74;
-  const H = OY + OH + 12;
-  const xs = [20, 20 + BW + GAP, 20 + 2 * (BW + GAP)];
-
-  const parts = [
-    { eyebrow: "THE RULE", title: "One record",
-      body: ["Every idea becomes one issue with an ID.", "Nothing exists outside it."],
-      so: "so nothing is invisible and status is free" },
-    { eyebrow: "THE STRUCTURE", title: STAGES.length + " stages, one capacity line",
-      body: ["One routine can move each stage.", "Work can leave from any of them."],
-      so: "so capacity follows rank, not volume" },
-    { eyebrow: "THE ROUTINES", title: FORUMS.length + " standing routines",
-      body: ["Each holds a decision right.", "All read the same record."],
-      so: "so nothing sits longer than it can go stale" },
-  ];
-
-  const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-  svg.setAttribute("class", "dia model");
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label",
-    "How the model produces its outcome. " +
-    parts.map(p => p.eyebrow + ": " + p.title + ". " + p.body.join(" ") + " — " + p.so).join(" ") +
-    " All three feed one outcome: capabilities live in the business with measured value.");
-
-  const node = (tag, attrs, text, parent) => {
-    const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]);
-    if (text !== undefined && text !== null) n.textContent = text;
-    (parent || svg).append(n);
-    return n;
-  };
-
-  const defs = node("defs", {});
-  const m = node("marker", { id: "ma", viewBox: "0 0 8 8", refX: 7, refY: 4,
-    markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, null, defs);
-  node("path", { d: "M0,0 L8,4 L0,8 z", class: "farrow" }, null, m);
-
-  parts.forEach((p, i) => {
-    const x = xs[i], cx = x + BW / 2;
-    node("rect", { x: x, y: BY, width: BW, height: BH, rx: 2, class: "fbox" });
-    node("text", { x: cx, y: BY + 26, class: "fhead", "text-anchor": "middle", "data-cap": BW - 18 }, p.eyebrow);
-    node("text", { x: cx, y: BY + 50, class: "rhubt", "text-anchor": "middle", "data-cap": BW - 18 }, p.title);
-    p.body.forEach((line, j) =>
-      node("text", { x: cx, y: BY + 74 + j * 16, class: "rst", "text-anchor": "middle", "data-cap": BW - 18 }, line));
-    node("text", { x: cx, y: BY + BH - 14, class: "dso", "text-anchor": "middle", "data-cap": BW - 18 }, p.so);
-    node("line", { x1: cx, y1: BY + BH, x2: cx, y2: OY - 2, class: "fline", "marker-end": "url(#ma)" });
-  });
-
-  node("rect", { x: 20, y: OY, width: W - 40, height: OH, rx: 2, class: "rhub" });
-  node("text", { x: W / 2, y: OY + 25, class: "fhead", "text-anchor": "middle" }, "THE OUTCOME");
-  node("text", { x: W / 2, y: OY + 48, class: "rbig", "text-anchor": "middle", "data-cap": W - 58 },
-    "Capabilities live in the business, with measured value");
-  node("text", { x: W / 2, y: OY + 64, class: "rhubs", "text-anchor": "middle", "data-cap": W - 58 },
-    "Every number on this site is computed from the record — none of it is reported by hand");
-
-  host.replaceChildren(svg);
-  fitCheck(svg, "model map");
-}
-
-/* Text in an SVG cannot wrap, so a caption that outgrows its box is silently
-   clipped rather than reflowed. Each label carries the width it has to live
-   in — inferring it from the class was wrong, since the same class appears in
-   boxes of different widths. Measured once after render: edit a label past
-   what fits and the console names it instead of shipping it cut off. */
-function fitCheck(svg, what) {
-  for (const t of svg.querySelectorAll("text[data-cap]")) {
-    const cap = Number(t.dataset.cap), w = t.getBBox().width;
-    if (w > cap)
-      console.warn("Diagram overflow — " + what + ': "' + t.textContent + '" is ' +
-        Math.round(w) + "px in a " + cap + "px box.");
-  }
-}
-
-/* Six routines on a ring around the record they all read and write. The shape
-   is the argument: there is no chain here, so nothing waits for its turn to
-   come round. Two-headed connectors because every routine both reads the
-   record and writes its decision back to it. */
-function renderRoutineMap() {
-  const host = document.getElementById("flow");
-  if (!host) return;
-
-  const NS = "http://www.w3.org/2000/svg";
-  /* Geometry follows the routine count rather than assuming six. Fewer nodes
-     means each one can be wider, which matters because a routine covering
-     three stages carries a longer label than one covering a single stage —
-     merging routines is exactly what makes those labels grow. The height is
-     derived from the lowest node so the box never carries dead space. */
-  const n = FORUMS.length;
-  const NS_ANG = FORUMS.map((f, i) => (-90 + i * 360 / n) * Math.PI / 180);
-  const W = 940, CX = 470, RX = 320, RY = n <= 3 ? 104 : 170;
-  const NW = n <= 4 ? 292 : 214, NH = 64, HW = 250, HH = 86;
-  const CY = 24 + NH / 2 + RY;
-  const H = CY + RY * Math.max(...NS_ANG.map(Math.sin)) + NH / 2 + 24;
-
-  const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-  svg.setAttribute("class", "dia ring");
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label",
-    FORUMS.length + " routines arranged around the record they all read and write. " +
-    "At the center, one Jira issue per use case, from which health, rank, " +
-    "gate status and time in stage are computed. Around it: " +
-    FORUMS.map(f => f.name + ", " + f.day.toLowerCase() + "s for " + f.mins + " minutes, covering " +
-      f.stages.map(id => stageById[id].name).join(" and ")).join("; ") +
-    ". No routine hands off to another.");
-
-  const node = (tag, attrs, text, parent) => {
-    const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]);
-    if (text !== undefined && text !== null) n.textContent = text;
-    (parent || svg).append(n);
-    return n;
-  };
-
-  const defs = node("defs", {});
-  const m = node("marker", { id: "ra", viewBox: "0 0 8 8", refX: 7, refY: 4,
-    markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, null, defs);
-  node("path", { d: "M0,0 L8,4 L0,8 z", class: "farrow" }, null, m);
-
-  // where a line leaves a box centered at (px,py), heading toward (tx,ty)
-  const edge = (px, py, w, h, tx, ty) => {
-    const dx = tx - px, dy = ty - py;
-    const sx = dx ? (w / 2) / Math.abs(dx) : Infinity;
-    const sy = dy ? (h / 2) / Math.abs(dy) : Infinity;
-    const s = Math.min(sx, sy);
-    return [px + dx * s, py + dy * s];
-  };
-
-  // connectors first, so the boxes sit over them
-  const pts = NS_ANG.map(a => [CX + RX * Math.cos(a), CY + RY * Math.sin(a)]);
-  for (const [nx, ny] of pts) {
-    const [x1, y1] = edge(nx, ny, NW, NH, CX, CY);
-    const [x2, y2] = edge(CX, CY, HW, HH, nx, ny);
-    node("line", { x1: x1, y1: y1, x2: x2, y2: y2, class: "fline",
-      "marker-start": "url(#ra)", "marker-end": "url(#ra)" });
-  }
-
-  // the record
-  node("rect", { x: CX - HW / 2, y: CY - HH / 2, width: HW, height: HH, rx: 2, class: "rhub" });
-  node("text", { x: CX, y: CY - 26, class: "fhead", "text-anchor": "middle" }, "THE RECORD");
-  node("text", { x: CX, y: CY - 6, class: "rhubt", "text-anchor": "middle", "data-cap": HW - 14 }, "One issue per use case");
-  node("text", { x: CX, y: CY + 13, class: "rhubs", "text-anchor": "middle", "data-cap": HW - 14 },
-    "Health, rank, gate status and time in stage");
-  node("text", { x: CX, y: CY + 28, class: "rhubs", "text-anchor": "middle", "data-cap": HW - 14 },
-    "are computed from it, never typed");
-
-  // the routines
-  FORUMS.forEach((f, i) => {
-    const [nx, ny] = pts[i];
-    node("rect", { x: nx - NW / 2, y: ny - NH / 2, width: NW, height: NH, rx: 2, class: "fbox" });
-    node("text", { x: nx, y: ny - 12, class: "rname", "text-anchor": "middle", "data-cap": NW - 14 }, f.name);
-    node("text", { x: nx, y: ny + 4, class: "rcad", "text-anchor": "middle" },
-      (f.day.slice(0, 3) + " \u00b7 " + f.mins + " MIN").toUpperCase());
-    node("text", { x: nx, y: ny + 20, class: "rst", "text-anchor": "middle", "data-cap": NW - 14 },
-      f.stages.map(id => stageById[id].name).join(" · "));
-  });
-
-  host.replaceChildren(svg);
-  fitCheck(svg, "routine ring");
-}
 
 /* ---------- tabs ---------- */
 /* Order follows the flow of work: what the model is, how it runs, how an idea
@@ -3730,7 +3409,7 @@ function renderMix(active) {
 const FORUM_BY_STAGE = {
   intake: "Weekly Intake", triage: "Weekly Intake",
   discovery: "Tactical Standup", delivery: "Tactical Standup", scale: "Tactical Standup",
-  design: "AI Portfolio Council", approval: "AI Portfolio Council", value: "AI Portfolio Council",
+  design: "Portfolio Council", approval: "Portfolio Council", value: "Portfolio Council",
 };
 const SEV_RANK = { critical: 0, warning: 1, opportunity: 2 };
 const SEV_DOT = { critical: ["critical", "✕"], warning: ["warning", "!"], opportunity: ["neutral", "\u2192"] };
@@ -3791,7 +3470,7 @@ function actionsFor(u, plan) {
   if (plan && plan.below.some(x => x.id === u.id)) {
     out.push({ sev: "warning", act: "Defer on the record, or free capacity",
       why: (plan.open - plan.used) + " points remain after higher-ranked work and this needs " + u.size + ".",
-      where: "AI Portfolio Council" });
+      where: "Portfolio Council" });
   }
 
   if (u.complete.pct < 70) {
@@ -3837,25 +3516,34 @@ function actionsFor(u, plan) {
    that meets on its own schedule is how risk ends up finding out last. */
 const FORUMS = [
   { name: "Weekly Intake", cadence: "Weekly", mins: 15, day: "Monday",
+    when: "Every Monday, 15 min",
     stages: ["intake", "triage"], next: () => nextWeekly(1),
-    who: "Portfolio Lead, PM Lead",
-    decides: "Accept, reject, or defer — every new idea gets one of the three. Assigns the risk tier and names the PM owner.",
-    reads: "Every new issue. Writes the tier, the owner and the triage backlog.",
-    sla: "A PM owner named within 48 hours, or it escalates to skip-level." },
+    lines: [
+      ["Attendees", "Portfolio Lead (Director), PM Lead"],
+      ["Portfolio Lead decides", "Accept, reject, or deferred."],
+      ["Outputs", "Risk tier assigned. PM owner named. Triage backlog updated."],
+      ["SLA", "PM owner identified within 48 hours or escalate to skip-level."],
+    ] },
 
   { name: "Tactical Standup", cadence: "Weekly", mins: 30, day: "Tuesday",
+    when: "Every Tuesday, 30 min",
     stages: ["discovery", "design", "delivery", "scale"], next: () => nextWeekly(2),
-    who: "Every active PM, Tech Lead, Model Risk & Monitoring",
-    decides: "Nothing, on purpose. Each PM gives status, blocker and ask in two to three minutes; what cannot be cleared here becomes Council agenda.",
-    reads: "Everything in flight. Writes blockers and work-stream health.",
-    sla: "Red surfaces Tuesday; the Director decides by Wednesday end of day or it escalates." },
+    lines: [
+      ["Attendees", "All active PMs, Tech Lead, Model Risk & Monitoring rep"],
+      ["Each PM / work stream lead reports", "Status, blocker, ask. 2\u20133 min each."],
+      ["Outputs", "Blockers flagged for escalation. Work stream health visible. Portfolio Council agenda fed."],
+      ["Escalation SLA", "Red items surface by Tuesday; Director decides by Wednesday EOD or they escalate."],
+    ] },
 
-  { name: "AI Portfolio Council", cadence: "Weekly", mins: 75, day: "Thursday",
+  { name: "Portfolio Council", cadence: "Weekly", mins: 75, day: "Thursday",
+    when: "Run by Director, every Thursday, 75 min (tight when active)",
     stages: ["triage", "design", "approval", "value"], next: () => nextWeekly(4),
-    who: "Director, PM Lead, Risk Lead, Finance, Tech Lead",
-    decides: "What’s new (15 min): intake backlog and tier review. What we know (25 min): design reviews, feasibility, governance gaps, blockers from the standup. What we decide (35 min): approve to delivery, capacity trade-offs, kill or advance red.",
-    reads: "Everything at triage, design, approval and value, across every function. Writes rank, capacity points and delivery windows.",
-    sla: "Any red item escalated here leaves with a call: unblock, re-tier, or accept the delay." },
+    lines: [
+      ["Attendees", "Director, PM Lead, Risk Lead, Finance Rep, Tech Lead"],
+      ["What\u2019s New (15 min)", "Intake backlog triage. Risk tier review."],
+      ["What We Know (25 min)", "Design reviews. Tech feasibility. Governance gaps. Blockers from Tactical."],
+      ["What We Decide (35 min)", "Approve to Delivery. Capacity trade-offs. Kill or advance red items. Escalation paths."],
+    ] },
 ];
 const CADENCE_DAYS = { Weekly: 7, "Bi-weekly": 14, Monthly: 30, Quarterly: 90 };
 
@@ -4180,81 +3868,78 @@ function paintReport(r) {
    Both read the same config, so the definition cannot drift from the instance. */
 function renderSpecs() {
 
+  /* Gate ownership and criteria, straight off STAGES so the table and the
+     stage cards above it cannot disagree about who decides what. */
   const r = document.getElementById("readyspec");
   if (r) {
-    r.replaceChildren();
-    for (const d of READINESS)
-      r.append(el("tr", null, null,
-        el("td", null, d.name), el("td", null, d.asks), el("td", null, d.owner)));
+    r.replaceChildren(...READINESS.map(d => el("tr", null, null,
+      el("td", "gname", d.name), el("td", "gowner", d.owner), el("td", "gcrit", d.asks))));
   }
 
-  /* The eight stages as cards, each carrying the three things that have to be
-     true to leave it, plus how much of the live portfolio is sitting there.
-     Drawn from STAGES, so a stage cannot appear here with criteria the gate
-     does not actually grade. */
+  /* The eight stages as cards, each with the three things that have to be true
+     to leave it. The indicator per stage is the rollout status the document
+     states: intake and triage complete, discovery in progress, the rest not
+     yet stood up. */
   const sg = document.getElementById("stagegrid");
   if (sg) {
-    const here = {};
-    for (const u of USE_CASES) if (!u.closed) here[u.stage] = (here[u.stage] || 0) + 1;
-    sg.replaceChildren(...STAGES.map((s, i) => {
+    sg.replaceChildren(...STAGES.map((st, i) => {
       const card = el("div", "stagecard");
-      const n = here[s.id] || 0;
-      const head = el("div", "schead", null,
-        el("span", "sno", String(i + 1)), el("span", "snm", s.name));
-      head.append(el("span", "scount", n ? n + " here" : "—"));
-      card.append(head, el("div", "sowner", s.owner));
+      card.append(el("div", "schead", null,
+        el("span", "sno", String(i + 1)), el("span", "snm", st.name)));
       const ul = el("ul", "sexits");
-      for (const e of s.exits) ul.append(el("li", null, e));
+      for (const e of st.exits) {
+        const li = el("li");
+        const dot = el("span", "sdot i-" + STAGE_STATUS[st.id]);
+        dot.setAttribute("aria-hidden", "true");
+        li.append(dot, el("span", "stext", e));
+        ul.append(li);
+      }
       card.append(ul);
       return card;
     }));
   }
 
-  /* Tiers, with the live count in each. The counts are computed from the same
-     rule the board applies to every use case, so the model page cannot claim a
-     spread the portfolio does not have. */
+  const sl = document.getElementById("statuslegend");
+  if (sl) {
+    sl.replaceChildren(...[["done", "Complete"], ["prog", "In Progress"], ["block", "Blocked"]]
+      .map(([k, label]) => {
+        const li = el("li");
+        const dot = el("span", "sdot i-" + k);
+        dot.setAttribute("aria-hidden", "true");
+        li.append(dot, el("span", null, label));
+        return li;
+      }));
+  }
+
   const tg = document.getElementById("tiergrid");
   if (tg) {
-    const active = USE_CASES.filter(u => !u.closed);
-    tg.replaceChildren(...TIERS.map(t => {
-      const n = active.filter(u => tierOf(u) === t.key).length;
-      return el("div", "tiercard t-" + t.key, null,
-        el("div", "tlab", t.name + " risk"),
-        el("div", "tband", t.band),
-        el("div", "twhat", t.what),
-        el("div", "tnow", n + " of " + active.length + " open " +
-          (n === 1 ? "use case is" : "use cases are") + " in this tier"));
+    tg.replaceChildren(...TIERS.map(t => el("div", "tiercard t-" + t.key, null,
+      el("div", "tlab", t.name + " Risk"),
+      el("div", "tband", t.band),
+      el("div", "twhat", t.what))));
+  }
+
+  /* The three routines as the document lays them out: a title, when it sits,
+     and its own labelled lines. Rendered from FORUMS, so renaming a routine or
+     moving a stage updates the ring, the agendas and this block together. */
+  const rg = document.getElementById("routinegrid");
+  if (rg) {
+    rg.replaceChildren(...FORUMS.map(f => {
+      const box = el("div", "routinebox");
+      box.append(el("div", "rtitle", f.name), el("div", "rcadence", f.when));
+      for (const [lab, body] of f.lines)
+        box.append(el("div", "ritem", null, el("strong", null, lab + ":"),
+          document.createTextNode(" " + body)));
+      return box;
     }));
   }
 
-  /* The routines table, rendered from FORUMS. It used to be hand-written, and
-     twice an edit to it silently changed nothing because the columns had moved
-     underneath. A table generated from the definition cannot go stale. */
-  const rs = document.getElementById("routinespec");
-  if (rs) {
-    rs.replaceChildren(...FORUMS.map(f => el("tr", null, null,
-      el("td", null, f.name),
-      el("td", null, f.day + ", " + f.mins + " min"),
-      el("td", null, f.who),
-      el("td", null, f.decides),
-      el("td", null, f.reads),
-      el("td", null, f.sla))));
-  }
-
-  const leg = document.getElementById("raglegend2");
-  if (leg) {
-    leg.replaceChildren();
-    for (const [grade, label, meaning] of RAG_SCALE) {
-      const li = el("li");
-      if (grade === "pending") li.append(el("span", "rpend", "\u2013"));
-      else {
-        const dot = el("span", "dot " + grade, HEALTH[grade].glyph);
-        dot.setAttribute("aria-hidden", "true");
-        li.append(dot);
-      }
-      li.append(el("b", null, label), document.createTextNode(" " + meaning));
-      leg.append(li);
-    }
+  const mg = document.getElementById("metricgrid");
+  if (mg) {
+    mg.replaceChildren(...RESULTS.map(m => el("div", "metric", null,
+      el("div", "mvalue", m.value),
+      el("div", "mlabel", m.label),
+      el("div", "mnote", m.note))));
   }
 }
 
@@ -4550,13 +4235,8 @@ let staticRendered = false;
 const NUMWORD = ["zero","one","two","three","four","five","six","seven","eight","nine","ten",
   "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty"];
 const COUNTS = {
-  stages:     () => STAGES.length,
-  routines:   () => FORUMS.length,
   gates:      () => READINESS.length,
   usecases:   () => USE_CASES.length,
-  playbooks:  () => Object.keys(STAGE_DETAILS).length,
-  principles: () => document.querySelectorAll("#principles .tenet").length,
-  roles:      () => document.querySelectorAll("#roles .tenet").length,
 };
 function fillCounts() {
   for (const node of document.querySelectorAll("[data-count]")) {
@@ -4586,11 +4266,6 @@ function renderStatic() {
 
   renderSpecs();
   fillCounts();
-  renderDrives();
-  renderScorecard();
-  renderModelMap();
-  renderStateMap();
-  renderRoutineMap();
   renderJira();
   renderJiraActions();
   renderTrends();

@@ -5,15 +5,14 @@
 A working demonstration of one way in for every AI idea — so capacity goes to
 what's worth building. Built as a single self-contained HTML page with six views:
 
-- **Operating Model** — the whole model in one arc: the three numbers it drives,
-  a diagram of how the rule, the structure and the routines produce them, six
-  principles, the two gates an idea clears before anyone builds it, the eight
-  stages with the three things that have to be true to leave each, the risk
-  tiers that set how long intake to approval should take, the three standing
-  routines drawn as a ring around the record they all read, the eight gate
-  owners, and what the whole thing means operationally. The diagrams and every
-  table are drawn from the same stage, tier and routine definitions the rest of
-  the page reads, so they cannot drift from them.
+- **Operating Model** — the operating model document itself, section for
+  section: the principle it opens on, the eight stages with the three things
+  that have to be true to leave each, the intake and triage gates, cycle time
+  by risk tier, the three weekly routines and their escalation rule, gate
+  ownership and criteria, the results, and what it all means operationally.
+  The stage cards, tier cards, routine boxes and gate table are drawn from the
+  same stage, tier and routine definitions the rest of the page reads, so the
+  document and the board cannot say different things.
 - **Intake Form** — a mock of the fifteen-minute use case intake form with
   live answer coaching.
 - **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog
