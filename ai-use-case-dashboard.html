@@ -549,7 +549,6 @@
   .afterlist li { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.5; margin: var(--s2) 0; }
   .afterlist b { color: var(--ink); font-weight: 600; }
   .afternote { color: var(--ink-3); font-size: var(--fs-caption); line-height: 1.5; margin: var(--s3) 0 0; }
-  .gatenote { color: var(--ink-3); font-size: var(--fs-caption); margin: var(--s3) 0 0; padding: 0 var(--s5) var(--s4); }
 
   .subsect { margin-top: var(--s6); }
 
@@ -707,32 +706,7 @@
      once, in the row for the stage it is standing in. The old matrix put every
      use case against all eight gates and most of the cells were "not due",
      which made the few that mattered hard to find. */
-  .stagetable { min-width: 720px; }
-  .stagetable th:nth-child(1), .stagetable td:nth-child(1) { width: 22%; }
-  .stagetable th:nth-child(2), .stagetable td:nth-child(2) { width: 18%; }
-  .stagetable td { vertical-align: top; }
-  .stagetable .stname { font-weight: 600; white-space: normal; }
-  .stagetable .stgate {
-    font-weight: 400; color: var(--ink-3); font-size: var(--fs-caption);
-    line-height: 1.45; margin-top: var(--s1);
-  }
-  .stagetable .stowner { color: var(--ink-2); font-size: var(--fs-caption); white-space: normal; }
-  .stagetable .sthere { white-space: normal; }
-  .stagetable .stempty { color: var(--ink-3); font-size: var(--fs-caption); }
-  .stagetable .stitem { display: flex; gap: var(--s2); align-items: flex-start; }
-  .stagetable .stitem + .stitem { margin-top: var(--s2); padding-top: var(--s2); border-top: 1px solid var(--hairline); }
-  .stagetable .stitem .dot { margin-top: 2px; flex: none; }
-  .stagetable .stwhy { color: var(--ink-3); font-size: var(--fs-caption); line-height: 1.45; margin-top: 2px; }
 
-  .rpend { color: var(--rule); font-weight: 700; }
-  .raglegend { margin-bottom: var(--s3); }
-  .raglegend {
-    list-style: none; display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5);
-    margin: var(--s3) 0 0; padding: 0; font-size: var(--fs-caption); color: var(--ink-3);
-  }
-  .raglegend li { display: flex; align-items: center; gap: var(--s2); }
-  .raglegend b { color: var(--ink-2); font-weight: 600; }
-  .jira .jraglegend { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: var(--s3); }
 
   /* ---------- the weekly report, one block per sitting ----------
      Stacked rather than in a grid: these are read in the order the meetings
@@ -1618,17 +1592,6 @@
   <p class="jsub">The same <span data-count="usecases">sixteen</span> use cases as Jira issues, with the workflow status and the flag riding on top. This is what every other tab is a view of &mdash; the board, the gates and the weekly report all read this and nothing else.</p>
   <div class="jira" id="jira-list"></div>
 
-  <h2 class="jsect">The eight stages</h2>
-  <p class="jsub">Where every issue sits, and whether it is clear at the gate for the stage it is in. <strong>That gate is what makes something red</strong> &mdash; not a score, and not eight gates at once. A stage a use case has not reached yet is not a failure, and one it has already left is not re-argued.</p>
-  <ul class="raglegend" id="raglegend"></ul>
-  <div class="tscroll">
-    <table class="port stagetable">
-      <thead><tr><th>Stage</th><th>Gate owner</th><th>Issues here</th></tr></thead>
-      <tbody id="stagetable"></tbody>
-    </table>
-  </div>
-  <p class="gatenote">Read weekly, not quarterly. Anything red or amber for more than five days is raised at the next routine &mdash; staleness is the waste this model exists to remove.</p>
-
   <h2 class="jsect">One issue</h2>
   <p class="jsub">The fields that do the work sit on the issue &mdash; the risk tier, the date it opened, the readiness evidence. The comment stream is where the week’s narrative comes from, so the <button type="button" class="xlink" data-tab="status" title="Open the Weekly Status">weekly report</button> writes itself from what the team already logs rather than from a second dashboard.</p>
   <div class="jira" id="jira-issue"></div>
@@ -1933,15 +1896,6 @@ const READINESS = STAGES.map(s => ({
   key: s.id, name: s.name, from: s.id, owner: s.owner, asks: s.asks, grade: s.grade,
 }));
 
-
-/* The scale, stated rather than assumed. Red is not "bad", it is "blocked and
-   someone owns unblocking it"; amber is in progress. */
-const RAG_SCALE = [
-  ["critical", "Red",     "Blocked, or past the window it should have cleared in"],
-  ["warning",  "Amber",   "In progress, or partly met"],
-  ["good",     "Green",   "Met, with the evidence on the record"],
-  ["pending",  "Not due", "The work has not reached this stage yet"],
-];
 
 /* A gate is graded only once the work has reached the stage it belongs to.
    `past` says the work has already left that stage — the model's "one record,
@@ -3002,7 +2956,6 @@ function render() {
   renderBacklog(allActive); // capacity is a portfolio fact, not a slice fact
   renderMix(active);
   renderStatus(allActive); // the weekly report describes the portfolio, not a slice
-  renderStageTable(allActive); // Jira is the record, not a slice of it
   renderTable(visible);
   renderStatic();
 }
@@ -3346,80 +3299,6 @@ function actionsFor(u, plan) {
    has not reached is not due; a stage it has left is not re-argued, which is
    the model's own "one record, one status, no re-reviews" rule applied to the
    grading rather than asserted next to it. */
-const GRADE_RANK = { pending: -1, good: 0, warning: 1, critical: 2 };
-
-function renderStageTable(active) {
-  const tb = document.getElementById("stagetable");
-  if (!tb) return;
-
-  tb.replaceChildren(...STAGES.map(st => {
-    const here = active.filter(u => u.stage === st.id)
-      .map(u => {
-        const cell = readiness(u).find(c => c.d.from === st.id);
-        /* Two things can make a use case red and the dot has to carry both, or
-           the table shows a green tick above the line that says it is three
-           weeks past the window its tier promised. The gate says whether the
-           evidence is there; the clock says whether it arrived in time. The
-           dot takes the worse of the two and the lines below say which. */
-        const onTime = (u.health === "critical" || u.overTier) ? "critical"
-                     : u.fresh === "stale" ? "warning" : "good";
-        const gate = cell ? cell.grade : "pending";
-        const grade = GRADE_RANK[onTime] > GRADE_RANK[gate] ? onTime : gate;
-        return { u, grade, need: cell ? cell.need : null };
-      })
-      .sort((a, b) => GRADE_RANK[b.grade] - GRADE_RANK[a.grade] || a.u.daysTo - b.u.daysTo);
-
-    const tr = el("tr");
-    const tdStage = el("td", "stname");
-    tdStage.append(stageLink(st.id, st.name));
-    tdStage.append(el("div", "stgate", st.asks));
-    tr.append(tdStage, el("td", "stowner", st.owner));
-
-    const tdHere = el("td", "sthere");
-    if (!here.length) {
-      tdHere.append(el("span", "stempty", "Nothing at this stage."));
-    } else {
-      for (const { u, grade, need } of here) {
-        const row = el("div", "stitem");
-        const dot = el("span", "dot " + grade, HEALTH[grade] ? HEALTH[grade].glyph : "\u2013");
-        dot.setAttribute("aria-hidden", "true");
-        const body = el("div");
-        const nm = el("button", "name namebtn", u.id + " \u00b7 " + u.name);
-        nm.type = "button";
-        nm.title = "Open " + u.id + " detail";
-        nm.addEventListener("click", () => openUseCase(u));
-        body.append(nm);
-        /* Why it is not green, in the grader's own words. A red with no reason
-           beside it is a colour, not a grade. */
-        const why = [];
-        if (need) why.push(need);
-        if (u.daysTo < 0) why.push(Math.abs(u.daysTo) + days(Math.abs(u.daysTo)) + " past target");
-        if (u.overTier) why.push("day " + u.age + " of a " + u.tierDays + "-day window");
-        if (u.fresh !== "fresh") why.push(u.sinceUpdate + days(u.sinceUpdate) + " since an update");
-        if (why.length) body.append(el("div", "stwhy", why.join(" \u00b7 ")));
-        row.append(dot, body);
-        tdHere.append(row);
-      }
-    }
-    tr.append(tdHere);
-    return tr;
-  }));
-
-  const leg = document.getElementById("raglegend");
-  if (leg) {
-    leg.replaceChildren(...RAG_SCALE.map(([grade, label, meaning]) => {
-      const li = el("li");
-      if (grade === "pending") li.append(el("span", "rpend", "\u2013"));
-      else {
-        const dot = el("span", "dot " + grade, HEALTH[grade].glyph);
-        dot.setAttribute("aria-hidden", "true");
-        li.append(dot);
-      }
-      li.append(el("b", null, label), document.createTextNode(" " + meaning));
-      return li;
-    }));
-  }
-}
 
 /* ---------- the weekly report as routine output ----------
    The report is not a document someone assembles. It is what the three
