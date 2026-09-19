@@ -7,24 +7,26 @@ what's worth building. Built as a single self-contained HTML page with six views
 
 - **Operating Model** — the whole model in one arc: the three numbers it drives,
   a diagram of how the rule, the structure and the routines produce them, six
-  principles, the eight states work is held in, the six standing routines drawn
-  as a ring around the record they all read, the gates and readiness framework
-  approved work is graded against, and who decides what. The diagrams are
-  drawn from the same state and routine definitions the rest of the page reads,
-  so they cannot drift from them.
+  principles, the two gates an idea clears before anyone builds it, the eight
+  stages with the three things that have to be true to leave each, the risk
+  tiers that set how long intake to approval should take, the three standing
+  routines drawn as a ring around the record they all read, the eight gate
+  owners, and what the whole thing means operationally. The diagrams and every
+  table are drawn from the same stage, tier and routine definitions the rest of
+  the page reads, so they cannot drift from them.
 - **Intake Form** — a mock of the fifteen-minute use case intake form with
   live answer coaching.
 - **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog
   against a capacity line, per-use-case suggested actions, and a filterable use
   case table.
 - **Weekly Status** — RAG for the portfolio and its three elements, what changed
-  since last week, which use cases and forums the coming week turns on, and the
-  portfolio-level risks. Previous weeks are kept as issued.
+  since last week, which use cases and routines the coming week turns on, and
+  the portfolio-level risks. Previous weeks are kept as issued.
 - **Jira** — the same use cases as Jira issues, styled as Jira: an Action
   Required dashboard whose three gadgets each grade the portfolio on a
   different logic (decision rights, time against the expected window, and the
-  readiness framework), the backlog view with workflow statuses and flagged
-  rows, and one issue opened with its full field set and comment stream.
+  eight gates), the backlog view with workflow statuses and flagged rows, and
+  one issue opened with its full field set and comment stream.
 - **AI First** — *The AI Operating System*: a written piece on running the work
   with AI as infrastructure rather than as a search box, in three layers —
   information, action, automation.
@@ -58,10 +60,19 @@ python3 build_portfolio.py --csv use_cases.csv           # rebuild from it
 The CSV path is the one a Jira export would take: export the issues, map the
 columns, rebuild. List fields (`impact`, `risk`) are pipe-separated.
 
+A CSV carries no authoring date, so a page built from one has `ANCHOR` set to
+null and reads every date literally — which is what real data wants. Rebuild the
+bundled sample that way and it looks overdue across the board, because its dates
+are from when it was written. That is the sliding turned off, not a fault.
+
 The script only supplies data. Health, staleness, completeness, WSJF rank, the
-capacity line, suggested actions, the weekly ratings, forum sittings and the
-portfolio risks are all computed in the page against the date it is opened —
-so a page built today still reads correctly next month.
+risk tier, the capacity line, suggested actions, the weekly ratings, routine
+sittings and the portfolio risks are all computed in the page against the date
+it is opened — so a page built today still reads correctly next month.
+
+The risk tier has no column on purpose. It is derived from the risk flags, the
+function and the impact a use case already carries, so a customer-facing credit
+model cannot be filed as low tier by whoever is in a hurry.
 
 If `ai-use-case-dashboard.html` sits next to the script it is used as the
 template, so you can iterate on the design and rebuild. Otherwise the embedded
