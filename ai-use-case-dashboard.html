@@ -540,7 +540,7 @@
   /* Sections are chapters. The rule and the air above each one are what make
      five different kinds of content read as a single page rather than five
      stacked widgets. */
-  .sect { margin-top: var(--s7); padding-top: var(--s6); border-top: 1px solid var(--hairline); }
+  .sect { margin-top: var(--s6); padding-top: var(--s5); border-top: 1px solid var(--hairline); }
   .secthead { display: flex; align-items: baseline; gap: var(--s3); margin: 0 0 var(--s1); }
   .secthead h2 { font: 400 var(--fs-h2)/1.2 var(--serif); margin: 0; }
   .sectsub { color: var(--ink-2); font-size: var(--fs-small); margin: var(--s1) 0 var(--s5); max-width: var(--measure); }
@@ -548,7 +548,7 @@
   /* Containers carry records and tables. Statements are set open on the page —
      that is the whole rule, and it is why the principles are set open while
      states and routines sit in a table. */
-  .tenets { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s5) var(--s6); }
+  .tenets { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4) var(--s6); }
   @media (max-width: 900px) { .tenets { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .tenets { grid-template-columns: 1fr; } }
   .tenet { padding: 0; background: none; border: none; }
@@ -585,7 +585,7 @@
   .afternote { color: var(--ink-3); font-size: var(--fs-caption); line-height: 1.5; margin: var(--s3) 0 0; }
   .gatenote { color: var(--ink-3); font-size: var(--fs-caption); margin: var(--s3) 0 0; padding: 0 var(--s5) var(--s4); }
 
-  .subsect { margin-top: var(--s7); }
+  .subsect { margin-top: var(--s6); }
   .statemap { min-width: 860px; }
   .scorecard { min-width: 620px; }
   .scorecard th:nth-child(2), .scorecard td:nth-child(2) { width: 42%; }
@@ -677,7 +677,7 @@
 
   /* Two columns, not three: these bodies run several sentences and a third
      column would set them too narrow to read comfortably. */
-  .aigrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s5) var(--s6); }
+  .aigrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s4) var(--s6); }
   @media (max-width: 780px) { .aigrid { grid-template-columns: 1fr; } }
   .aigrid .tenet h3 { margin-top: 0; }
   .aigrid .tenet .no + h3 { margin-top: var(--s2); }
@@ -1161,14 +1161,14 @@
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>The bet</h2></div>
     <p class="ruleline">One record. <em>Every other view is computed from it.</em></p>
-    <p class="sectsub">One choice answers all four. If every idea is one issue and nothing exists outside it, Risk sees work early because it is visible from the day it arrives, priority is a ranked list rather than a negotiation, Finance reads a forecast instead of asking for one, and a decline is data the next person can find. <span data-count="principles">Six</span> principles follow from it &mdash; the first three decide what we build, the last three decide how it runs.</p>
+    <p class="sectsub">One choice answers all four: if every idea is one issue and nothing exists outside it, work is visible from day one, priority is a list rather than a negotiation, and a decline is data. <span data-count="principles">Six</span> principles follow &mdash; the first three decide what we build, the last three how it runs.</p>
 <div class="tenets" id="principles">
-      <div class="tenet"><div class="no">01</div><h3>One way in</h3><p>Every idea arrives through the same <button type="button" class="xlink" data-tab="intake" title="Open the Intake Form">fifteen-minute form</button> and becomes an issue with an ID. No side channel, so the board is the whole portfolio rather than the part that got written down.</p></div>
-      <div class="tenet"><div class="no">02</div><h3>Hypothesis first</h3><p>Start with what we believe and what would disprove it. Every use case states up front what would tell us to stop.</p></div>
-      <div class="tenet"><div class="no">03</div><h3>Evidence before scale</h3><p>Pilots answer a question, they do not prove we were right. A stop that cost four weeks instead of two quarters is a successful discovery, and it stays in the portfolio as data.</p></div>
-      <div class="tenet"><div class="no">04</div><h3>Nobody writes a status</h3><p>Health, rank, gate status and time in stage are derived from what the work already leaves behind. The <button type="button" class="xlink" data-tab="portfolio" title="Open the Portfolio Dashboard">board</button> nobody maintains by hand is a board nobody can quietly massage.</p></div>
+      <div class="tenet"><div class="no">01</div><h3>One way in</h3><p>One <button type="button" class="xlink" data-tab="intake" title="Open the Intake Form">fifteen-minute form</button>, one issue with an ID, no side channel &mdash; so the board is the whole portfolio.</p></div>
+      <div class="tenet"><div class="no">02</div><h3>Hypothesis first</h3><p>Every use case states up front what we believe and what would tell us to stop.</p></div>
+      <div class="tenet"><div class="no">03</div><h3>Evidence before scale</h3><p>Pilots answer a question. A stop that cost four weeks instead of two quarters is a successful discovery.</p></div>
+      <div class="tenet"><div class="no">04</div><h3>Nobody writes a status</h3><p>Health, rank, gate status and time in stage are derived, never typed &mdash; so nobody can quietly massage the <button type="button" class="xlink" data-tab="portfolio" title="Open the Portfolio Dashboard">board</button>.</p></div>
       <div class="tenet"><div class="no">05</div><h3>Finished, not launched</h3><p>Done means a business routine, a named owner and measured value against a baseline &mdash; not shipped.</p></div>
-      <div class="tenet"><div class="no">06</div><h3>Speed is a governance outcome</h3><p>Risk, Legal and MRM engage early and by tier. Controls are not the brake, they are the reason we can move at all.</p></div>
+      <div class="tenet"><div class="no">06</div><h3>Speed is a governance outcome</h3><p>Risk, Legal and MRM engage early and by tier. Controls are why we can move, not what stops us.</p></div>
     </div>
     <p class="sectsub subsect">That is the whole model: one rule, one structure, <span data-count="routines">three</span> routines, pointed at one outcome. Everything after this is those three parts in detail.</p>
 <div class="flowwrap"><div id="model"></div></div>
@@ -1179,7 +1179,7 @@
     <p class="sectsub">The three parts the diagram names, in the order work meets them.</p>
 
     <h3 class="label">The structure: one stage at a time</h3>
-    <p class="sectsub">Work sits in <strong>exactly one stage</strong>, and each stage names the single routine that can move it out, what it leaves behind, and the ways it can leave altogether &mdash; from any stage, not only the last. Work leaves when a gate is met or failed, not when it is convenient: each stage has a window, and work that hits it without being ready goes red and forces a call. It is then <strong>ranked against a capacity line</strong>, so what gets built is what fits, in order.</p>
+    <p class="sectsub"><strong>Exactly one stage at a time.</strong> Each names the one routine that can move it and the ways work can leave &mdash; from any stage, not just the last. Work leaves when a gate is met or failed, not when convenient. Then it is <strong>ranked against a capacity line</strong>, so what gets built is what fits, in order.</p>
 <details class="ref">
       <summary>The <span data-count="stages">eight</span> stages, who can move each, and how work leaves</summary>
       <div class="refbody">
@@ -1194,7 +1194,7 @@
     </details>
 
     <h3 class="label subsect">The routines: three, all reading the same record</h3>
-    <p class="sectsub">None of them hands off to another. They read and write the same record in Jira, so nothing waits for its turn to come round. <strong>Cadence is how often we look, not how often we all sit down:</strong> where the board is green a sitting is a two-minute confirmation, and people are only in a room when something red needs a decision the data cannot make.</p>
+    <p class="sectsub">None hands off to another; all three read and write the same <button type="button" class="xlink" data-tab="jira" title="Open the Jira view">record in Jira</button>. <strong>Cadence is how often we look, not how often we all sit down:</strong> a green board makes a sitting a two-minute confirmation against the <button type="button" class="xlink" data-tab="status" title="Open the Weekly Status">weekly report</button>.</p>
 <div class="flowwrap"><div id="flow"></div></div>
     <p class="readynote">No routine meets less often than the stage it owns can go stale. That rule, not preference, sets these cadences &mdash; and the page checks it on load.</p>
     <details class="ref">
@@ -1205,7 +1205,7 @@
             <thead><tr><th>Routine</th><th>Cadence</th><th>Who is in the room</th><th>Decides</th><th>Reads and writes</th></tr></thead>
             <tbody>
               <tr><td>AI Intake &amp; Discovery</td><td>Weekly</td><td>Portfolio Team Lead, one or two assigned PMs, a technical reviewer when the question is technical</td><td>Accept or reject a new idea. Approve a discovery package to design, or kill it. Assign the PM lead and size the work.</td><td>Every new issue. Writes discovery findings, the go/no-go, and the PM assignment.</td></tr>
-              <tr><td>AI Portfolio Council</td><td>Bi-weekly</td><td>Product Director, Finance Lead, Strategic Sponsor, one or two PMs, Risk Lead as needed</td><td>Rank what gets funded. Approve to delivery. Grade whether a live capability is performing. Every sixth sitting is the increment review, where funding and staffing are committed.</td><td>Everything in design, approval, ops and value. Writes rank, capacity points and delivery windows.</td></tr>
+              <tr><td>AI Portfolio Council</td><td>Bi-weekly</td><td>Product Director, Finance Lead, Strategic Sponsor, one or two PMs, Risk Lead as needed</td><td>Rank and fund <strong>across spaces</strong> &mdash; what a product owner can decide inside their own function does not come here. Approve to delivery. Grade whether a live capability is performing. Every sixth sitting is the increment review, where funding and staffing are committed.</td><td>Everything in design, approval, ops and value, across every function. Writes rank, capacity points and delivery windows.</td></tr>
               <tr><td>AI Risk &amp; Controls</td><td>Bi-weekly</td><td>Governance Lead, Risk Lead, Compliance and MRM, one or two PMs, Tech Lead for design detail</td><td>Sign off the compliance gate at design. Walk the delivery and ops gates. Clear escalations and blockers, same day when something comes in red.</td><td>Everything in design, delivery and ops. Writes gate status, readiness gaps and compliance decisions.</td></tr>
             </tbody>
           </table>
@@ -1214,7 +1214,7 @@
     </details>
 
     <h3 class="label subsect">The gates: seven, and binary</h3>
-    <p class="sectsub">Met or not met, with no gray, and each graded from the record rather than argued in the room. A gate starts counting only when work reaches the stage it belongs to, so an early idea is not marked down for a control it has not reached.</p>
+    <p class="sectsub">Met or not met, no gray, each graded from the record rather than argued in the room. A gate counts only once work reaches the stage it belongs to.</p>
 <ul class="raglegend" id="raglegend2"></ul>
     <details class="ref">
       <summary>The <span data-count="gates">seven</span> gates, what each asks, and who owns it</summary>
@@ -1230,15 +1230,16 @@
   </div>
 
   <div class="sect">
-    <div class="secthead"><span class="kicker">04</span><h2>Who owns it</h2></div>
-    <p class="sectsub">Six roles, and every stage and gate above names one of them. There is no work anywhere on this page without a person attached to it &mdash; which is the difference between a model and a diagram.</p>
-<div class="tenets">
-      <div class="tenet"><h3>Portfolio Team Lead</h3><p>Owns intake and triage. Reviews every new idea, makes the accept or reject call, assigns PM leads. Ensures nothing sits in intake longer than 48 hours.</p></div>
-      <div class="tenet"><h3>Assigned PM</h3><p>Owns discovery. Validates the hypothesis, sizes the scope, assesses risk, writes the go/no-go, and presents to the Council if it advances.</p></div>
-      <div class="tenet"><h3>Tech Lead</h3><p>Owns the technically-feasible gate at design and the build-complete gate at delivery. Specs the architecture, maps dependencies, estimates effort.</p></div>
-      <div class="tenet"><h3>Governance Lead</h3><p>Owns the compliance gate. Works Legal, Risk and MRM to clear it at design rather than at go-live, and escalates a regulatory blocker the same day.</p></div>
-      <div class="tenet"><h3>AI Portfolio Council</h3><p>Owns the business-case gate. Ranks, allocates quarterly capacity, approves to delivery, and makes the trade-off call when capacity is full.</p></div>
-      <div class="tenet"><h3>Ops Lead</h3><p>Owns the ops-ready gate and, with the PM, the value-confirmed gate. Trains support, builds runbooks, sets monitoring, runs it in production.</p></div>
+    <div class="secthead"><span class="kicker">04</span><h2>Who decides what</h2></div>
+    <p class="sectsub"><strong>Owned locally, ranked centrally.</strong> A product owner owns what gets raised in their space, what gets killed there, and the value case behind it. The portfolio owns only what crosses spaces &mdash; rank, capacity, and the call when two good things cannot both be funded this quarter. <span data-count="roles">Seven</span> roles, and every stage and gate above names one.</p>
+<div class="tenets" id="roles">
+      <div class="tenet"><h3>Product Owner</h3><p>Owns the AI roadmap for one function &mdash; what to raise, what to stop locally, and the value case. Brings to the Council only what needs capacity or crosses a boundary.</p></div>
+      <div class="tenet"><h3>Portfolio Team Lead</h3><p>Owns intake and triage. Accept or reject on every new idea, a PM assigned, nothing sitting longer than 48 hours.</p></div>
+      <div class="tenet"><h3>Assigned PM</h3><p>Owns discovery. Validates the hypothesis, sizes the scope, writes the go/no-go.</p></div>
+      <div class="tenet"><h3>Tech Lead</h3><p>Owns the technically-feasible gate at design and build-complete at delivery.</p></div>
+      <div class="tenet"><h3>Governance Lead</h3><p>Owns the compliance gate &mdash; cleared at design rather than at go-live, with regulatory blockers escalated the same day.</p></div>
+      <div class="tenet"><h3>AI Portfolio Council</h3><p>Owns the business-case gate. Ranks, commits capacity, and makes the trade-off call when it is full.</p></div>
+      <div class="tenet"><h3>Ops Lead</h3><p>Owns the ops-ready gate and, with the PM, value-confirmed. Runs it in production.</p></div>
     </div>
     <details class="ref">
       <summary>What happens when something goes wrong</summary>
@@ -1257,16 +1258,16 @@
     <p class="sectsub">Four weeks to a board that moves, on the same terms the model asks of every use case: one owner and one date each.</p>
 <ol class="steps">
       <li><div class="stitle">Socialize the model and the intake form</div>
-          <div class="ssub">Q&amp;A on how intake works, what happens when an idea is rejected, and how to write a stop condition. Everyone leaves with the form link and access to the board.</div>
+          <div class="ssub">How intake works, what a rejection means, how to write a stop condition.</div>
           <div class="smeta"><b>AI Portfolio Team</b> &middot; Weeks 1&ndash;2</div></li>
       <li><div class="stitle">Consumer Bank D&amp;A builds the intake form</div>
-          <div class="ssub">Fifteen minutes, five questions, creates the issue and assigns it to triage automatically. The board goes live with it.</div>
+          <div class="ssub">Five questions, creates the issue, assigns it to triage. The board goes live with it.</div>
           <div class="smeta"><b>Consumer Bank D&amp;A</b> &middot; Week 3</div></li>
       <li><div class="stitle">All three routines sit for the first time</div>
-          <div class="ssub">Against real submissions where there are any, and a few seeded ideas where there are not, so the model is exercised end to end before it matters.</div>
+          <div class="ssub">Against real submissions, seeded where there are none, so the model is exercised before it matters.</div>
           <div class="smeta"><b>AI Portfolio Team</b> &middot; Week 4</div></li>
       <li><div class="stitle">Review cycle times and gate clarity, then adjust</div>
-          <div class="ssub">Four weeks of real use tells us which gate is ambiguous and which routine is slow. Expect small tweaks, not a redesign. Steady state by quarter end.</div>
+          <div class="ssub">Real use shows which gate is ambiguous and which routine is slow. Small tweaks, not a redesign.</div>
           <div class="smeta"><b>AI Portfolio Team</b> &middot; Weeks 5+</div></li>
     </ol>
     <p class="readynote">The model is not fixed. It is reviewed quarterly against two standing questions &mdash; where can more information, action, automation and AI be put to work, and where do lighter paths let work move the moment it is ready. If something is not working, that is the input, not a complaint.</p>
@@ -1706,19 +1707,19 @@
 
   <div class="premise">
     <p class="plead">Most people use AI as a better search box. Ask, answer, close the tab, lose everything.</p>
-    <p>This inverts that. The assistant doesn&rsquo;t have a memory, it lives inside one: an instructions file read at the start of every session, so it boots into full context instead of starting from zero.</p>
+    <p>This inverts it. The assistant doesn&rsquo;t have a memory, it lives inside one &mdash; an instructions file read at the start of every session, so it boots into full context rather than from zero.</p>
     <p class="pturn">AI-first isn&rsquo;t &ldquo;we use Copilot a lot.&rdquo; It&rsquo;s &ldquo;the system of record is machine-readable, and the assistant is a first-class operator inside it.&rdquo;</p>
   </div>
 
   <div class="sect">
     <div class="secthead"><span class="kicker">01</span><h2>Three layers, in order</h2></div>
-    <p class="sectsub">Each one needs the one above it. Most efforts stop at the first and wonder why nothing compounds.</p>
+    <p class="sectsub">Each needs the one above it. Most efforts stop at the first and wonder why nothing compounds.</p>
     <ol class="stackdia">
       <li class="layer">
         <span class="lnum">01</span>
         <div class="lbody">
           <h3>Information</h3>
-          <p>Make the organization&rsquo;s knowledge addressable. A deliberate memory topology: a boot sequence that orients the assistant, an enforced privacy boundary, and conventions that keep it parseable.</p>
+          <p>Make the organization&rsquo;s knowledge addressable: a boot sequence that orients the assistant, an enforced privacy boundary, conventions that keep it parseable.</p>
           <p class="lres">Information stops being something you remember and becomes something you query.</p>
         </div>
       </li>
@@ -1726,7 +1727,7 @@
         <span class="lnum">02</span>
         <div class="lbody">
           <h3>Action</h3>
-          <p>Encode the judgment, not just the facts. This is the layer almost nobody builds, and the one that matters &mdash; facts alone produce a chatbot, facts plus protocol produce an operator.</p>
+          <p>Encode the judgment, not just the facts. Almost nobody builds this layer &mdash; facts alone produce a chatbot, facts plus protocol produce an operator.</p>
           <p class="lres">The assistant doesn&rsquo;t just tell you things. It does the work, to a defined standard, inside stated guardrails.</p>
         </div>
       </li>
@@ -1734,7 +1735,7 @@
         <span class="lnum">03</span>
         <div class="lbody">
           <h3>Automation</h3>
-          <p>Collapse recurring work to a phrase. Once the judgment is written down, the repeatable parts stop needing a human at all.</p>
+          <p>Collapse recurring work to a phrase. Once the judgment is written down, the repeatable parts stop needing a human.</p>
           <p class="lres">Work that used to cost an hour a week costs a sentence.</p>
         </div>
       </li>
@@ -1761,12 +1762,12 @@
 
   <div class="sect">
     <div class="secthead"><span class="kicker">02</span><h2>Why this is genuinely AI-first</h2></div>
-    <p class="sectsub">Four claims. Each has to hold, or the pattern is just a filing system.</p>
+    <p class="sectsub">Four claims. Each has to hold, or this is just a filing system.</p>
     <div class="aigrid">
-      <div class="tenet"><div class="no">01</div><h3>Memory is infrastructure, not a feature</h3><p>Chat history is disposable. A structured file system with READMEs, conventions and provenance is durable, auditable, and portable across tools and models.</p></div>
-      <div class="tenet"><div class="no">02</div><h3>Every answer improves the next one</h3><p>Answer log, feedback log, audit log, accomplishments log &mdash; all append-only, never edited or deleted. The system accumulates rather than resets, and compounding is the whole game.</p></div>
-      <div class="tenet"><div class="no">03</div><h3>Truth has an address</h3><p>Every claim carries a source, a date and a person, and a superseded value is kept as a prior-value line. In a regulated environment that is not a nice-to-have, it is the license to operate this way at all.</p></div>
-      <div class="tenet"><div class="no">04</div><h3>The human stays the decision-maker</h3><p>The assistant reads, drafts, routes, checks, logs and proposes. A person approves. That division is written into the operating rules, not left to good intentions.</p></div>
+      <div class="tenet"><div class="no">01</div><h3>Memory is infrastructure, not a feature</h3><p>Chat history is disposable. A file system with READMEs, conventions and provenance is durable, auditable and portable across models.</p></div>
+      <div class="tenet"><div class="no">02</div><h3>Every answer improves the next one</h3><p>Every log is append-only, never edited or deleted. The system accumulates rather than resets, and compounding is the whole game.</p></div>
+      <div class="tenet"><div class="no">03</div><h3>Truth has an address</h3><p>Every claim carries a source, a date and a person; a superseded value is kept, not overwritten. In a regulated environment that is the license to operate this way at all.</p></div>
+      <div class="tenet"><div class="no">04</div><h3>The human stays the decision-maker</h3><p>The assistant reads, drafts, routes, checks and proposes. A person approves &mdash; written into the operating rules, not left to good intentions.</p></div>
     </div>
     <p class="result">The same argument as the rest of this site, one desk down: define it once, capture it as a side effect of the work, and let every view be computed rather than written.</p>
   </div>
@@ -2878,7 +2879,7 @@ function renderModelMap() {
   if (!host) return;
 
   const NS = "http://www.w3.org/2000/svg";
-  const W = 940, BW = 288, BH = 138, GAP = 38, BY = 26, OY = 224, OH = 74;
+  const W = 940, BW = 288, BH = 138, GAP = 38, BY = 20, OY = 198, OH = 74;
   const H = OY + OH + 12;
   const xs = [20, 20 + BW + GAP, 20 + 2 * (BW + GAP)];
 
@@ -2968,7 +2969,7 @@ function renderRoutineMap() {
      derived from the lowest node so the box never carries dead space. */
   const n = FORUMS.length;
   const NS_ANG = FORUMS.map((f, i) => (-90 + i * 360 / n) * Math.PI / 180);
-  const W = 940, CX = 470, RX = 320, RY = 170;
+  const W = 940, CX = 470, RX = 320, RY = n <= 3 ? 132 : 170;
   const NW = n <= 4 ? 292 : 214, NH = 64, HW = 250, HH = 86;
   const CY = 24 + NH / 2 + RY;
   const H = CY + RY * Math.max(...NS_ANG.map(Math.sin)) + NH / 2 + 24;
@@ -4340,6 +4341,7 @@ const COUNTS = {
   usecases:   () => USE_CASES.length,
   playbooks:  () => Object.keys(STAGE_DETAILS).length,
   principles: () => document.querySelectorAll("#principles .tenet").length,
+  roles:      () => document.querySelectorAll("#roles .tenet").length,
 };
 function fillCounts() {
   for (const node of document.querySelectorAll("[data-count]")) {
