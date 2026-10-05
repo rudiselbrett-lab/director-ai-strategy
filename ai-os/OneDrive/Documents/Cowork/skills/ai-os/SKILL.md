@@ -1,6 +1,6 @@
 ---
 name: ai-os
-description: Personal AI operating system for an AI portfolio PM, run from the AI-OS.xlsx workbook in OneDrive. Use when the user says start my day, refresh dashboard, log this, add note to, confirm INV-, decide INV-, what's open on, done:, draft weekly report, prep for, review this, support:, draft Jira update for, what's stale in Jira, move file, or check integrity.
+description: AI portfolio operating system run from AI-OS.xlsx in OneDrive. Use when the user says start my day, refresh dashboard, log this, add note to, confirm INV-, decide INV-, what's open on, show <KEY>, what fits this quarter, done:, draft weekly report, prep for, review this, support:, draft Jira update for, what's stale in Jira, move file, or check integrity.
 ---
 
 # AI Operating System
@@ -28,9 +28,12 @@ Never use `AI-OS-sample.xlsx` for real work; it is demo data.
 `workbook.md` has every sheet's exact columns. Read it before your first write
 in a session. The short version:
 
-- **Dashboard** is all formulas. Read it; never write to it.
+- **Five dashboard tabs**: Home, Portfolio, Weekly Status, Gates, Use Case.
+  All formulas, linked to each other. Read them; never write to them, except
+  the Use Case picker (E5) for `show <KEY>`.
 - **Inventory, Done, Answers, Reviews, Changes** are append-only logs.
-- **Jira** is a snapshot, replaced in full on each refresh.
+- **Use Cases** is the Jira snapshot, replaced in full on each refresh.
+- **Value** holds projected and realized value per quarter.
 - **Topics, People** are reference lists. Changes need my yes.
 - **Config** holds settings. You write only the three Snapshot cells.
 - Blue header = input column you may fill. Grey header = formula: never type in it.
@@ -49,6 +52,7 @@ file in this skill and follow it exactly.
 |---|---|
 | start my day | `daily.md` |
 | refresh dashboard, what's stale in Jira, draft Jira update for KEY | `jira.md` |
+| show KEY, what fits this quarter, or any question about portfolio health, gates, tiers or capacity | `portfolio.md` |
 | log this, add note to TOPIC, confirm INV-id, decide INV-id, what's open on TOPIC | `inventory.md` |
 | done: X, draft weekly report | `weekly-report.md` |
 | prep for MEETING | `meeting-prep.md` |
@@ -92,7 +96,7 @@ When a request doesn't match a command, just help, under the rules below.
 - Second-hand information is `Unconfirmed` until I confirm it.
 - If something new contradicts what the Inventory says, the Inventory stands:
   log a `Conflict` row, don't overwrite or pick a winner.
-- Refer to facts by ID (`INV-0012`, `AIUC-104`, `Q-0003`) rather than
+- Refer to facts by ID (`INV-0012`, `AI-004`, `Q-0003`) rather than
   restating them.
 - When a person comes up who isn't on the People sheet, offer to add them.
   Don't add them unasked.

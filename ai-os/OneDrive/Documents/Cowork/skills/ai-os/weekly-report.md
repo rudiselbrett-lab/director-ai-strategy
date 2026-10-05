@@ -14,7 +14,10 @@ happens, so the weekly report is mostly written by the time Friday comes.
 
 ## draft weekly report
 
-1. **Log.** Read Done rows where This week = Yes.
+1. **Start from the Weekly Status tab.** It already holds the RAG and the
+   three sittings' output for this week, computed from the record. The
+   report is that tab in prose, plus what the logs and the sweep add.
+   Read Done rows where This week = Yes.
 2. **Sweep.** Look through this week's sent email, Teams messages and
    calendar for substantive work that never got logged: deliverables sent,
    decisions I drove, meetings I ran. List them and ask which to add to
@@ -22,13 +25,15 @@ happens, so the weekly report is mostly written by the time Friday comes.
    writing.
 3. **Inventory.** This week's rows: New, Know, Decisions opened, and
    Resolved.
-4. **Jira.** From the Jira sheet: issues that changed stage this week (compare
-   with last week's report if there is one in `Reports/`), issues needing
-   attention, and the pipeline count by stage from the Dashboard.
+4. **Portfolio.** From the Portfolio tab: pipeline by stage, what fits
+   capacity, value realized. Compare with last week's report in `Reports/`
+   for use cases that changed stage.
 5. **Write** it as a Word doc at `Drafts/Weekly-<Monday YYYY-MM-DD>.docx`
    in this structure:
 
-   **Headline:** one sentence on the week.
+   **Headline:** one sentence on the week, with the Overall RAG.
+
+   **Status:** Flow, Value, Risk and controls: RAG word, metric, one line each.
 
    **What's new:** 3–5 bullets.
 

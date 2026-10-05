@@ -2,17 +2,20 @@
 
 The morning pass. Aim for one screen of output.
 
-1. **Freshness.** Read Config B15 (snapshot age) against B14. If the Jira
+1. **Freshness.** Read Config B23 (snapshot age) against B15. If the Jira
    snapshot is stale or missing, run `refresh dashboard` (see `jira.md`)
    first. If the refresh fails its checks, carry on with the old snapshot
    and say so at the top.
-2. **Needs you.** Read Dashboard rows 10–19 and 23–32. List the critical
-   and warning items, worst first, each with its ID and the command from the
-   "Say this" column. Skip `On track` items unless there are fewer than three
-   others.
+2. **Needs you.** Read Home › Needs you and Home › Use cases needing
+   attention. List the critical and warning items, worst first, each with
+   its ID and the command from the "Say this" column. Skip `On track` items
+   unless there are fewer than three others. Add one line from the Weekly
+   Status tiles: Overall, Flow, Value, Risk and controls.
 3. **Today.** Read today's calendar. For each meeting that matches a topic
    (by name, attendee or forum on the Topics sheet), list the open
-   Inventory items for that topic and offer `prep for <meeting>`.
+   Inventory items for that topic and offer `prep for <meeting>`. If it is
+   one of the three sittings (Weekly Intake, Tactical Standup, Portfolio
+   Council), point at that block of the Weekly Status tab.
 4. **Sweep.** Look through my email and Teams since the last working day for:
    - decisions someone made or asked for,
    - new facts about a topic on the Topics sheet,
@@ -31,14 +34,16 @@ The morning pass. Aim for one screen of output.
 Jira snapshot: <time> (<source>)
 
 NEEDS YOU
-1. [Critical] INV-0007 complaint-triage: decision open 11 days → decide INV-0007: <outcome>
+1. [Critical] INV-0007 council: find a sponsor for AI-010, open 11 days → decide INV-0007: <outcome>
 2. ...
 
-JIRA
-1. [Critical] AIUC-103 Fraud alert prioritization: flagged → draft Jira update for AIUC-103
+Weekly status: Amber (Flow Amber · Value Green · Risk Amber)
+
+USE CASES
+1. [Critical] AI-003 Fraud alert prioritization: 3 days past its Design target, flagged → draft Jira update for AI-003
 
 TODAY
-- 10:00 AI Council: 3 open items on council, fraud-alerts → prep for AI Council?
+- 10:00 Portfolio Council: 4 open decisions → prep for Portfolio Council?
 
 PROPOSED LOG ENTRIES
 1. Decision · vendor-copilot · ... · S. Ruiz · Email · Confirmed

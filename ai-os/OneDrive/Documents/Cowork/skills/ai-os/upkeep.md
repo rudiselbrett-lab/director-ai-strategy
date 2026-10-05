@@ -29,8 +29,10 @@ yourself. Propose the correcting row for each.
 4. **Duplicate IDs** on Inventory or Answers.
 5. **Bad values**: Type, Channel, Confidence or Kind not on the allowed
    list; dates stored as text; dates in the future.
-6. **Unmapped Jira statuses**: Jira rows whose Stage is `Unmapped`, with a
-   proposed stage for each.
+6. **Unmapped Jira statuses**: Use Cases rows whose Stage is `Unmapped`,
+   with a proposed stage for each. Also flag use cases missing a Target,
+   Updated or Opened date, and Risk / Impact values that aren't on the
+   allowed lists (they silently change the tier).
 7. **Unknown topics**: Topic values not on the Topics sheet.
 8. **Stale snapshot**: Jira snapshot older than the Config limit.
 9. **Formula damage**: any grey (computed) cell that holds a typed value

@@ -1,111 +1,116 @@
 # AI-OS.xlsx: sheet reference
 
-Exact columns for every sheet you write to. Letters matter: fill only the
-input columns listed, in the first row where column A is empty. Everything
-to the right of the input columns is a formula already in place.
+Five dashboard tabs (purple), then the data sheets (blue), then Commands,
+Config and Read Me (grey). Read this before your first write in a session.
 
-Dates are real dates (YYYY-MM-DD), not text.
+## Dashboards: read only, never write
 
-## Inventory (append-only). Inputs A–J. Formulas K–O.
+| Tab | What it answers | Sections |
+|---|---|---|
+| **Home** | What needs me today? | Tiles (each links to its tab) · Needs you · Use cases needing attention · Done this week · Accomplishments per week |
+| **Portfolio** | Where does every use case stand? | Tiles · Pipeline by stage · What starts next: WSJF against capacity · All open use cases · Value realized vs projected · Portfolio mix |
+| **Weekly Status** | What did this week's three sittings produce? | Overall, Flow, Value, Risk and controls (Red/Amber/Green) · Weekly Intake · Tactical Standup · Portfolio Council |
+| **Gates** | Which gates are failing and why? | Tiles · By stage · Tier clock · Gate exceptions |
+| **Use Case** | Everything about one use case | Picker (cell E5) · status tiles · the eight-gate strip · the record · its Inventory and Done history · commands |
+
+The **one cell you may write on a dashboard** is `Use Case!E5`, the picker,
+when I say `show <KEY>`.
+
+Every "Say this" column holds the exact command for that row.
+
+## Rules for the data sheets
+
+- Blue header = input column. Grey header = formula: never type in it.
+- To add a row: the first row where column A is empty; fill only the blue
+  columns. The grey formulas are already there, down to row 1001 (Use Cases
+  to row 501).
+- Never insert, delete, sort, or edit existing rows on a log sheet. A
+  correction is a new row that references the old one.
+- Dates are real dates, not text.
+
+## Use Cases (Jira snapshot). Inputs A–W. Formulas X onward.
+
+Replaced in full on each refresh (see `jira.md`). One row per use case.
 
 | Col | Field | Rule |
 |---|---|---|
-| A | ID | `INV-` + 4 digits, next number after the highest existing ID |
+| A | Key | Jira key, e.g. `AI-003` |
+| B | Use case | Jira summary |
+| C | Status | Exactly as Jira shows it. Config maps it to a stage |
+| D | Function | Business function. Payments, Collections, Consumer Lending, Fraud Operations make it high tier |
+| E | Owner | PM owner |
+| F | Sponsor | Named business sponsor; leave blank or write "(sponsor not named)" if none |
+| G | Opened | Jira Created |
+| H | Updated | Jira Updated. Drives freshness, so it must be right |
+| I | Target | Expected exit date of the **current** stage. Drives health |
+| J | Risk flags | Pipe-separated: `NPI` · `Reg report` · `No human review` |
+| K | Impact | Pipe-separated: `revenue` · `cost` · `cycle` · `risk` · `insight` |
+| L | Value $K | Estimated annual value in $K; blank until sized |
+| M | Size | Job size in delivery points |
+| N | WSJF | WSJF score; blank until scored |
+| O | Metric | `Y` if a success metric and stop condition are set |
+| P | Data ready | `ready` · `partial` · `none` · blank if not assessed |
+| Q | Baseline | `Y` if a baseline is measured |
+| R | Waiting on | What it is blocked on, if anything |
+| S | Decided | Date of the triage decision |
+| T | Outcome | `Declined` or `Transferred` if closed that way |
+| U | Closed | Date closed |
+| V | Flagged | `Y` if flagged in Jira |
+| W | Topic | Topics slug, if one matches |
+
+Computed (read these, never write): Stage · Stage # · Days to target ·
+Since update · Health (`On track` / `At risk` / `Overdue`) · Freshness
+(`Fresh` / `Aging` / `Stale`) · Tier (`Low` / `Medium` / `High`) · Tier
+days · Age · Tier clock (`Inside` / `Over` / `Past approval`) · Gate
+(`Good` / `Warning` / `Critical`) · What the gate needs · Next forum ·
+Capacity (`Committed` / `Candidate`) · WSJF rank · Cum. points · Capacity
+line (`Fits` / `Below line`) · Attention · Why · Say this · Jira link, and
+helper keys the dashboards sort by.
+
+## Inventory (append-only). Inputs A–J. Formulas K onward.
+
+| Col | Field | Rule |
+|---|---|---|
+| A | ID | `INV-` + 4 digits, next after the highest |
 | B | Date | Date the information arrived |
-| C | Type | `New` (what's new) · `Know` (what we need to know) · `Decision` (decision needed) · `Conflict` · `Confirmed` · `Resolved` |
-| D | Topic | A slug from the Topics sheet, column A. If none fits, ask before inventing one |
+| C | Type | `New` · `Know` · `Decision` · `Conflict` · `Confirmed` · `Resolved` |
+| D | Topic | A slug from Topics column A. If none fits, ask |
 | E | Summary | One sentence, plain, no customer data |
-| F | From | The person it came from (as on the People sheet if they're there) |
+| F | From | The person it came from |
 | G | Channel | `Meeting` · `Email` · `Teams` · `Call` · `Document` · `Jira` · `Session` |
-| H | Confidence | `Confirmed` (first-hand or verified) · `Unconfirmed` (second-hand) |
+| H | Confidence | `Confirmed` · `Unconfirmed` |
 | I | Ref | Required for `Confirmed`, `Resolved`, `Conflict`: the INV ID it refers to |
-| J | Jira | Related issue key, if any |
+| J | Use case | Related use case key, if any. This is what puts it on the Use Case tab |
 
-Computed (read only): K State (`Open`, `Closed`, `Unconfirmed`, `Confirmed`,
-`Logged`) · L Age · M Severity · N Rank key · O Say this.
+## Done (append-only). Inputs A–E.
 
-## Jira (snapshot). Inputs A–L. Formulas M–T.
+Date · Accomplishment (an outcome, past tense) · Topic · Use case key ·
+Source (`Session` / `Email` / `Teams` / `Calendar`)
 
-| Col | Field | Rule |
-|---|---|---|
-| A | Key | e.g. `AIUC-104` |
-| B | Summary | Issue summary |
-| C | Status | Exactly as Jira shows it |
-| D | Type | Epic, Story, Task... |
-| E | Priority | |
-| F | Assignee | Display name, or `Unassigned` |
-| G | Created | Date |
-| H | Updated | Date. Drives staleness, so it must be right |
-| I | Due | Date or blank |
-| J | Flagged | `Y` if flagged, an impediment, or labelled blocked; else blank |
-| K | Labels | Comma-separated |
-| L | Topic | Topic slug if the issue's key or label matches a Topics row (column E); else blank |
+## Value. Inputs A–D.
 
-Computed: M Stage · N Days idle · O Stale after · P Health · Q Why · R Rank
-key · S Say this · T Link.
+Quarter · Projected $K · Realized $K · Complete (`Y` once the quarter is
+closed and measured). Append a row per quarter. Update Realized only when I
+give you the Council's number, and show me before/after.
 
-## Done (append-only). Inputs A–E. Formulas F–H.
+## Answers, Reviews, Changes (append-only)
 
-| Col | Field | Rule |
-|---|---|---|
-| A | Date | Day it was done |
-| B | Accomplishment | An outcome, past tense. "Got MRM sign-off on X", not "met with MRM" |
-| C | Topic | Slug |
-| D | Jira | Key, if any |
-| E | Source | `Session` · `Email` · `Teams` · `Calendar` |
+- **Answers:** ID (`Q-` + 4 digits) · Date · Question · Kind (`Answer` / `Routed` / `Reuse`) · Answer or route · Source · Asked by · Ref
+- **Reviews:** Date · Artifact · Author · Passed (of 8) · Failed · Verdict (`Ready` / `Fix first`) · Top fix
+- **Changes:** Date · What changed · From · To · References updated · Approved by
 
-## Answers (append-only). Inputs A–H. Formula I.
+## Topics, People (reference; changes need my yes)
 
-| Col | Field | Rule |
-|---|---|---|
-| A | ID | `Q-` + 4 digits |
-| B | Date | |
-| C | Question | As asked, minus anything personal |
-| D | Kind | `Answer` · `Routed` · `Reuse` |
-| E | Answer or route | |
-| F | Source | Link or document it traces to, or who it was routed to |
-| G | Asked by | |
-| H | Ref | For `Reuse`: the Q ID reused |
-
-## Reviews (append-only). Inputs A–G.
-
-Date · Artifact · Author · Passed (of 8) · Failed · Verdict (`Ready` / `Fix first`) · Top fix
-
-## Changes (append-only). Inputs A–F.
-
-Date · What changed · From · To · References updated · Approved by
-
-## Topics (reference). Inputs A–G. Formulas H–J.
-
-Topic slug · Name · Owner · Forum (`Front door` / `Standup` / `Council`) ·
-Jira label (key or label) · Status (`Active` / `Paused` / `Closed`) · Notes doc path
-
-## People (reference). Inputs A–G.
-
-Name · Role · Team · Works with me on (topic slugs) · How they work (facts
-only) · Source · Last updated
+- **Topics:** slug · Name · Owner · Forum (`Weekly Intake` / `Tactical Standup` / `Portfolio Council`) · Use cases · Status · Notes doc
+- **People:** Name · Role · Team · Works with me on · How they work (facts only) · Source · Last updated
 
 ## Config
 
-You write only:
+You write only the snapshot stamp: **B20** SnapshotAt (date and time),
+**B21** SnapshotSource, **B22** SnapshotCount.
 
-| Cell | Name | What |
-|---|---|---|
-| B17 | SnapshotAt | Date and time of this Jira pull |
-| B18 | SnapshotSource | `Copilot connector (Jira Cloud)`, `Copilot connector (Jira Data Center)`, or `CSV: <file name>` |
-| B19 | SnapshotCount | Number of issues written |
-
-Read but never change: B4 OwnerName · B5 JiraSite · B6 JiraProjects ·
-B7 JiraScope · B8 SampleAsOf · B11–B14 thresholds · the stage table
-(A22:C30) · the status map (E22:F62). If a Jira status is missing from the
-map, tell me and propose the stage. Don't add it yourself.
-
-## Reading the Dashboard
-
-- B2 / F2: as-of date and the data warning banner.
-- Row 5: open decisions, unconfirmed, open conflicts, Jira needing
-  attention, done this week. Row 6 has the detail under each.
-- Rows 10–19: **Needs you**, worst first. Column J is the command to run.
-- Rows 23–32: **Jira needing attention**, worst first. Column K is the command.
-- Rows 36–44: pipeline by stage.
-- Rows 49–56: done this week.
+Read, never change: B4 OwnerName · B5 JiraSite · B6 JiraProjects · B7
+JiraScope · B8 SampleAsOf · B12–B15 thresholds · B16 CapacityPoints ·
+stages A27:E34 · tiers A38:C40 · high-tier functions A43:A50 · status map
+G27:H66 · **Jira field map J27:L49** (which Jira field fills each Use Cases
+column). If a Jira status isn't in the map, tell me and propose the stage.

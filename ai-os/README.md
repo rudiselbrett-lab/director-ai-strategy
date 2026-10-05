@@ -1,18 +1,39 @@
 # AI Operating System: Copilot Cowork kit
 
-The [AI First](https://rudiselbrett-lab.github.io/director-ai-strategy/#aifirst)
-page, built as something you can use. It targets **Microsoft 365 Copilot
-Cowork** and has two parts:
+The [site](https://rudiselbrett-lab.github.io/director-ai-strategy/), built
+as something you can use. It targets **Microsoft 365 Copilot Cowork** and
+has two parts:
 
 1. **A Cowork skill** (`ai-os`) with the operating rules and one protocol
    per reserved command.
-2. **A workbook** (`AI-OS.xlsx`) that is both the system of record and the
-   dashboard. Cowork appends rows; the Dashboard sheet recomputes from them
-   with plain Excel formulas. Cowork never runs a script.
+2. **A workbook** (`AI-OS.xlsx`) that is both the system of record and
+   five linked dashboard tabs. Cowork appends rows and refreshes the use
+   cases from Jira; the tabs recompute with plain Excel formulas. Cowork
+   never runs a script.
 
 Nothing here touches the site. The site's files are unchanged.
 
-![Dashboard sheet, sample data](preview-dashboard.png)
+## The five tabs
+
+Every tab has the same navigation bar, its tiles link to the tab behind
+them, and every use case or inventory ID links to its record.
+
+| Tab | Mirrors on the site | What it shows |
+|---|---|---|
+| **Home** | AI First | Needs you, use cases needing attention, done this week. One tile per other tab |
+| **Portfolio** | Portfolio Dashboard | Health and freshness, pipeline by stage, WSJF ranked against the capacity line, every open use case, value realized vs projected, portfolio mix |
+| **Weekly Status** | Weekly Status | Overall, Flow, Value, Risk and controls RAG, then the week as the three sittings produce it: Weekly Intake, Tactical Standup, Portfolio Council |
+| **Gates** | Operating Model | The eight stages with gate grades, overdue and stale counts; the tier clock against 21/45/70 days; every gate exception with what the gate owner needs |
+| **Use Case** | Jira (one issue) | Pick a key: status tiles, the eight-gate strip, the record, its Inventory and Done history, the commands to run |
+
+The rules are the site's own: health against the current stage's target and
+at-risk window, freshness by stage cadence, the risk tier computed from the
+flags and function (never typed), gates graded only at the stage a use case
+is in, and a strict WSJF cut against delivery capacity. With the sample
+data, the numbers match the site.
+
+![Home](preview-home.png)
+![Portfolio](preview-portfolio.png)
 
 ## What maps to what
 
@@ -26,7 +47,7 @@ Nothing here touches the site. The site's files are unchanged.
 | **Automation**: Reserved commands | The command table in `SKILL.md`, and the Commands sheet as your reference card |
 | **Automation**: Accomplishments flywheel | Done sheet + `weekly-report.md` |
 | **Automation**: Integrity under change | `upkeep.md` + Changes sheet |
-| The rest of the site (eight stages, staleness by stage) | Config sheet stage table and status map; the Jira sheet's Health column |
+| The rest of the site | The Portfolio, Weekly Status, Gates and Use Case tabs, driven by the Config stage, tier and status tables |
 
 ## What's in the folder
 
@@ -36,7 +57,7 @@ ai-os/
 ├── build_workbook.py          regenerates the workbooks (only needed if you change the structure)
 ├── ai-os-onedrive.zip         everything under OneDrive/, zipped
 └── OneDrive/Documents/        mirrors your OneDrive: copy it across as-is
-    ├── Cowork/skills/ai-os/   the skill: SKILL.md + 9 protocol files
+    ├── Cowork/skills/ai-os/   the skill: SKILL.md + 10 protocol files
     └── AI-OS/
         ├── AI-OS.xlsx         blank workbook for real use
         ├── AI-OS-sample.xlsx  same workbook with illustrative data, to try it out
@@ -81,10 +102,15 @@ Open `AI-OS.xlsx` > Config:
 - **B4** your name as Jira shows it
 - **B5** your Jira site URL
 - **B6** project key(s)
-- **B7** the scope in plain words (default: everything not Done, plus anything closed in the last 30 days)
-- **Status map (E23 down):** add every status in your Jira workflow and the
-  stage it belongs to. Anything missing shows as `Unmapped` on the Dashboard
-  until you add it.
+- **B7** the scope in plain words (default: everything not Done, plus anything closed in the last 90 days)
+- **B16** delivery capacity this quarter, in points
+- **Status map (G27 down):** add every status in your Jira workflow and the
+  stage it belongs to. Anything missing shows as `Unmapped` until you add it.
+- **Field map (J27 down):** the name of the Jira field behind each column:
+  sponsor, target date, risk flags, WSJF and so on. These are usually
+  custom fields, so this is the step that decides whether the tabs light up.
+  If your project doesn't carry a field yet, the column stays blank and the
+  gate that needs it reads Critical, which is the honest answer.
 
 Then add your real topics on the Topics sheet. Every other sheet uses those slugs.
 
@@ -92,7 +118,7 @@ Then add your real topics on the Topics sheet. Every other sheet uses those slug
 
 In Cowork:
 
-1. `refresh dashboard`: pulls Jira into the Jira sheet and stamps it.
+1. `refresh dashboard`: pulls Jira into the Use Cases sheet and stamps it.
 2. `check integrity`: confirms the statuses mapped and nothing is broken.
 3. `start my day`: the morning brief.
 
@@ -110,18 +136,20 @@ entries but writes nothing until you reply.
 | `log this: <note>` | Typed Inventory row with source and confidence |
 | `decide INV-0007: approved, with weekly QA` | Closes the decision with a Resolved row |
 | `done: got MRM sign-off on the validation plan` | Done log |
-| `draft weekly report` | Word draft in Drafts/, sourced from the logs, Jira and a sweep of your week |
-| `prep for AI Council` | Agenda from open items for that forum's topics |
+| `show AI-003` | Sets the Use Case tab to it and summarises stage, health, gate, capacity |
+| `what fits this quarter` | The WSJF list against open capacity, and what it would take to fit the next one |
+| `draft weekly report` | Word draft in Drafts/, built from the Weekly Status tab plus a sweep of your week |
+| `prep for Portfolio Council` | Agenda from that sitting's block of the Weekly Status tab and the open Inventory |
 | `review this` | Eight-check Review Gate: pass, fail, specific fix, no rewrite |
 | `support: who approves a vendor model?` | Answer, or "this is a routing, not an answer" |
-| `draft Jira update for AIUC-103` | Comment draft. You post it |
+| `draft Jira update for AI-003` | Comment draft. You post it |
 
-The Dashboard's "Say this" columns give you the exact command for every
+The "Say this" columns give you the exact command for every
 open item, so you can paste it straight into Cowork.
 
 ## Try it before you set it up
 
-Open `AI-OS-sample.xlsx`. Its dates are frozen at 2026-10-02 (Config B8),
+Open `AI-OS-sample.xlsx`. It carries the site's sixteen use cases. Its dates are frozen at 2026-10-02 (Config B8),
 so the ages and health stay coherent whenever you open it. Clear B8 and
 everything measures against today instead.
 
@@ -135,7 +163,7 @@ everything measures against today instead.
 - **Nothing leaves without you.** Every email, Teams message, report and Jira
   comment is a draft.
 - **Logs only grow.** Corrections are new rows that point at the old one.
-  The Jira sheet is the one exception, and OneDrive version history keeps
+  The Use Cases sheet is the one exception, and OneDrive version history keeps
   every previous snapshot.
 - **This repo is public.** Build and change the kit here, but never commit
   a real workbook, real topics or real names back to it. Once it's at work,
@@ -154,4 +182,4 @@ change by hand or migrate your rows across.
 The formulas use Excel 2010-era functions only (no FILTER, XLOOKUP or
 dynamic arrays), so the workbook behaves the same in Excel desktop, Excel
 for the web and whatever engine Cowork edits with. Log formulas are
-pre-filled to row 1001 (Jira to 501). Past that, extend the grey columns.
+pre-filled to row 1001 (Use Cases to 501). Past that, extend the grey columns.

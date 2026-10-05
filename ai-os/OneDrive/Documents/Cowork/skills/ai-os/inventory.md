@@ -47,11 +47,12 @@ Summary = the outcome in one sentence ("Approved: ...", "Declined: ...",
 
 ## what's open on <topic>
 
-Read the Inventory and Jira sheets. Reply with:
+Read the Inventory and Use Cases sheets. Reply with:
 
 1. Open decisions and conflicts on that topic, oldest first, with age.
 2. Unconfirmed items, oldest first.
-3. Jira issues tagged to that topic with Health not `On track` or `Closed`.
+3. Use cases tagged to that topic whose Attention is `Critical` or
+   `Warning`, with the Why column.
 4. The last three Resolved rows on the topic, so I have the context.
 
 Use the IDs. Keep it to one screen.
