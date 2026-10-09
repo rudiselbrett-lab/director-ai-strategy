@@ -1,0 +1,86 @@
+{
+  "site": "https://your-company.atlassian.net",
+  "jql": "project = AIUC AND issuetype = Capability ORDER BY key",
+  "includeText": false,
+  "includeChangelog": true,
+  "stages": {
+    "Backlog": "intake",
+    "Triage": "triage",
+    "In Discovery": "discovery",
+    "In Design": "design",
+    "Awaiting Approval": "approval",
+    "In Progress": "delivery",
+    "In Scale": "scale",
+    "In Benefits Review": "value"
+  },
+  "doneStatuses": [
+    "Done",
+    "Closed",
+    "Declined",
+    "Transferred",
+    "Won't Do"
+  ],
+  "flagField": "Flagged",
+  "fields": {
+    "func": "Consumer Bank function",
+    "sponsor": "Business Sponsor",
+    "wsjf": "WSJF",
+    "est": {
+      "field": "Estimated Annual Value",
+      "scale": 1
+    },
+    "size": "Story Points",
+    "impact": {
+      "field": "Impact",
+      "values": {
+        "Revenue / growth": "revenue",
+        "Cost / productivity": "cost",
+        "Cycle time": "cycle",
+        "Risk / control": "risk",
+        "Decision / insight": "insight"
+      }
+    },
+    "risk": {
+      "field": "labels",
+      "values": {
+        "npi": "NPI",
+        "reg-report": "Reg report",
+        "no-human-review": "No human review"
+      }
+    },
+    "dataReady": {
+      "field": "Data Readiness",
+      "values": {
+        "Ready": "ready",
+        "Partial": "partial",
+        "Not available": "unavailable"
+      }
+    },
+    "metric": "Success Metric",
+    "baseline": "Baseline Captured",
+    "waitingOn": "Waiting On",
+    "target": "Stage Target Date",
+    "next": "Next Step",
+    "stage": null,
+    "closedReason": "Close Reason",
+    "techReady": {
+      "field": "Technology Readiness",
+      "values": {
+        "Ready": "ready",
+        "Partial": "partial",
+        "Not ready": "unavailable"
+      }
+    },
+    "pattern": "AI Pattern",
+    "live": "Target Go-Live",
+    "realized": {
+      "field": "Realized Annual Value",
+      "scale": 1
+    },
+    "dependsOn": {
+      "field": "issuelinks",
+      "linkTypes": "block|depend"
+    }
+  },
+  "_comment": "Full-fidelity map for a Jira with the portfolio custom fields added. The default JIRA_MAP needs none of them."
+}

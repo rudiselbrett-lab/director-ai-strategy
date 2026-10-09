@@ -16,7 +16,10 @@ what's worth building. Built as a single self-contained HTML page with six views
 - **Intake Form** — a mock of the fifteen-minute use case intake form with
   live answer coaching.
 - **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog
-  against a capacity line, per-use-case suggested actions, a filterable use case
+  against a capacity line, a four-quarter roadmap with gate decisions and
+  dependency sequencing checks, benefits realized against the approved
+  estimate (under 75% goes to a Council benefits review), shared AI patterns
+  across use cases, per-use-case suggested actions, a filterable use case
   table carrying each one's risk tier, and the trend panels.
 - **Weekly Status** — RAG for the portfolio and its three elements, then the
   week as its three sittings produced it: what the front door took in and
@@ -33,10 +36,39 @@ what's worth building. Built as a single self-contained HTML page with six views
   with AI as infrastructure rather than as a search box, in three layers —
   information, action, automation.
 
-All data is illustrative and this is not an Ally system of record. In production
+The bundled data is illustrative and this is not an Ally system of record. In production
 Jira is the system of record and this page is the view; health, staleness,
 capacity, and the weekly ratings recompute against the current date on every
 load.
+
+## Real Jira data
+
+The page reads real Jira issues through `JIRA_MAP` (JQL, status to stage, and
+which field feeds what). The default map uses only fields every Jira has plus a
+labels convention, so it needs no custom fields or admin change; it shows a **Data check** on the Jira tab: every
+field found or not, how full it is, and every issue it could not place. Three
+ways in, all through the same mapper:
+
+```
+python3 build_portfolio.py --jira -o portfolio.html          # live, token from the environment
+python3 build_portfolio.py --jira-file jira_issues.json      # what an agent pulled via the Jira MCP
+```
+
+or **Load a Jira export** on the Jira tab, which reads a saved search response
+in the browser and stores nothing. The page never holds a credential.
+[docs/JIRA_SETUP.md](docs/JIRA_SETUP.md) has the field contract and the
+mapping; [cowork/SKILL.md](cowork/SKILL.md) is the playbook for an agent
+(Cowork, Copilot, Claude) with the Jira MCP.
+
+For a lighter build, `cowork/command-center.html` is a 20 KB single file:
+what to ask this week, who has to fill in what, what changed, what went
+quiet. It reads the same Jira conventions, and `cowork/PROMPT.md` is the
+one-paste prompt to refresh it in Cowork.
+
+Checks: `python3 -m unittest discover tests` for the pull, and
+`node tests/browser_check.mjs` (after `npm i --no-save playwright`) for the
+mapping round-trip and the page. After editing the page, run
+`python3 tools/refresh_embedded.py` so the one-file script carries it.
 
 ## Building it from Python
 

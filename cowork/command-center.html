@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Portfolio Command Center</title>
+<style>
+  :root {
+    --bg: #f5f6f7; --card: #fff; --ink: #16181d; --ink2: #4a5160; --ink3: #6b7280;
+    --line: #e2e4e8; --brand: #6b2c91; --link: #0f56a5;
+    --good: #0ca30c; --warn: #d99400; --bad: #d03b3b;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  header { background: var(--brand); color: #fff; padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  header h1 { font: 400 20px Georgia, serif; margin: 0; }
+  header .src { font-size: 12px; opacity: .85; margin-left: auto; }
+  header button { font-family: inherit; font-size: 12px; font-weight: 600; padding: 6px 12px; border: 1px solid #fff; background: transparent; color: #fff; cursor: pointer; }
+  main { max-width: 1200px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .kpi { background: var(--card); border: 1px solid var(--line); padding: 12px; }
+  .kpi b { display: block; font-size: 26px; }
+  .kpi span { font-size: 12px; color: var(--ink2); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+  section { background: var(--card); border: 1px solid var(--line); padding: 14px 16px; min-width: 0; }
+  h2 { font-size: 11px; font-weight: 700; line-height: 1.4; letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); margin: 0 0 10px; }
+  .hint { font-size: 12px; color: var(--ink3); margin: -6px 0 10px; }
+  ul.list { list-style: none; margin: 0; padding: 0; }
+  ul.list li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  ul.list li:last-child { border-bottom: 0; }
+  .id { font-weight: 700; color: var(--link); }
+  .muted { color: var(--ink3); font-size: 12px; }
+  .q { display: block; margin-top: 2px; }
+  .pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 2px; color: #fff; }
+  .pill.good { background: var(--good); } .pill.warn { background: var(--warn); } .pill.bad { background: var(--bad); }
+  .pipe { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  @media (max-width: 700px) { .pipe { grid-template-columns: repeat(4, 1fr); } }
+  .stage { border-top: 3px solid var(--line); padding-top: 6px; font-size: 12px; }
+  .stage b { font-size: 20px; display: block; }
+  .stage.bad { border-top-color: var(--bad); } .stage.warn { border-top-color: var(--warn); } .stage.good { border-top-color: var(--good); }
+  .owner { font-weight: 700; margin-top: 10px; }
+  .owner:first-child { margin-top: 0; }
+  code { background: var(--bg); padding: 0 4px; font-size: 12px; }
+  .tbl { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; white-space: nowrap; }
+  th { font-size: 11px; color: var(--ink3); text-transform: uppercase; letter-spacing: .06em; }
+  td.wrap { white-space: normal; }
+  .empty { color: var(--ink3); }
+  .rag { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+  @media (max-width: 700px) { .rag { grid-template-columns: 1fr 1fr; } }
+  .rag div { border-top: 4px solid var(--line); padding: 6px 0; font-size: 12px; color: var(--ink2); }
+  .rag div b { display: block; font-size: 15px; color: var(--ink); }
+  .rag .good { border-top-color: var(--good); } .rag .warn { border-top-color: var(--warn); } .rag .bad { border-top-color: var(--bad); }
+  .status h3 { font-size: 13px; margin: 12px 0 4px; }
+  .status ul { margin: 0; padding-left: 18px; }
+  .status li { margin: 2px 0; }
+  .bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .bar button { font-family: inherit; font-size: 12px; font-weight: 600; padding: 6px 12px; border: 1px solid var(--brand); background: var(--brand); color: #fff; cursor: pointer; }
+  .bar span { font-size: 12px; color: var(--ink3); }
+</style>
+</head>
+<body>
+<header>
+  <h1>AI Portfolio Command Center</h1>
+  <button type="button" id="refresh" hidden>Refresh from Jira</button>
+  <button type="button" id="load">Load Jira export</button>
+  <input type="file" id="file" accept=".json" hidden>
+  <span class="src" id="src"></span>
+</header>
+<main>
+  <div class="kpis" id="kpis"></div>
+  <section class="status">
+    <h2>Weekly status</h2>
+    <div class="bar"><button type="button" id="copy">Copy for email / Teams</button><span id="copied">Computed from Jira as it stands now. Paste it out to keep a record; this page does not store past weeks.</span></div>
+    <div class="rag" id="rag"></div>
+    <div id="report"></div>
+  </section>
+  <section><h2>Pipeline</h2><div class="pipe" id="pipe"></div></section>
+  <div class="grid2">
+    <section>
+      <h2>Ask this week</h2>
+      <p class="hint">One question per use case that needs one, worst first. Bring these to the routines.</p>
+      <ul class="list" id="ask"></ul>
+    </section>
+    <section>
+      <h2>Chase list</h2>
+      <p class="hint">What each owner has to fill in for the stage they are at, and the label that does it.</p>
+      <div id="chase"></div>
+    </section>
+  </div>
+  <div class="grid2">
+    <section><h2>What changed (7 days)</h2><ul class="list" id="changed"></ul></section>
+    <section><h2>Gone quiet</h2><p class="hint">No update for longer than the stage's review window.</p><ul class="list" id="quiet"></ul></section>
+  </div>
+  <section><h2>Reporting: by function</h2><div class="tbl"><table id="byfunc"></table></div></section>
+  <section><h2>Every use case</h2><div class="tbl"><table id="all"></table></div></section>
+</main>
+
+<script>
+/* ===== DATA =====
+   Paste a Jira search response here (the object with "issues"), or use
+   "Load Jira export". null = built-in sample. Nothing is sent anywhere. */
+const JIRA = null;
+
+/* ===== RULES ===== */
+const STAGES = [
+  { id: "intake",    name: "Intake",    stale: 7,  need: ["sponsor", "impact", "metric"] },
+  { id: "triage",    name: "Triage",    stale: 7,  need: ["sponsor", "impact", "metric", "size", "dataReady"] },
+  { id: "discovery", name: "Discovery", stale: 10, need: ["sponsor", "impact", "metric", "size", "dataReady", "baseline", "techReady"] },
+  { id: "design",    name: "Design",    stale: 14, need: ["sponsor", "impact", "metric", "size", "dataReady", "baseline", "techReady"] },
+  { id: "approval",  name: "Approval",  stale: 14, need: ["sponsor", "impact", "metric", "size", "dataReady", "baseline", "techReady", "live"] },
+  { id: "delivery",  name: "Delivery",  stale: 7,  need: ["sponsor", "metric", "baseline", "live"] },
+  { id: "scale",     name: "Scale",     stale: 14, need: ["sponsor", "metric", "baseline", "live"] },
+  { id: "value",     name: "Value",     stale: 30, need: ["sponsor", "metric", "baseline", "live"] },
+];
+const ST = Object.fromEntries(STAGES.map((s, i) => [s.id, { ...s, i }]));
+/* How each missing field gets filled in Jira, with no custom fields. */
+const HOW = {
+  sponsor: "set Reporter to the accountable sponsor",
+  impact: "label impact-revenue | impact-cost | impact-cycle-time | impact-risk | impact-insight",
+  metric: "label metric-defined once the success metric is in the description",
+  size: "set Story Points",
+  dataReady: "label data-ready | data-partial | data-unavailable",
+  baseline: "label baseline-set once the baseline is measured",
+  techReady: "label tech-ready | tech-partial | tech-not-ready",
+  live: "add a Fix version with a release date",
+  target: "set Due date for the current gate",
+};
+const STATUS_STAGE = { "backlog": "intake", "to do": "intake", "triage": "triage", "in discovery": "discovery",
+  "in design": "design", "awaiting approval": "approval", "in review": "approval", "in progress": "delivery",
+  "in scale": "scale", "in benefits review": "value" };
+
+/* ===== MAPPER: generic Jira fields + labels ===== */
+const DAY = 864e5;
+const d10 = v => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}/.test(v)) ? v.slice(0, 10) : null;
+const tag = (labels, prefix) => { const l = labels.find(x => x.startsWith(prefix)); return l ? l.slice(prefix.length) : null; };
+/* Story Points and Flagged are custom fields whose ids differ between Jira
+   sites. Find them by name when the response carries a names map. */
+function fieldIds(names) {
+  const find = (...ns) => Object.keys(names || {}).find(id => ns.includes(String(names[id]).toLowerCase()));
+  return { points: find("story points", "story point estimate") || "customfield_10016",
+           flag: find("flagged") || "customfield_10021" };
+}
+function mapIssue(is, ids) {
+  const f = is.fields || {}, labels = (f.labels || []).map(l => String(l).toLowerCase());
+  const status = (f.status && f.status.name) || "";
+  const done = (f.status && f.status.statusCategory && f.status.statusCategory.key === "done");
+  const stage = tag(labels, "stage-") || STATUS_STAGE[status.toLowerCase()] || null;
+  const vers = (f.fixVersions || []).map(v => v.releaseDate).filter(Boolean).sort();
+  const dr = tag(labels, "data-"), tr = tag(labels, "tech-");
+  return {
+    id: is.key, name: f.summary || is.key, status, done, stage: ST[stage] ? stage : null,
+    owner: (f.assignee && f.assignee.displayName) || "Unassigned",
+    sponsor: (f.reporter && f.reporter.displayName) || null,
+    func: (f.components && f.components[0] && f.components[0].name) || null,
+    size: f[ids.points] ?? null,
+    impact: labels.filter(l => l.startsWith("impact-")).map(l => l.slice(7)),
+    metric: labels.includes("metric-defined"), baseline: labels.includes("baseline-set"),
+    dataReady: dr && /^(ready|partial|unavailable)$/.test(dr) ? dr : null,
+    techReady: tr && /^(ready|partial|not-ready)$/.test(tr) ? tr : null,
+    risk: labels.filter(l => ["npi", "reg-report", "no-human-review"].includes(l)),
+    flagged: !!(f[ids.flag] && f[ids.flag].length),
+    target: d10(f.duedate), live: vers.length ? vers[vers.length - 1] : null,
+    deps: (f.issuelinks || []).filter(l => l.inwardIssue && /block|depend/i.test((l.type || {}).name || "")).map(l => l.inwardIssue.key),
+    opened: d10(f.created), updated: d10(f.updated),
+  };
+}
+
+/* ===== SAMPLE: generic Jira shape, dates relative to today ===== */
+function sample() {
+  const at = n => new Date(Date.now() + n * DAY).toISOString().slice(0, 10);
+  const mk = (key, summary, st, who, rep, comp, pts, labels, due, upd, opts = {}) => ({ key, fields: {
+    summary, status: { name: st, statusCategory: { key: st === "Done" ? "done" : st === "To Do" ? "new" : "indeterminate" } },
+    assignee: { displayName: who }, reporter: rep ? { displayName: rep } : null, components: [{ name: comp }],
+    customfield_10016: pts, labels, duedate: due == null ? null : at(due), updated: at(-upd), created: at(-upd - 40),
+    fixVersions: opts.live != null ? [{ name: "R", releaseDate: at(opts.live) }] : [],
+    issuelinks: (opts.deps || []).map(k => ({ type: { name: "Blocks" }, inwardIssue: { key: k } })),
+    customfield_10021: opts.flag ? [{ value: "Impediment" }] : null } });
+  return { issues: [
+    mk("AI-001", "Contact center call summarization", "In Progress", "M. Alvarez", "Contact Center Ops", "Contact Center", 8,
+       ["stage-scale", "npi", "impact-cost", "metric-defined", "baseline-set", "data-ready", "tech-ready"], 20, 2, { live: -140 }),
+    mk("AI-002", "Complaint triage and routing", "To Do", "J. Whitfield", "Head of Customer Care", "Customer Care", 5,
+       ["stage-discovery", "npi", "impact-cycle-time", "metric-defined", "data-partial"], 12, 3),
+    mk("AI-003", "Fraud alert prioritization", "To Do", "S. Okafor", "Fraud Ops Director", "Fraud Operations", 8,
+       ["stage-design", "npi", "impact-risk", "metric-defined", "baseline-set", "data-ready", "tech-ready"], -3, 1, { flag: true, live: 70 }),
+    mk("AI-004", "KYC document extraction", "To Do", "R. Patel", "Deposits Operations", "Onboarding", 13,
+       ["stage-discovery", "npi", "reg-report", "impact-cost", "metric-defined"], 4, 6, { flag: true, deps: ["AI-011"] }),
+    mk("AI-005", "Collections outreach timing", "To Do", "D. Kim", "Collections VP", "Collections", 5,
+       ["stage-approval", "impact-revenue", "metric-defined", "baseline-set", "data-ready", "tech-ready"], 16, 3, { live: 50 }),
+    mk("AI-006", "Branch staffing forecast", "To Do", "L. Nguyen", "Retail Distribution", "Branch Network", 8,
+       ["stage-approval", "impact-cost", "metric-defined", "baseline-set", "data-ready"], 9, 12),
+    mk("AI-007", "Marketing copy assistant", "To Do", "Intake team", null, "Marketing", 2,
+       ["stage-triage", "impact-revenue"], 5, 2),
+    mk("AI-008", "Chat deflection FAQ assistant", "In Progress", "M. Alvarez", "Digital Channels", "Digital Banking", 5,
+       ["stage-delivery", "npi", "impact-cost", "metric-defined", "baseline-set", "data-ready", "tech-ready"], 21, 4, { live: 6 }),
+    mk("AI-009", "Wire fraud anomaly detection", "To Do", "Intake team", "Payments Risk", "Payments", 8,
+       ["stage-intake", "npi", "no-human-review"], 6, 1),
+    mk("AI-010", "Statement insight summaries", "To Do", "Intake team", null, "Digital Banking", 3,
+       ["stage-intake", "impact-insight"], -2, 9),
+    mk("AI-011", "Loan document pre-fill", "In Progress", "T. Brooks", "Lending Operations", "Consumer Lending", 3,
+       ["stage-value", "npi", "impact-cost", "metric-defined", "baseline-set", "data-ready", "tech-ready"], 50, 10, { live: -190 }),
+    mk("AI-012", "Teller balancing assistant", "To Do", "Intake team", "Branch Operations", "Branch Network", 3,
+       ["stage-triage", "impact-cost"], 8, 18),
+    mk("AI-013", "ATM cash forecasting", "To Do", "R. Patel", "Treasury Services", "Branch Network", 5,
+       ["stage-discovery", "impact-cost", "metric-defined", "data-partial"], 18, 4, { live: 60, deps: ["AI-006"] }),
+  ] };
+}
+
+/* ===== RENDER ===== */
+const $ = id => document.getElementById(id);
+const el = (t, c, txt) => { const n = document.createElement(t); if (c) n.className = c; if (txt != null) n.textContent = txt; return n; };
+const today = () => { const n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); };
+const days = s => s ? Math.round((today() - Date.parse(s)) / DAY) : null;
+const LBL = { sponsor: "sponsor", impact: "impact", metric: "success metric", size: "size", dataReady: "data readiness",
+  baseline: "baseline", techReady: "tech readiness", live: "go-live date", target: "gate due date" };
+const has = (u, k) => Array.isArray(u[k]) ? u[k].length > 0 : !!u[k];
+
+function enrich(u, all) {
+  const s = ST[u.stage];
+  const missing = (s ? s.need : []).filter(k => !has(u, k));
+  if (!u.target) missing.push("target");
+  const late = u.target ? -days(u.target) : null;            // days to target, negative = overdue
+  const quiet = days(u.updated);
+  const health = late == null ? "warn" : late < 0 ? "bad" : late <= 3 ? "warn" : "good";
+  const blockedBy = u.deps.map(k => all.find(x => x.id === k)).filter(d => d && !d.done && !(d.live && Date.parse(d.live) <= today()));
+  return { ...u, missing, late, quiet, health, stale: s && quiet > s.stale, blockedBy };
+}
+
+/* The one question worth asking, by what is most wrong. */
+function question(u) {
+  const s = ST[u.stage];
+  if (u.flagged) return [3, "What exactly is it waiting on, who owns that, and by what date does it return?"];
+  if (u.late != null && u.late < 0) return [3, "The " + s.name.toLowerCase() + " gate was due " + -u.late + " days ago. What's the new date, and what changed?"];
+  if (u.blockedBy.length) return [2, "It builds on " + u.blockedBy.map(d => d.id).join(", ") + ", which isn't live. Is the plan still realistic?"];
+  if (!u.sponsor) return [2, "Who is the business sponsor accountable for the value?"];
+  if (u.stale) return [2, "No update in " + u.quiet + " days. Where does it actually stand?"];
+  if (u.stage === "intake" && !u.metric) return [1, "What measurable outcome would make this worth building?"];
+  if (u.stage === "triage" && !u.dataReady) return [1, "Does the data exist, and can we get access to it?"];
+  if (u.dataReady === "partial") return [1, "Which data gaps remain, who closes them, and by when?"];
+  if (u.techReady === "partial" || u.techReady === "not-ready") return [1, "What is missing on the platform side to build this?"];
+  if (u.stage === "approval") return [1, "What is the stop condition if the pilot misses its metric?"];
+  if (u.stage === "scale" || u.stage === "value") return [1, "What has it actually returned against the approved estimate?"];
+  return null;
+}
+
+/* ===== WEEKLY STATUS =====
+   Three ratings and an overall that takes the worst, then the week in the
+   order a leadership reader wants it. Thresholds are here to argue with. */
+const RAG_TXT = { good: "Green", warn: "Amber", bad: "Red" };
+function weekly(active, all) {
+  const n = Math.max(1, active.length);
+  const late = active.filter(u => u.health === "bad"), worst = Math.max(0, ...late.map(u => -u.late));
+  const stale = active.filter(u => u.stale), flagged = active.filter(u => u.flagged);
+  const gaps = active.filter(u => u.missing.length);
+  const deps = active.filter(u => u.blockedBy.length);
+  const parts = [
+    { name: "Flow", st: late.length / n > .2 || worst > 21 ? "bad" : late.length || stale.length >= 3 ? "warn" : "good",
+      note: late.length + " past a gate date, " + stale.length + " gone quiet" },
+    { name: "Blockers", st: flagged.some(u => u.health === "bad") ? "bad" : flagged.length || deps.length ? "warn" : "good",
+      note: flagged.length + " flagged, " + deps.length + " waiting on a dependency" },
+    { name: "Record quality", st: gaps.length / n > .4 ? "bad" : gaps.length / n > .15 ? "warn" : "good",
+      note: gaps.length + " of " + active.length + " missing what their stage needs" },
+  ];
+  const rank = { good: 0, warn: 1, bad: 2 };
+  const overall = parts.reduce((w, p) => rank[p.st] > rank[w.st] ? p : w, parts[0]);
+  const t = today(), soon = active.filter(u => u.live && Date.parse(u.live) > t && Date.parse(u.live) <= t + 30 * DAY);
+  const name = u => u.id + " " + u.name;
+  const sections = [
+    ["Updated this week", all.filter(u => u.quiet != null && u.quiet <= 7)
+      .map(u => name(u) + ": " + (u.done ? "closed (" + u.status + ")" : "now at " + ST[u.stage].name) + ", " + u.owner)],
+    ["Going live in the next 30 days", soon.map(u => name(u) + ": " + u.live)],
+    ["Risks and blockers", [
+      ...flagged.map(u => name(u) + ": flagged in Jira, " + u.owner + " to confirm what it waits on and the return date"),
+      ...late.filter(u => !u.flagged).map(u => name(u) + ": " + ST[u.stage].name + " gate " + -u.late + " days late"),
+      ...deps.map(u => name(u) + ": depends on " + u.blockedBy.map(d => d.id).join(", ") + ", not live yet"),
+      ...stale.map(u => name(u) + ": no update in " + u.quiet + " days")]],
+    ["Decisions needed", [
+      ...active.filter(u => u.stage === "approval").map(u => name(u) + ": funding decision" + (u.live ? ", go-live planned " + u.live : ", no go-live date yet")),
+      ...late.filter(u => u.stage !== "approval").map(u => name(u) + ": agree a new " + ST[u.stage].name.toLowerCase() + " date or stop")]],
+    ["Asks of owners", Object.entries(gaps.reduce((a, u) => ((a[u.owner] = a[u.owner] || []).push(u.id), a), {}))
+      .map(([o, ids]) => o + ": complete " + ids.join(", "))],
+  ];
+  return { parts, overall, sections };
+}
+function paintWeekly(w) {
+  $("rag").replaceChildren(...[{ name: "Overall", st: w.overall.st, note: w.overall.name + " is the constraint" }, ...w.parts].map(p => {
+    const d = el("div", p.st); d.append(el("b", null, p.name + ": " + RAG_TXT[p.st]), document.createTextNode(p.note)); return d; }));
+  $("report").replaceChildren(...w.sections.flatMap(([h, items]) => {
+    const ul = el("ul"); for (const i of items.length ? items : ["Nothing to report."]) ul.append(el("li", null, i));
+    return [el("h3", null, h), ul]; }));
+  $("copy").onclick = () => {
+    const wk = new Date(); wk.setDate(wk.getDate() - ((wk.getDay() + 6) % 7));
+    const txt = ["AI portfolio status, week of " + wk.toISOString().slice(0, 10),
+      "Overall: " + RAG_TXT[w.overall.st] + " (" + w.overall.name + " is the constraint)",
+      ...w.parts.map(p => p.name + ": " + RAG_TXT[p.st] + " - " + p.note), "",
+      ...w.sections.flatMap(([h, items]) => [h + ":", ...(items.length ? items : ["Nothing to report."]).map(i => "- " + i), ""])].join("\n");
+    const done = () => $("copied").textContent = "Copied. Paste it into the email or channel.";
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(done).catch(() => {
+      const ta = el("textarea"); ta.value = txt; document.body.append(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch (e) { $("copied").textContent = "Copy blocked; select the text above."; } ta.remove(); });
+  };
+}
+function paintByFunc(active) {
+  const t = $("byfunc"); t.replaceChildren();
+  const hr = el("tr"); for (const h of ["Function", "In flight", "Late", "Flagged", "Gone quiet", "Missing info", "Live in 90d"]) hr.append(el("th", null, h));
+  t.append(hr);
+  const groups = {};
+  for (const u of active) (groups[u.func || "No component"] = groups[u.func || "No component"] || []).push(u);
+  const t90 = today() + 90 * DAY;
+  for (const [f, xs] of Object.entries(groups).sort((a, b) => b[1].length - a[1].length)) {
+    const tr = el("tr");
+    tr.append(el("td", null, f), ...[xs.length, xs.filter(u => u.health === "bad").length, xs.filter(u => u.flagged).length,
+      xs.filter(u => u.stale).length, xs.filter(u => u.missing.length).length,
+      xs.filter(u => u.live && Date.parse(u.live) > today() && Date.parse(u.live) <= t90).length].map(n => el("td", null, n)));
+    t.append(tr);
+  }
+}
+
+let SOURCE = "Sample data";
+function render(raw) {
+  const ids = fieldIds(raw.names);
+  const mapped = (raw.issues || []).map(is => mapIssue(is, ids));
+  const unplaced = mapped.filter(u => !u.stage && !u.done);
+  const all0 = mapped.filter(u => u.stage);
+  const all = all0.map(u => enrich(u, all0));
+  const active = all.filter(u => !u.done);
+  $("src").textContent = SOURCE + " · " + active.length + " active" +
+    (unplaced.length ? " · " + unplaced.length + " not placed (no stage label or mapped status: " + unplaced.map(u => u.id).join(", ") + ")" : "");
+
+  const k = [
+    [active.length, "in flight"],
+    [active.filter(u => u.health === "bad").length, "past a gate date"],
+    [active.filter(u => u.flagged).length, "flagged / blocked"],
+    [active.filter(u => u.stale).length, "gone quiet"],
+    [active.filter(u => u.missing.length).length, "missing required info"],
+  ];
+  $("kpis").replaceChildren(...k.map(([n, l]) => { const d = el("div", "kpi"); d.append(el("b", null, n), el("span", null, l)); return d; }));
+
+  $("pipe").replaceChildren(...STAGES.map(s => {
+    const xs = active.filter(u => u.stage === s.id);
+    const worst = xs.some(u => u.health === "bad") ? "bad" : xs.some(u => u.health === "warn") ? "warn" : xs.length ? "good" : "";
+    const d = el("div", "stage " + worst); d.append(el("b", null, xs.length), document.createTextNode(s.name)); return d;
+  }));
+
+  const asks = active.map(u => ({ u, q: question(u) })).filter(x => x.q).sort((a, b) => b.q[0] - a.q[0]);
+  $("ask").replaceChildren(...(asks.length ? asks.map(({ u, q }) => {
+    const li = el("li"); const p = el("span", "pill " + (q[0] === 3 ? "bad" : q[0] === 2 ? "warn" : "good"), q[0] === 3 ? "NOW" : q[0] === 2 ? "SOON" : "ASK");
+    li.append(p, document.createTextNode(" "), el("span", "id", u.id), document.createTextNode(" " + u.name + " · " + u.owner), el("span", "q", q[1]));
+    return li; }) : [el("li", "empty", "Nothing to ask this week.")]));
+
+  const byOwner = {};
+  for (const u of active) if (u.missing.length) (byOwner[u.owner] = byOwner[u.owner] || []).push(u);
+  const chase = Object.entries(byOwner).sort((a, b) => b[1].length - a[1].length);
+  $("chase").replaceChildren(...(chase.length ? chase.flatMap(([o, xs]) => {
+    const ul = el("ul", "list");
+    for (const u of xs) { const li = el("li"); li.append(el("span", "id", u.id), document.createTextNode(" needs " + u.missing.map(m => LBL[m]).join(", ")));
+      for (const m of u.missing) li.append(el("span", "muted q", "· " + HOW[m])); ul.append(li); }
+    return [el("div", "owner", o + " (" + xs.length + ")"), ul]; }) : [el("p", "empty", "Every record has what its stage asks for.")]));
+
+  const changed = all.filter(u => u.quiet != null && u.quiet <= 7).sort((a, b) => a.quiet - b.quiet);
+  $("changed").replaceChildren(...(changed.length ? changed.map(u => { const li = el("li"); li.append(el("span", "id", u.id),
+    document.createTextNode(" " + u.name), el("span", "muted q", (u.quiet === 0 ? "today" : u.quiet + "d ago") + " · " + (u.done ? "closed" : ST[u.stage].name) + " · " + u.owner)); return li; })
+    : [el("li", "empty", "Nothing updated this week.")]));
+  const quiet = active.filter(u => u.stale).sort((a, b) => b.quiet - a.quiet);
+  $("quiet").replaceChildren(...(quiet.length ? quiet.map(u => { const li = el("li"); li.append(el("span", "id", u.id),
+    document.createTextNode(" " + u.name), el("span", "muted q", u.quiet + " days without an update (" + ST[u.stage].name + " window is " + ST[u.stage].stale + ") · " + u.owner)); return li; })
+    : [el("li", "empty", "Everything has moved inside its window.")]));
+
+  paintWeekly(weekly(active, all));
+  paintByFunc(active);
+
+  const t = $("all"); t.replaceChildren();
+  const hr = el("tr"); for (const h of ["", "Key", "Use case", "Stage", "Owner", "Sponsor", "Gate due", "Go-live", "Missing"]) hr.append(el("th", null, h));
+  t.append(hr);
+  for (const u of active.sort((a, b) => ST[a.stage].i - ST[b.stage].i)) {
+    const tr = el("tr");
+    const h = el("td"); h.append(el("span", "pill " + u.health, u.health === "bad" ? "LATE" : u.health === "warn" ? "RISK" : "OK"));
+    tr.append(h, el("td", "id", u.id), el("td", "wrap", u.name + (u.flagged ? " ⚑" : "")), el("td", null, ST[u.stage].name), el("td", null, u.owner),
+      el("td", null, u.sponsor || "—"), el("td", null, u.target ? (u.late < 0 ? -u.late + "d late" : "in " + u.late + "d") : "—"),
+      el("td", null, u.live || "—"), el("td", "wrap muted", u.missing.map(m => LBL[m]).join(", ") || "—"));
+    t.append(tr);
+  }
+}
+
+$("load").onclick = () => $("file").click();
+$("file").onchange = () => {
+  const f = $("file").files[0]; if (!f) return;
+  f.text().then(txt => { const d = JSON.parse(txt); SOURCE = "Jira · " + f.name; render(Array.isArray(d) ? { issues: d } : d); })
+    .catch(e => alert("Could not read that file: " + e.message));
+};
+/* Refresh from Jira works when the page is opened through cowork/serve.py,
+   which holds the API token on this machine and calls Jira for the page.
+   The page never sees the token. Opened as a plain file, the button hides. */
+if (location.protocol.startsWith("http")) {
+  const btn = $("refresh");
+  btn.hidden = false;
+  const pull = () => {
+    btn.disabled = true; btn.textContent = "Pulling\u2026";
+    fetch("refresh", { cache: "no-store" })
+      .then(r => r.json().then(d => { if (!r.ok) throw new Error(d.error || r.statusText); return d; }))
+      .then(d => { SOURCE = "Jira · pulled " + new Date(d.pulledAt || Date.now()).toLocaleString(); render(d); })
+      .catch(e => { $("src").textContent = "Refresh failed: " + e.message; })
+      .finally(() => { btn.disabled = false; btn.textContent = "Refresh from Jira"; });
+  };
+  btn.onclick = pull;
+  if (!JIRA) pull();
+}
+if (JIRA) SOURCE = "Jira snapshot";
+render(JIRA || sample());
+</script>
+</body>
+</html>

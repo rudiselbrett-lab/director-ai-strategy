@@ -1,0 +1,915 @@
+{
+ "isLast": true,
+ "names": {
+  "summary": "Summary",
+  "status": "Status",
+  "assignee": "Assignee",
+  "reporter": "Reporter",
+  "created": "Created",
+  "updated": "Updated",
+  "duedate": "Due date",
+  "resolution": "Resolution",
+  "resolutiondate": "Resolved",
+  "labels": "Labels",
+  "components": "Components",
+  "fixVersions": "Fix versions",
+  "issuelinks": "Linked Issues",
+  "customfield_10016": "Story Points",
+  "customfield_10021": "Flagged"
+ },
+ "issues": [
+  {
+   "id": "10000",
+   "key": "AI-001",
+   "fields": {
+    "summary": "Contact center call summarization",
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "assignee": {
+     "displayName": "M. Alvarez",
+     "accountId": "x0"
+    },
+    "reporter": {
+     "displayName": "Contact Center Ops",
+     "accountId": "r0",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-02-10T09:14:00.000-0400",
+    "updated": "2026-08-07T16:02:00.000-0400",
+    "duedate": "2026-09-25",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "impact-cost",
+     "impact-cycle-time",
+     "stage-scale",
+     "data-ready",
+     "tech-ready",
+     "metric-defined",
+     "baseline-set",
+     "pattern-summarization",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "0",
+      "name": "Contact Center",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "0",
+      "name": "Release 2026-05",
+      "releaseDate": "2026-05-15",
+      "released": false
+     }
+    ],
+    "issuelinks": [],
+    "customfield_10016": 8,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10001",
+   "key": "AI-002",
+   "fields": {
+    "summary": "Complaint triage and routing",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "J. Whitfield",
+     "accountId": "x1"
+    },
+    "reporter": {
+     "displayName": "Head of Customer Care",
+     "accountId": "r1",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-07-05T09:14:00.000-0400",
+    "updated": "2026-08-08T16:02:00.000-0400",
+    "duedate": "2026-08-23",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "impact-cycle-time",
+     "impact-risk",
+     "stage-discovery",
+     "data-partial",
+     "tech-partial",
+     "metric-defined",
+     "pattern-classification-routing",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "1",
+      "name": "Customer Care",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [],
+    "issuelinks": [],
+    "customfield_10016": 5,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10002",
+   "key": "AI-003",
+   "fields": {
+    "summary": "Fraud alert prioritization",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "S. Okafor",
+     "accountId": "x2"
+    },
+    "reporter": {
+     "displayName": "Fraud Ops Director",
+     "accountId": "r2",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-06-10T09:14:00.000-0400",
+    "updated": "2026-08-09T16:02:00.000-0400",
+    "duedate": "2026-08-08",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "impact-risk",
+     "impact-insight",
+     "stage-design",
+     "data-ready",
+     "tech-ready",
+     "metric-defined",
+     "baseline-set",
+     "pattern-risk-scoring",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "2",
+      "name": "Fraud Operations",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "2",
+      "name": "Release 2026-12",
+      "releaseDate": "2026-12-15",
+      "released": false
+     }
+    ],
+    "issuelinks": [],
+    "customfield_10016": 8,
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ]
+   }
+  },
+  {
+   "id": "10003",
+   "key": "AI-004",
+   "fields": {
+    "summary": "KYC document extraction",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "R. Patel",
+     "accountId": "x3"
+    },
+    "reporter": {
+     "displayName": "Deposits Operations",
+     "accountId": "r3",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-05-20T09:14:00.000-0400",
+    "updated": "2026-08-05T16:02:00.000-0400",
+    "duedate": "2026-08-15",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "reg-report",
+     "impact-cost",
+     "impact-cycle-time",
+     "impact-risk",
+     "stage-discovery",
+     "tech-partial",
+     "metric-defined",
+     "pattern-document-extraction",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "3",
+      "name": "Onboarding",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "3",
+      "name": "Release 2027-03",
+      "releaseDate": "2027-03-31",
+      "released": false
+     }
+    ],
+    "issuelinks": [
+     {
+      "id": "93",
+      "type": {
+       "name": "Blocks",
+       "inward": "is blocked by",
+       "outward": "blocks"
+      },
+      "inwardIssue": {
+       "key": "AI-011"
+      }
+     }
+    ],
+    "customfield_10016": 13,
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ]
+   }
+  },
+  {
+   "id": "10004",
+   "key": "AI-005",
+   "fields": {
+    "summary": "Collections outreach timing",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "D. Kim",
+     "accountId": "x4"
+    },
+    "reporter": {
+     "displayName": "Collections VP",
+     "accountId": "r4",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-06-25T09:14:00.000-0400",
+    "updated": "2026-08-08T16:02:00.000-0400",
+    "duedate": "2026-08-27",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "impact-revenue",
+     "impact-insight",
+     "impact-cost",
+     "stage-approval",
+     "data-ready",
+     "tech-ready",
+     "metric-defined",
+     "baseline-set",
+     "pattern-propensity-timing",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "4",
+      "name": "Collections",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "4",
+      "name": "Release 2026-11",
+      "releaseDate": "2026-11-30",
+      "released": false
+     }
+    ],
+    "issuelinks": [],
+    "customfield_10016": 5,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10005",
+   "key": "AI-006",
+   "fields": {
+    "summary": "Branch staffing forecast",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "L. Nguyen",
+     "accountId": "x5"
+    },
+    "reporter": {
+     "displayName": "Retail Distribution",
+     "accountId": "r5",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-06-30T09:14:00.000-0400",
+    "updated": "2026-07-30T16:02:00.000-0400",
+    "duedate": "2026-08-20",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "impact-cost",
+     "impact-insight",
+     "stage-approval",
+     "data-partial",
+     "tech-ready",
+     "metric-defined",
+     "baseline-set",
+     "pattern-forecasting",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "5",
+      "name": "Branch Network",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "5",
+      "name": "Release 2026-12",
+      "releaseDate": "2026-12-31",
+      "released": false
+     }
+    ],
+    "issuelinks": [],
+    "customfield_10016": 8,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10006",
+   "key": "AI-007",
+   "fields": {
+    "summary": "Marketing copy assistant",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "x6"
+    },
+    "reporter": {
+     "displayName": "Consumer Marketing",
+     "accountId": "r6",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-08-01T09:14:00.000-0400",
+    "updated": "2026-08-09T16:02:00.000-0400",
+    "duedate": "2026-08-16",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "impact-revenue",
+     "impact-cost",
+     "stage-triage",
+     "tech-ready",
+     "pattern-content-generation",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "6",
+      "name": "Marketing",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [],
+    "issuelinks": [],
+    "customfield_10016": 2,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10007",
+   "key": "AI-008",
+   "fields": {
+    "summary": "Chat deflection FAQ assistant",
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "assignee": {
+     "displayName": "M. Alvarez",
+     "accountId": "x7"
+    },
+    "reporter": {
+     "displayName": "Digital Channels",
+     "accountId": "r7",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-03-15T09:14:00.000-0400",
+    "updated": "2026-08-06T16:02:00.000-0400",
+    "duedate": "2026-09-01",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "no-human-review",
+     "impact-cost",
+     "impact-cycle-time",
+     "stage-delivery",
+     "data-ready",
+     "tech-ready",
+     "metric-defined",
+     "baseline-set",
+     "pattern-conversational-assistant",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "7",
+      "name": "Digital Banking",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "7",
+      "name": "Release 2026-10",
+      "releaseDate": "2026-10-15",
+      "released": false
+     }
+    ],
+    "issuelinks": [],
+    "customfield_10016": 5,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10008",
+   "key": "AI-009",
+   "fields": {
+    "summary": "Wire fraud anomaly detection",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "x8"
+    },
+    "reporter": {
+     "displayName": "Payments Risk",
+     "accountId": "r8",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-08-06T09:14:00.000-0400",
+    "updated": "2026-08-10T16:02:00.000-0400",
+    "duedate": "2026-08-17",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "impact-risk",
+     "impact-insight",
+     "stage-intake",
+     "data-partial",
+     "pattern-risk-scoring",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "8",
+      "name": "Payments",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [],
+    "issuelinks": [],
+    "customfield_10016": 8,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10009",
+   "key": "AI-010",
+   "fields": {
+    "summary": "Statement insight summaries",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "x9"
+    },
+    "reporter": {
+     "displayName": "— (sponsor not named)",
+     "accountId": "r9",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-07-21T09:14:00.000-0400",
+    "updated": "2026-08-02T16:02:00.000-0400",
+    "duedate": "2026-08-13",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "impact-insight",
+     "stage-intake",
+     "pattern-summarization",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "9",
+      "name": "Digital Banking",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [],
+    "issuelinks": [],
+    "customfield_10016": 3,
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ]
+   }
+  },
+  {
+   "id": "10010",
+   "key": "AI-011",
+   "fields": {
+    "summary": "Loan document pre-fill",
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "assignee": {
+     "displayName": "T. Brooks",
+     "accountId": "x10"
+    },
+    "reporter": {
+     "displayName": "Lending Operations",
+     "accountId": "r10",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-01-20T09:14:00.000-0400",
+    "updated": "2026-08-01T16:02:00.000-0400",
+    "duedate": "2026-09-30",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "impact-revenue",
+     "impact-cycle-time",
+     "impact-cost",
+     "stage-value",
+     "data-ready",
+     "tech-ready",
+     "metric-defined",
+     "baseline-set",
+     "pattern-document-extraction",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "10",
+      "name": "Consumer Lending",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "10",
+      "name": "Release 2026-03",
+      "releaseDate": "2026-03-31",
+      "released": false
+     }
+    ],
+    "issuelinks": [],
+    "customfield_10016": 3,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10011",
+   "key": "AI-012",
+   "fields": {
+    "summary": "Teller balancing assistant",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "x11"
+    },
+    "reporter": {
+     "displayName": "Branch Operations",
+     "accountId": "r11",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-07-24T09:14:00.000-0400",
+    "updated": "2026-08-03T16:02:00.000-0400",
+    "duedate": "2026-08-19",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "impact-cost",
+     "stage-triage",
+     "pattern-conversational-assistant",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "11",
+      "name": "Branch Network",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [],
+    "issuelinks": [],
+    "customfield_10016": 3,
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ]
+   }
+  },
+  {
+   "id": "10012",
+   "key": "AI-013",
+   "fields": {
+    "summary": "ATM cash forecasting",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "R. Patel",
+     "accountId": "x12"
+    },
+    "reporter": {
+     "displayName": "Treasury Services",
+     "accountId": "r12",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-07-28T09:14:00.000-0400",
+    "updated": "2026-08-07T16:02:00.000-0400",
+    "duedate": "2026-08-29",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "impact-cost",
+     "impact-insight",
+     "stage-discovery",
+     "data-partial",
+     "tech-partial",
+     "metric-defined",
+     "pattern-forecasting",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "12",
+      "name": "Branch Network",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "12",
+      "name": "Release 2026-12",
+      "releaseDate": "2026-12-15",
+      "released": false
+     }
+    ],
+    "issuelinks": [
+     {
+      "id": "912",
+      "type": {
+       "name": "Blocks",
+       "inward": "is blocked by",
+       "outward": "blocks"
+      },
+      "inwardIssue": {
+       "key": "AI-006"
+      }
+     }
+    ],
+    "customfield_10016": 5,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10013",
+   "key": "AI-014",
+   "fields": {
+    "summary": "Dispute intake summarizer",
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "assignee": {
+     "displayName": "D. Kim",
+     "accountId": "x13"
+    },
+    "reporter": {
+     "displayName": "Card Services",
+     "accountId": "r13",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-06-20T09:14:00.000-0400",
+    "updated": "2026-08-05T16:02:00.000-0400",
+    "duedate": "2026-09-04",
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "impact-cycle-time",
+     "impact-cost",
+     "stage-approval",
+     "data-ready",
+     "tech-ready",
+     "metric-defined",
+     "baseline-set",
+     "pattern-summarization",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "13",
+      "name": "Customer Care",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [
+     {
+      "id": "13",
+      "name": "Release 2027-01",
+      "releaseDate": "2027-01-31",
+      "released": false
+     }
+    ],
+    "issuelinks": [
+     {
+      "id": "913",
+      "type": {
+       "name": "Blocks",
+       "inward": "is blocked by",
+       "outward": "blocks"
+      },
+      "inwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
+    "customfield_10016": 8,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10014",
+   "key": "AI-015",
+   "fields": {
+    "summary": "RM email auto-drafting",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "x14"
+    },
+    "reporter": {
+     "displayName": "Small Business Banking",
+     "accountId": "r14",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-07-08T09:14:00.000-0400",
+    "updated": "2026-07-24T16:02:00.000-0400",
+    "duedate": "2026-07-22",
+    "resolution": {
+     "name": "Declined"
+    },
+    "resolutiondate": "2026-07-22T11:00:00.000-0400",
+    "labels": [
+     "impact-cost",
+     "stage-triage",
+     "pattern-content-generation",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "14",
+      "name": "Small Business",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [],
+    "issuelinks": [],
+    "customfield_10016": 2,
+    "customfield_10021": null
+   }
+  },
+  {
+   "id": "10015",
+   "key": "AI-016",
+   "fields": {
+    "summary": "HR policy chatbot",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "x15"
+    },
+    "reporter": {
+     "displayName": "HR Shared Services",
+     "accountId": "r15",
+     "emailAddress": "r@example.com"
+    },
+    "created": "2026-07-01T09:14:00.000-0400",
+    "updated": "2026-07-15T16:02:00.000-0400",
+    "duedate": "2026-07-15",
+    "resolution": {
+     "name": "Transferred"
+    },
+    "resolutiondate": "2026-07-15T11:00:00.000-0400",
+    "labels": [
+     "impact-cost",
+     "stage-triage",
+     "pattern-conversational-assistant",
+     "q3-planning"
+    ],
+    "components": [
+     {
+      "id": "15",
+      "name": "Human Resources",
+      "self": "x"
+     }
+    ],
+    "fixVersions": [],
+    "issuelinks": [],
+    "customfield_10016": 3,
+    "customfield_10021": null
+   }
+  }
+ ]
+}

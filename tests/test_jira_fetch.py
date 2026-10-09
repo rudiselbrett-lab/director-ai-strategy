@@ -1,0 +1,183 @@
+"""The live pull, against a stand-in Jira on localhost.
+
+    python3 -m unittest discover tests
+"""
+import json
+import pathlib
+import sys
+import threading
+import unittest
+import urllib.error
+import urllib.parse
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+import build_portfolio as bp  # noqa: E402
+
+FIXTURE = json.loads((ROOT / "tests" / "fixtures" / "jira_clean.json").read_text(encoding="utf-8"))
+GENERIC = json.loads((ROOT / "tests" / "fixtures" / "jira_generic.json").read_text(encoding="utf-8"))
+FIELDS = [{"id": k, "name": v, "custom": k.startswith("customfield_")}
+          for k, v in dict(GENERIC["names"], **FIXTURE["names"]).items()]
+
+
+class FakeJira(BaseHTTPRequestHandler):
+    seen = []
+    status = 200
+    issues = None   # None = the custom-field fixture
+
+    def log_message(self, *a):
+        pass
+
+    def _send(self, code, body):
+        raw = json.dumps(body).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(raw)
+
+    def do_GET(self):
+        url = urllib.parse.urlparse(self.path)
+        q = {k: v[0] for k, v in urllib.parse.parse_qs(url.query).items()}
+        FakeJira.seen.append((url.path, q, self.headers.get("Authorization")))
+        if FakeJira.status != 200:
+            return self._send(FakeJira.status, {"errorMessages": ["nope"]})
+        issues = FakeJira.issues or FIXTURE["issues"]
+        if url.path.endswith("/field"):
+            return self._send(200, FIELDS)
+        if url.path == "/rest/api/3/search/jql":
+            start = int(q.get("nextPageToken") or 0)
+            page = issues[start:start + 10]
+            more = start + 10 < len(issues)
+            body = {"issues": page, "isLast": not more}
+            if more:
+                body["nextPageToken"] = str(start + 10)
+            return self._send(200, body)
+        if url.path == "/rest/api/2/search":
+            start = int(q.get("startAt", 0))
+            return self._send(200, {"issues": issues[start:start + 10], "startAt": start,
+                                    "total": len(issues)})
+        self._send(404, {"errorMessages": ["no route"]})
+
+
+class FetchTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.srv = HTTPServer(("127.0.0.1", 0), FakeJira)
+        threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
+        cls.site = "http://127.0.0.1:%d" % cls.srv.server_port
+        cls.jmap = json.loads((ROOT / "docs" / "jira_map.custom-fields.json").read_text(encoding="utf-8"))
+        cls.generic = bp.builtin_data()["JIRA_MAP"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.shutdown()
+
+    def setUp(self):
+        FakeJira.seen, FakeJira.status, FakeJira.issues = [], 200, None
+
+    def env(self, **kw):
+        return dict({"JIRA_SITE": self.site, "JIRA_ALLOW_HTTP": "1"}, **kw)
+
+    def test_cloud_pages_through_tokens(self):
+        snap = bp.fetch_jira(self.jmap, env=self.env(JIRA_EMAIL="a@b.c", JIRA_API_TOKEN="tok"), log=lambda *_: None)
+        self.assertEqual(len(snap["issues"]), len(FIXTURE["issues"]))
+        searches = [s for s in FakeJira.seen if s[0].endswith("/search/jql")]
+        self.assertEqual(len(searches), 2)
+        self.assertTrue(all(s[2].startswith("Basic ") for s in FakeJira.seen))
+        asked = searches[0][1]["fields"].split(",")
+        self.assertIn("customfield_10101", asked)       # resolved from "Consumer Bank function"
+        self.assertNotIn("description", asked)          # includeText is off
+        self.assertEqual(searches[0][1].get("expand"), "changelog")
+
+    def test_generic_map_asks_for_standard_fields(self):
+        bp.fetch_jira(self.generic, env=self.env(JIRA_PAT="pat"), log=lambda *_: None)
+        asked = [s for s in FakeJira.seen if s[0] == "/rest/api/2/search"][0][1]["fields"].split(",")
+        for f in ("components", "reporter", "fixVersions", "issuelinks", "labels", "duedate",
+                  "customfield_10016", "customfield_10021"):
+            self.assertIn(f, asked)
+        self.assertFalse([f for f in asked if f.startswith("customfield_") and f not in
+                          ("customfield_10016", "customfield_10021")])
+
+    def test_precheck_counts_alternatives_as_one_field(self):
+        snap = bp.snapshot_from(GENERIC["issues"], GENERIC["names"], self.generic)
+        lines, errors = bp.precheck(snap, self.generic)
+        self.assertEqual(errors, 0)
+        self.assertFalse([ln for ln in lines if "not found" in ln], lines)
+
+    def test_data_center_pages_through_offsets(self):
+        snap = bp.fetch_jira(self.jmap, env=self.env(JIRA_PAT="pat"), log=lambda *_: None)
+        self.assertEqual(len(snap["issues"]), len(FIXTURE["issues"]))
+        self.assertTrue(all(s[2] == "Bearer pat" for s in FakeJira.seen))
+        self.assertTrue(any(s[0] == "/rest/api/2/search" for s in FakeJira.seen))
+
+    def test_trims_people_and_keeps_no_secret(self):
+        snap = bp.fetch_jira(self.jmap, env=self.env(JIRA_EMAIL="a@b.c", JIRA_API_TOKEN="s3cret"), log=lambda *_: None)
+        blob = json.dumps(snap)
+        for leak in ("s3cret", "accountId", "emailAddress", "avatarUrls"):
+            self.assertNotIn(leak, blob)
+        self.assertEqual(snap["issues"][0]["fields"]["assignee"], {"displayName": "M. Alvarez"})
+
+    def test_bad_credentials_say_so(self):
+        FakeJira.status = 401
+        with self.assertRaises(bp.JiraError) as cm:
+            bp.fetch_jira(self.jmap, env=self.env(JIRA_PAT="bad"), log=lambda *_: None)
+        self.assertIn("credentials", str(cm.exception))
+
+    def test_refuses_plain_http_and_missing_credentials(self):
+        with self.assertRaises(bp.JiraError):
+            bp.fetch_jira(self.jmap, env={"JIRA_SITE": self.site, "JIRA_PAT": "x"}, log=lambda *_: None)
+        with self.assertRaises(bp.JiraError):
+            bp.fetch_jira(self.jmap, env=self.env(), log=lambda *_: None)
+
+    def test_precheck_flags_unmapped_status(self):
+        messy = json.loads((ROOT / "tests" / "fixtures" / "jira_messy.json").read_text(encoding="utf-8"))
+        snap = bp.snapshot_from(messy["issues"], messy["names"], self.jmap)
+        lines, errors = bp.precheck(snap, self.jmap)
+        self.assertEqual(errors, 1)
+        self.assertTrue(any("Ready for UAT" in ln for ln in lines))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class ServeTest(unittest.TestCase):
+    """cowork/serve.py: the refresh button's helper."""
+
+    def test_refresh_returns_trimmed_issues_and_refuses_foreign_hosts(self):
+        import os
+        import urllib.request
+        sys.path.insert(0, str(ROOT / "cowork"))
+        import serve
+        jira = HTTPServer(("127.0.0.1", 0), FakeJira)
+        threading.Thread(target=jira.serve_forever, daemon=True).start()
+        FakeJira.issues, FakeJira.status = GENERIC["issues"], 200
+        env = {"JIRA_SITE": "http://127.0.0.1:%d" % jira.server_port, "JIRA_ALLOW_HTTP": "1",
+               "JIRA_EMAIL": "a@b.c", "JIRA_API_TOKEN": "s3cret"}
+        old = {k: os.environ.get(k) for k in env}
+        os.environ.update(env)
+        srv = serve.ThreadingHTTPServer(("127.0.0.1", 0), FakeJira)
+        port = srv.server_port
+        srv.RequestHandlerClass = serve.make_handler(bp.builtin_data()["JIRA_MAP"], None, port)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            base = "http://127.0.0.1:%d" % port
+            page = urllib.request.urlopen(base + "/").read().decode()
+            self.assertIn("Refresh from Jira", page)
+            body = urllib.request.urlopen(base + "/refresh").read().decode()
+            snap = json.loads(body)
+            self.assertEqual(len(snap["issues"]), len(GENERIC["issues"]))
+            for leak in ("s3cret", "accountId", "emailAddress"):
+                self.assertNotIn(leak, body)
+            req = urllib.request.Request(base + "/refresh", headers={"Host": "evil.example:%d" % port})
+            with self.assertRaises(urllib.error.HTTPError) as cm:
+                urllib.request.urlopen(req)
+            self.assertEqual(cm.exception.code, 403)
+        finally:
+            srv.shutdown(); jira.shutdown(); FakeJira.issues = None
+            for k, v in old.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
