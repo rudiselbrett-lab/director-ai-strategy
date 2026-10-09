@@ -9,6 +9,12 @@ with its category, and a changelog. Two files:
   jira_messy.json  the same with what real instances do: an unmapped status,
                    a second "Story Points" field, a select option nobody
                    mapped, a missing target date, a dollar figure as text
+  jira_generic.json  the sample as a Jira with no portfolio custom fields:
+                   generic To Do / In Progress / Done statuses, components,
+                   reporter, due date, fix versions, issue links and the
+                   labels convention, read by the default JIRA_MAP
+
+jira_clean and jira_messy are read with docs/jira_map.custom-fields.json.
 
     python3 tests/make_jira_fixture.py
 """
@@ -117,6 +123,61 @@ def issue(u, n):
     return out
 
 
+GENERIC_NAMES = {
+    "summary": "Summary", "status": "Status", "assignee": "Assignee", "reporter": "Reporter",
+    "created": "Created", "updated": "Updated", "duedate": "Due date", "resolution": "Resolution",
+    "resolutiondate": "Resolved", "labels": "Labels", "components": "Components",
+    "fixVersions": "Fix versions", "issuelinks": "Linked Issues",
+    "customfield_10016": "Story Points", "customfield_10021": "Flagged",
+}
+SLUG_IMPACT = {"revenue": "revenue", "cost": "cost", "cycle": "cycle-time", "risk": "risk", "insight": "insight"}
+SLUG_TECH = {"ready": "ready", "partial": "partial", "unavailable": "not-ready"}
+
+
+def slug(t):
+    return "".join(c if c.isalnum() else "-" for c in t.lower()).replace("&", "").strip("-").replace("---", "-").replace("--", "-")
+
+
+def generic_issue(u, n):
+    """The same use case in a Jira nobody has customised: the workflow is
+    To Do / In Progress / Done, and the stage rides on a label."""
+    closed = u.get("closed")
+    pre = ["intake", "triage", "discovery", "design", "approval"]
+    status = ("Done", "done") if closed else ("To Do", "new") if u["stage"] in pre else ("In Progress", "indeterminate")
+    labels = [LABEL[r] for r in u["risk"]] + ["impact-" + SLUG_IMPACT[k] for k in u["impact"]]
+    labels.append("stage-" + u["stage"])
+    if u["dataReady"]:
+        labels.append("data-" + u["dataReady"])
+    if u.get("techReady"):
+        labels.append("tech-" + SLUG_TECH[u["techReady"]])
+    if u["metric"]:
+        labels.append("metric-defined")
+    if u["baseline"]:
+        labels.append("baseline-set")
+    if u.get("pattern"):
+        labels.append("pattern-" + slug(u["pattern"]))
+    labels.append("q3-planning")
+    f = {
+        "summary": u["name"],
+        "status": {"name": status[0], "statusCategory": {"key": status[1]}},
+        "assignee": {"displayName": u["owner"], "accountId": "x%d" % n},
+        "reporter": {"displayName": u["sponsor"], "accountId": "r%d" % n, "emailAddress": "r@example.com"},
+        "created": ts(u["opened"]), "updated": ts(u["lastUpdate"], "16:02"),
+        "duedate": u["target"],
+        "resolution": {"name": closed["outcome"]} if closed else None,
+        "resolutiondate": ts(closed["date"], "11:00") if closed else None,
+        "labels": labels,
+        "components": [{"id": str(n), "name": u["func"], "self": "x"}],
+        "fixVersions": [{"id": str(n), "name": "Release " + u["live"][:7], "releaseDate": u["live"],
+                         "released": False}] if u.get("live") else [],
+        "issuelinks": [{"id": "9%d" % n, "type": {"name": "Blocks", "inward": "is blocked by", "outward": "blocks"},
+                        "inwardIssue": {"key": d}} for d in u.get("dependsOn", [])],
+        "customfield_10016": u["size"],
+        "customfield_10021": [opt("Impediment", 500)] if u["waitingOn"] else None,
+    }
+    return {"id": str(10000 + n), "key": u["id"], "fields": f}
+
+
 def main():
     sample = bp.builtin_data()["USE_CASES"]
     clean = {"isLast": True, "names": NAMES, "issues": [issue(u, i) for i, u in enumerate(sample)]}
@@ -130,7 +191,9 @@ def main():
     for i in messy["issues"]:
         i["fields"]["customfield_10028"] = None
     OUT.mkdir(parents=True, exist_ok=True)
-    for name, data in (("jira_clean.json", clean), ("jira_messy.json", messy)):
+    generic = {"isLast": True, "names": GENERIC_NAMES,
+               "issues": [generic_issue(u, i) for i, u in enumerate(sample)]}
+    for name, data in (("jira_clean.json", clean), ("jira_messy.json", messy), ("jira_generic.json", generic)):
         (OUT / name).write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         print("wrote tests/fixtures/%s — %d issues" % (name, len(data["issues"])))
 

@@ -15,7 +15,9 @@ sys.path.insert(0, str(ROOT))
 import build_portfolio as bp  # noqa: E402
 
 FIXTURE = json.loads((ROOT / "tests" / "fixtures" / "jira_clean.json").read_text(encoding="utf-8"))
-FIELDS = [{"id": k, "name": v, "custom": k.startswith("customfield_")} for k, v in FIXTURE["names"].items()]
+GENERIC = json.loads((ROOT / "tests" / "fixtures" / "jira_generic.json").read_text(encoding="utf-8"))
+FIELDS = [{"id": k, "name": v, "custom": k.startswith("customfield_")}
+          for k, v in dict(GENERIC["names"], **FIXTURE["names"]).items()]
 
 
 class FakeJira(BaseHTTPRequestHandler):
@@ -62,7 +64,8 @@ class FetchTest(unittest.TestCase):
         cls.srv = HTTPServer(("127.0.0.1", 0), FakeJira)
         threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
         cls.site = "http://127.0.0.1:%d" % cls.srv.server_port
-        cls.jmap = bp.builtin_data()["JIRA_MAP"]
+        cls.jmap = json.loads((ROOT / "docs" / "jira_map.custom-fields.json").read_text(encoding="utf-8"))
+        cls.generic = bp.builtin_data()["JIRA_MAP"]
 
     @classmethod
     def tearDownClass(cls):
@@ -84,6 +87,15 @@ class FetchTest(unittest.TestCase):
         self.assertIn("customfield_10101", asked)       # resolved from "Consumer Bank function"
         self.assertNotIn("description", asked)          # includeText is off
         self.assertEqual(searches[0][1].get("expand"), "changelog")
+
+    def test_generic_map_asks_for_standard_fields(self):
+        bp.fetch_jira(self.generic, env=self.env(JIRA_PAT="pat"), log=lambda *_: None)
+        asked = [s for s in FakeJira.seen if s[0] == "/rest/api/2/search"][0][1]["fields"].split(",")
+        for f in ("components", "reporter", "fixVersions", "issuelinks", "labels", "duedate",
+                  "customfield_10016", "customfield_10021"):
+            self.assertIn(f, asked)
+        self.assertFalse([f for f in asked if f.startswith("customfield_") and f not in
+                          ("customfield_10016", "customfield_10021")])
 
     def test_data_center_pages_through_offsets(self):
         snap = bp.fetch_jira(self.jmap, env=self.env(JIRA_PAT="pat"), log=lambda *_: None)

@@ -2361,54 +2361,65 @@ const USE_CASES = [
     closed: { outcome: "Transferred", reason: "Employee-facing chat belongs to the Enterprise AI team", date: "2026-07-15" } },
 ];
 
-/* How this portfolio reads out of Jira. Fields are named as Jira shows them
-   (or by id, e.g. "customfield_10231"); docs/JIRA_SETUP.md walks through it.
+/* How this portfolio reads out of Jira, using only what every Jira has:
+   status, components, reporter, due date, fix versions, issue links, story
+   points, the Flagged field, and labels. Labels carry the rest by convention
+   (impact-cost, data-ready, stage-design...), because a label needs no admin
+   and a custom field needs a change request. docs/JIRA_SETUP.md has the
+   convention; docs/jira_map.custom-fields.json is the richer map for a Jira
+   that has the portfolio fields added (WSJF, value, sponsor...).
    build_portfolio.py and an agent with the Jira MCP both read jql and the
-   field list from here, so the search asks for exactly what is mapped and
-   nothing else lands in the file. */
+   field list from here, so the search asks for exactly what is mapped. */
 const JIRA_MAP = {
   "site": "https://your-company.atlassian.net",
-  "jql": "project = AIUC AND issuetype = Capability ORDER BY key",
+  "jql": "project = AIUC ORDER BY key",
   "includeText": false,
   "includeChangelog": true,
   "stages": {
     "Backlog": "intake",
+    "To Do": "intake",
     "Triage": "triage",
     "In Discovery": "discovery",
     "In Design": "design",
     "Awaiting Approval": "approval",
+    "In Review": "approval",
     "In Progress": "delivery",
     "In Scale": "scale",
     "In Benefits Review": "value"
   },
-  "doneStatuses": ["Done", "Closed", "Declined", "Transferred", "Won't Do"],
+  "doneStatuses": ["Done", "Closed", "Declined", "Transferred", "Won't Do", "Resolved"],
   "flagField": "Flagged",
   "fields": {
-    "func": "Consumer Bank function",
-    "sponsor": "Business Sponsor",
-    "wsjf": "WSJF",
-    "est": { "field": "Estimated Annual Value", "scale": 1 },
-    "size": "Story Points",
-    "impact": { "field": "Impact", "values": {
-      "Revenue / growth": "revenue", "Cost / productivity": "cost", "Cycle time": "cycle",
-      "Risk / control": "risk", "Decision / insight": "insight" } },
+    "stage": { "field": "labels", "values": {
+      "stage-intake": "intake", "stage-triage": "triage", "stage-discovery": "discovery",
+      "stage-design": "design", "stage-approval": "approval", "stage-delivery": "delivery",
+      "stage-scale": "scale", "stage-value": "value" } },
+    "func": "components",
+    "sponsor": "reporter",
+    "size": { "field": ["Story Points", "Story point estimate"] },
+    "wsjf": null,
+    "est": null,
+    "realized": null,
+    "impact": { "field": "labels", "values": {
+      "impact-revenue": "revenue", "impact-cost": "cost", "impact-cycle-time": "cycle",
+      "impact-risk": "risk", "impact-insight": "insight" } },
     "risk": { "field": "labels", "values": {
       "npi": "NPI", "reg-report": "Reg report", "no-human-review": "No human review" } },
-    "dataReady": { "field": "Data Readiness", "values": {
-      "Ready": "ready", "Partial": "partial", "Not available": "unavailable" } },
-    "metric": "Success Metric",
-    "baseline": "Baseline Captured",
-    "waitingOn": "Waiting On",
-    "target": "Stage Target Date",
-    "next": "Next Step",
-    "stage": null,
-    "closedReason": "Close Reason",
-    "techReady": { "field": "Technology Readiness", "values": {
-      "Ready": "ready", "Partial": "partial", "Not ready": "unavailable" } },
-    "pattern": "AI Pattern",
-    "live": "Target Go-Live",
-    "realized": { "field": "Realized Annual Value", "scale": 1 },
-    "dependsOn": { "field": "issuelinks", "linkTypes": "block|depend" }
+    "dataReady": { "field": "labels", "values": {
+      "data-ready": "ready", "data-partial": "partial", "data-unavailable": "unavailable" } },
+    "techReady": { "field": "labels", "values": {
+      "tech-ready": "ready", "tech-partial": "partial", "tech-not-ready": "unavailable" } },
+    "metric": { "field": "labels", "values": { "metric-defined": true } },
+    "baseline": { "field": "labels", "values": { "baseline-set": true } },
+    "pattern": { "field": "labels", "prefix": "pattern-", "values": {
+      "pattern-classification-routing": "Classification & routing",
+      "pattern-propensity-timing": "Propensity & timing" } },
+    "target": "duedate",
+    "live": "fixVersions",
+    "dependsOn": { "field": "issuelinks", "linkTypes": "block|depend" },
+    "waitingOn": null,
+    "next": null,
+    "closedReason": null
   }
 };
 
@@ -2441,8 +2452,10 @@ const JiraMapper = (() => {
   const TARGETS = {
     func:         { type: "text",   label: "Business function",   needed: true },
     sponsor:      { type: "text",   label: "Business sponsor",    needed: true },
-    wsjf:         { type: "number", label: "WSJF" },
-    est:          { type: "number", label: "Estimated annual value ($K)" },
+    wsjf:         { type: "number", label: "WSJF",
+                    off: "Nothing is ranked, so the WSJF backlog and capacity line stay empty." },
+    est:          { type: "number", label: "Estimated annual value ($K)",
+                    off: "No value estimates, so the benefits panel has nothing to hold use cases to." },
     size:         { type: "number", label: "Job size (points)" },
     impact:       { type: "list",   label: "Impact",              needed: true },
     risk:         { type: "list",   label: "Risk flags",          needed: true },
@@ -2457,7 +2470,8 @@ const JiraMapper = (() => {
     techReady:    { type: "enum",   label: "Technology readiness" },
     pattern:      { type: "text",   label: "AI pattern" },
     live:         { type: "date",   label: "Target go-live" },
-    realized:     { type: "number", label: "Realized annual value ($K)" },
+    realized:     { type: "number", label: "Realized annual value ($K)",
+                    off: "Realized value is not tracked, so every live use case reads \u201cnot measured\u201d." },
     dependsOn:    { type: "links",  label: "Depends on (issue links)" },
   };
 
@@ -2510,6 +2524,11 @@ const JiraMapper = (() => {
     return true;     // "yes", or any written metric or baseline counts as defined
   }
   function asDate(v) {
+    /* A fix version carries its release date, which is the go-live date in
+       any Jira that ships through releases. With several, the last one is
+       when the use case is actually live. */
+    if (Array.isArray(v)) return v.map(asDate).filter(Boolean).sort().pop() || null;
+    if (v && typeof v === "object" && "releaseDate" in v) return asDate(v.releaseDate);
     const t = asText(v);
     const m = t && /^(\d{4}-\d{2}-\d{2})/.exec(t);
     return m ? m[1] : null;
@@ -2519,6 +2538,8 @@ const JiraMapper = (() => {
     if (spec == null || spec === "") return null;
     return typeof spec === "string" ? { field: spec } : spec;
   }
+  /* "pattern-document-extraction" -> "Document extraction" */
+  const humanize = t => { const s = t.replace(/[-_]+/g, " ").trim(); return s.charAt(0).toUpperCase() + s.slice(1); };
 
   function map(snapshot, cfg) {
     cfg = cfg || {};
@@ -2545,33 +2566,44 @@ const JiraMapper = (() => {
     const resolved = {};
     for (const [target, meta] of Object.entries(TARGETS)) {
       const spec = normSpec((cfg.fields || {})[target]);
-      const row = { target, label: meta.label, ref: spec ? spec.field : null, id: null,
+      const refs = spec ? [].concat(spec.field) : [];
+      const row = { target, label: meta.label, ref: refs.join(" or ") || null, id: null,
                     jiraName: null, populated: 0, total: issues.length, state: "unmapped" };
       fieldRows.push(row);
       if (!spec) {
         if (meta.needed) problem("warn", "unmapped:" + target,
           meta.label + " has no Jira field in JIRA_MAP, so every use case reads it as empty.");
+        /* Jira has no standard home for these. Saying what goes dark is the
+           case for adding the field, which the PM will have to make. */
+        else if (meta.off) problem("info", "off:" + target, meta.label + " is not mapped. " + meta.off +
+          " docs/jira_map.custom-fields.json shows the field to add.");
         continue;
       }
-      let id = null;
-      if (present.has(spec.field) || names[spec.field]) id = spec.field;
-      else {
-        const cands = idsByName[lc(spec.field)] || [];
-        if (cands.length > 1) {
-          /* Big Jira instances often have two fields with one name (two
-             "Story Points" is the classic). Take the one that is filled in
-             and say so, rather than guess silently. */
-          cands.sort((a, b) => filled(b) - filled(a));
-          problem("warn", "ambiguous:" + target, "“" + spec.field + "” matches " + cands.length +
-            " Jira fields (" + cands.join(", ") + "). Using " + cands[0] +
-            ", the most filled in. Put the id in JIRA_MAP to pin it.");
+      /* A field may list alternatives — "Story Points" in a company-managed
+         project is "Story point estimate" in a team-managed one — and the
+         first that this Jira has, and fills in, is used. */
+      let id = null, best = -1;
+      for (const ref of refs) {
+        let cands;
+        if (present.has(ref) || names[ref]) cands = [ref];
+        else {
+          cands = (idsByName[lc(ref)] || []).slice();
+          if (cands.length > 1) {
+            /* Big Jira instances often have two fields with one name (two
+               "Story Points" is the classic). Take the one that is filled in
+               and say so, rather than guess silently. */
+            cands.sort((a, b) => filled(b) - filled(a));
+            problem("warn", "ambiguous:" + target, "“" + ref + "” matches " + cands.length +
+              " Jira fields (" + cands.join(", ") + "). Using " + cands[0] +
+              ", the most filled in. Put the id in JIRA_MAP to pin it.");
+          }
         }
-        id = cands[0] || null;
+        if (cands[0] && filled(cands[0]) > best) { id = cands[0]; best = filled(cands[0]); }
       }
       if (!id) {
         row.state = "missing";
         problem(meta.needed ? "error" : "warn", "missing:" + target,
-          meta.label + ": no field called “" + spec.field + "” came back from Jira. " +
+          meta.label + ": no field called “" + refs.join("” or “") + "” came back from Jira. " +
           "Check the name, or that the search asked for it.");
         continue;
       }
@@ -2606,9 +2638,11 @@ const JiraMapper = (() => {
         if (Number.isNaN(n)) { problem("warn", "nan:" + target, TARGETS[target].label + " is not a number on some issues.", is.key); return null; }
         return n == null ? null : Math.round(n * (spec.scale || 1) * 100) / 100;
       }
-      if (type === "bool") return asBool(raw);
+      if (type === "bool" && !spec.values) return asBool(raw);
       if (type === "date") return asDate(raw);
-      if (type === "text") return asText(raw);
+      /* A multi-value field read as one value (components as the function)
+         takes the first, as Jira lists them. */
+      if (type === "text" && !spec.values && !spec.prefix) return asText(Array.isArray(raw) ? raw[0] : raw);
       if (type === "links") {
         /* On issue X, a link whose inwardIssue is Y reads "X is blocked by Y"
            (or "depends on", by the link type's own wording). Those are X's
@@ -2618,10 +2652,14 @@ const JiraMapper = (() => {
           .filter(l => l && l.inwardIssue && l.type && types.test(l.type.name || ""))
           .map(l => l.inwardIssue.key);
       }
-      const vals = type === "list" ? asList(raw) : [asText(raw)].filter(Boolean);
+      const vals = type === "list" || Array.isArray(raw) ? asList(raw) : [asText(raw)].filter(Boolean);
       const out = [];
       for (const v of vals) {
-        const m = lookup(spec, v);
+        let m = lookup(spec, v);
+        /* A prefix takes any label that starts with it, so a team can add
+           "pattern-voice-biometrics" without anyone editing the map. */
+        if (m === undefined && spec.prefix && lc(v).startsWith(lc(spec.prefix)) && v.length > spec.prefix.length)
+          m = humanize(v.slice(spec.prefix.length));
         if (m === undefined) {
           /* Labels carry everything a team ever tagged, so a label that is not
              in the map is simply not ours. A select field's options are a
@@ -2633,6 +2671,7 @@ const JiraMapper = (() => {
         }
         if (m != null && !out.includes(m)) out.push(m);
       }
+      if (type === "bool") return out.some(Boolean);
       return type === "list" ? out : (out[0] || null);
     };
 

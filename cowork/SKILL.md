@@ -22,7 +22,9 @@ block (between the `DATA BLOCK` markers). You need `jql`, `fields`,
   `searchJiraIssuesUsingJql`; find the site's `cloudId` first if it asks).
 - Ask only for: `summary, status, assignee, created, updated, duedate,
   resolution, resolutiondate, labels`, the `flagField`, and every field named
-  in `fields`. Add `description, comment` only if `includeText` is true.
+  in `fields` (an entry may be a list of alternatives; ask for all of them).
+  The default map uses only standard fields and labels, so expect no
+  `customfield_` ids beyond Story Points and Flagged. Add `description, comment` only if `includeText` is true.
   Request `expand: changelog` if `includeChangelog` is true and the tool allows it.
 - Page until the tool says there are no more results. Do not stop at the first page.
 - Keep each issue exactly as returned (`key` and `fields`). Do not reshape,

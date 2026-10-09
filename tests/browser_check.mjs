@@ -15,6 +15,10 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const TMP = mkdtempSync(join(tmpdir(), "portfolio-check-"));
 const SHOTS = process.env.SHOTS || null;
 const fx = n => JSON.parse(readFileSync(join(ROOT, "tests/fixtures", n), "utf8"));
+// jira_clean and jira_messy carry the portfolio custom fields; the default
+// JIRA_MAP reads a Jira without them (jira_generic).
+const CUSTOM_MAP = join(ROOT, "docs/jira_map.custom-fields.json");
+const customMap = JSON.parse(readFileSync(CUSTOM_MAP, "utf8"));
 const py = (...a) => execFileSync("python3", [join(ROOT, "build_portfolio.py"), ...a], { encoding: "utf8" });
 
 let failed = 0;
@@ -48,12 +52,12 @@ console.log("sample page");
   check((await page.textContent("#srcbar")).includes("Sample data"), "source strip says sample");
 
   console.log("mapper, clean fixture round-trips to the sample");
-  const out = await page.evaluate(f => JiraMapper.map(f, JIRA_MAP), fx("jira_clean.json"));
+  const out = await page.evaluate(([f, m]) => JiraMapper.map(f, m), [fx("jira_clean.json"), customMap]);
   check(out.report.shown === sample.length && out.report.total === sample.length, "all " + sample.length + " issues placed");
   const KEYS = ["id", "name", "func", "stage", "owner", "sponsor", "wsjf", "est", "size", "impact", "metric",
                 "dataReady", "baseline", "risk", "waitingOn", "opened", "lastUpdate", "target", "next", "closed",
                 "pattern", "techReady", "live", "realized", "dependsOn"];
-  let diffs = [];
+  var diffs = [];
   for (const s of sample) {
     const m = out.useCases.find(u => u.id === s.id);
     if (!m) { diffs.push(s.id + " missing"); continue; }
@@ -67,7 +71,29 @@ console.log("sample page");
         "no warnings on clean data" + JSON.stringify(out.report.problems.map(p => p.msg)));
 
   console.log("mapper, messy fixture");
-  const m = await page.evaluate(f => JiraMapper.map(f, JIRA_MAP), fx("jira_messy.json"));
+  console.log("mapper, generic Jira with the default map");
+  const g = await page.evaluate(f => JiraMapper.map(f, JIRA_MAP), fx("jira_generic.json"));
+  check(g.report.shown === sample.length, "all " + sample.length + " issues placed from labels and system fields");
+  const GKEYS = ["id", "name", "func", "stage", "owner", "sponsor", "size", "impact", "metric", "dataReady",
+                 "baseline", "risk", "opened", "lastUpdate", "target", "pattern", "techReady", "live", "dependsOn"];
+  diffs = [];
+  for (const s of sample) {
+    const u = g.useCases.find(x => x.id === s.id);
+    if (!u) { diffs.push(s.id + " missing"); continue; }
+    for (const k of GKEYS) {
+      const a = JSON.stringify(s[k] ?? null), b = JSON.stringify(u[k] ?? null);
+      if (a !== b) diffs.push(s.id + "." + k + ": sample " + a + " vs jira " + b);
+    }
+    if (!!s.closed !== !!u.closed || (s.closed && s.closed.outcome !== u.closed.outcome)) diffs.push(s.id + ".closed");
+    if (!!s.waitingOn !== !!u.waitingOn) diffs.push(s.id + ".waitingOn flag");
+  }
+  check(diffs.length === 0, "every field the generic map covers matches" + (diffs.length ? "\n         " + diffs.join("\n         ") : ""));
+  check(g.report.problems.filter(p => p.sev === "error").length === 0,
+        "no errors" + JSON.stringify(g.report.problems.filter(p => p.sev === "error").map(p => p.msg)));
+  const off = g.report.fields.filter(f => f.state === "unmapped").map(f => f.target).sort().join(",");
+  check(off === "closedReason,est,next,realized,waitingOn,wsjf", "only the fields with no generic home are off: " + off);
+
+  const m = await page.evaluate(([f, mp]) => JiraMapper.map(f, mp), [fx("jira_messy.json"), customMap]);
   const keys = m.report.problems.map(p => p.key);
   check(m.report.shown === sample.length - 1 && m.report.skipped[0].key === "AI-002", "unmapped status is left off, and named");
   check(keys.includes("status:ready for uat"), "unmapped status reported as an error");
@@ -80,10 +106,10 @@ console.log("sample page");
 
   console.log("loading a file on the page");
   await page.click("#tabbtn-jira");
-  await page.setInputFiles("#datacheck-body input[type=file]", join(ROOT, "tests/fixtures/jira_messy.json"));
+  await page.setInputFiles("#datacheck-body input[type=file]", join(ROOT, "tests/fixtures/jira_generic.json"));
   await page.waitForFunction(() => document.querySelector("#srcbar").textContent.includes("Live from Jira"));
-  check((await page.textContent("#srcbar")).includes("15 of 16"), "source strip counts what made the board");
-  check((await page.locator(".dcprob li").count()) >= 4, "data check lists the problems");
+  check((await page.textContent("#srcbar")).includes("16 of 16"), "source strip counts what made the board");
+  check((await page.textContent("#datacheck-body")).includes("WSJF is not mapped"), "data check says what the generic map leaves dark");
   await visitAll(page);
   check(errors.length === 0, "no script errors after loading" + (errors.length ? ": " + errors.join(" | ") : ""));
   await page.close();
@@ -92,7 +118,7 @@ console.log("sample page");
 console.log("page built from a Jira file");
 {
   const built = join(TMP, "built.html");
-  const log = py("--jira-file", join(ROOT, "tests/fixtures/jira_messy.json"), "-o", built);
+  const log = py("--jira-file", join(ROOT, "tests/fixtures/jira_messy.json"), "--jira-map", CUSTOM_MAP, "-o", built);
   check(/status not mapped to a stage: 'Ready for UAT'/.test(log), "build pre-check names the unmapped status");
   const html = readFileSync(built, "utf8");
   check(!html.includes("emailAddress") && !html.includes("accountId") && !html.includes("avatarUrls"),

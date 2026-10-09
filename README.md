@@ -44,7 +44,8 @@ load.
 ## Real Jira data
 
 The page reads real Jira issues through `JIRA_MAP` (JQL, status to stage, and
-which field feeds what) and shows a **Data check** on the Jira tab: every
+which field feeds what). The default map uses only fields every Jira has plus a
+labels convention, so it needs no custom fields or admin change; it shows a **Data check** on the Jira tab: every
 field found or not, how full it is, and every issue it could not place. Three
 ways in, all through the same mapper:
 

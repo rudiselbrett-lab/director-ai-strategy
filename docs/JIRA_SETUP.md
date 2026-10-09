@@ -33,34 +33,58 @@ request returns at most 100 issues; past that, use one of the other routes.
 
 ## The field contract
 
-What the board needs from each issue. The **Minimum** column is what you need
-for the board to be honest; the rest sharpens it.
+The default `JIRA_MAP` needs **no custom fields and no admin change**. It reads
+fields every Jira has, and a labels convention for the rest. Anyone who can
+edit an issue can apply a label; a custom field is a change request.
 
-| Board field | Jira source (default name) | Type | Minimum | If it is missing |
-|---|---|---|---|---|
-| id, name, owner | key, Summary, Assignee | system | yes | — |
-| stage | Status, via `stages` | status | yes | Issue left off the board, named in the Data check |
-| opened, lastUpdate | Created, Updated | system | yes | Issue left off |
-| target | Stage Target Date, else Due date | date | yes | Derived as last update + stage review window, flagged |
-| func | Consumer Bank function | select/text | yes | "Unassigned"; the tier cannot see where it lands |
-| sponsor | Business Sponsor | user/text | yes | Intake grades it red |
-| risk | Labels `npi`, `reg-report`, `no-human-review` | labels | yes | Tier reads low risk. **Check this one first.** |
-| impact | Impact | multi-select | yes | Completeness drops; tier misses revenue |
-| size, est, wsjf | Story Points, Estimated Annual Value ($K), WSJF | number | for ranking | Use case sits unranked, below the capacity line |
-| dataReady | Data Readiness: Ready / Partial / Not available | select | from discovery | Discovery grades red |
-| metric, baseline | Success Metric, Baseline Captured | text / checkbox | from triage | Triage grades red/amber |
-| waitingOn | Waiting On, else the Flagged field | text | no | Flags still show as "Flagged in Jira" |
-| next, closedReason | Next Step, Close Reason | text | no | Blank |
-| techReady | Technology Readiness: Ready / Partial / Not ready | select | from discovery | "Not assessed" |
-| pattern | AI Pattern (Summarization, Document extraction, ...) | select | no | Shared-patterns panel cannot spot reuse |
-| live | Target Go-Live | date | from approval | Not on the roadmap (by design before approval) |
-| realized | Realized Annual Value ($K) | number | once live | Benefits shows "not measured" |
-| dependsOn | Issue links of type Blocks / Depends (`is blocked by`) | links | no | No sequencing check |
-| closed | Status category Done or `doneStatuses`, with Resolution | system | — | — |
+### Standard fields
 
-Risk flags ride on labels by default because adding a custom field to a bank's
-Jira is a change request and a label is not. Jira labels cannot hold spaces,
-which is why the map turns `reg-report` into "Reg report".
+| Board field | Jira field | Notes |
+|---|---|---|
+| id, name, owner | Key, Summary, Assignee | |
+| opened, lastUpdate | Created, Updated | Issues without Created are left off |
+| stage | Status via `stages`, overridden by a `stage-*` label | See below |
+| closed | Status category Done or `doneStatuses`, with Resolution | |
+| func | Components (the first one) | Must match `TIER_FUNCS` spelling for credit, collections, payments, fraud |
+| sponsor | Reporter | An approximation: the person who filed it. Map a real sponsor field when you have one |
+| size | Story Points, or Story point estimate (team-managed) | The first that is filled in |
+| target | Due date | Missing: last update + stage review window, flagged |
+| live | Fix versions, latest release date | Ship through Jira releases and the roadmap fills itself |
+| dependsOn | Linked issues, Blocks / Depends, "is blocked by" | |
+| waitingOn | Flagged | Shows as "Flagged in Jira" |
+
+### Labels convention
+
+| Board field | Labels |
+|---|---|
+| stage | `stage-intake` `stage-triage` `stage-discovery` `stage-design` `stage-approval` `stage-delivery` `stage-scale` `stage-value` |
+| impact | `impact-revenue` `impact-cost` `impact-cycle-time` `impact-risk` `impact-insight` |
+| risk | `npi` `reg-report` `no-human-review` |
+| dataReady | `data-ready` `data-partial` `data-unavailable` |
+| techReady | `tech-ready` `tech-partial` `tech-not-ready` |
+| metric, baseline | `metric-defined`, `baseline-set` |
+| pattern | `pattern-<anything>`, e.g. `pattern-document-extraction` reads as "Document extraction" |
+
+The stage label is what makes a stock **To Do / In Progress / Done** workflow
+usable: the status says whether work is moving, the label says which gate it
+is at. If your project already has a workflow status per stage, list them in
+`stages` and drop the labels. Where both exist, the label wins.
+
+Labels that are not in the map are ignored, so teams can keep their own.
+
+### What has no standard home
+
+WSJF, estimated annual value, realized value, a named sponsor, the waiting-on
+text, the next step and a close reason. With the default map these are off,
+and the Data check says what goes dark: no WSJF means no ranked backlog and no
+capacity line; no estimate or realized value means an empty benefits panel.
+That list is the change request, scoped and justified by what it unlocks.
+[`jira_map.custom-fields.json`](jira_map.custom-fields.json) is the map once
+those fields exist:
+
+```
+python3 build_portfolio.py --jira-map docs/jira_map.custom-fields.json --jira
+```
 
 ## Editing JIRA_MAP
 
@@ -70,10 +94,12 @@ python3 build_portfolio.py --write-jira-map jira_map.json   # dump it
 python3 build_portfolio.py --jira-map jira_map.json --jira-file export.json
 ```
 
-- **Fields** are named as Jira shows them. If two fields share a name (two
+- **Fields** are named as Jira shows them, or by id. A list (`["Story Points",
+  "Story point estimate"]`) takes the first one that is filled in. If two fields share a name (two
   "Story Points" is common) the Data check says so and uses the filled-in one;
   put the `customfield_NNNNN` id in to pin it.
-- **values** maps Jira's option text to the board's keys. An option with no
+- **values** maps Jira's option text or label to the board's keys; **prefix**
+  takes any label starting with it. An option with no
   entry is ignored and reported. Labels with no entry are ignored silently,
   since labels carry everything a team ever tagged.
 - **scale** converts units: if Estimated Annual Value is held in dollars, set
