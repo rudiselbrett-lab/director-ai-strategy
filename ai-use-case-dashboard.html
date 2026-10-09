@@ -3158,7 +3158,7 @@ function renderJira() {
   add("Assignee", asgDd);
 
   const flagDd = el("dd");
-  flagDd.append(el("span", "jflagicon", "⚑"), document.createTextNode("Flagged — " + u.waitingOn));
+  flagDd.append(el("span", "jflagicon", "⚑"), document.createTextNode(u.waitingOn === "Flagged in Jira" ? "Flagged" : "Flagged — " + u.waitingOn));
   if (u.waitingOn) add("Impediment", flagDd);
 
   add("Risk Tier", TIER[tierOf(u)].name + " \u00b7 " + TIER[tierOf(u)].band + " to approval");
