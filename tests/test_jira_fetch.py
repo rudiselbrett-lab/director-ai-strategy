@@ -97,6 +97,12 @@ class FetchTest(unittest.TestCase):
         self.assertFalse([f for f in asked if f.startswith("customfield_") and f not in
                           ("customfield_10016", "customfield_10021")])
 
+    def test_precheck_counts_alternatives_as_one_field(self):
+        snap = bp.snapshot_from(GENERIC["issues"], GENERIC["names"], self.generic)
+        lines, errors = bp.precheck(snap, self.generic)
+        self.assertEqual(errors, 0)
+        self.assertFalse([ln for ln in lines if "not found" in ln], lines)
+
     def test_data_center_pages_through_offsets(self):
         snap = bp.fetch_jira(self.jmap, env=self.env(JIRA_PAT="pat"), log=lambda *_: None)
         self.assertEqual(len(snap["issues"]), len(FIXTURE["issues"]))

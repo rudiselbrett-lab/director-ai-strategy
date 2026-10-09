@@ -267,6 +267,31 @@ JIRA_TEXT_FIELDS = ["description", "comment"]
 JIRA_PAGE = 100
 
 
+def _field_groups(jmap):
+    """Each mapped field as its list of alternatives, e.g. ["Story Points",
+    "Story point estimate"]. A group is missing only if none resolves."""
+    groups = []
+    for spec in (jmap.get("fields") or {}).values():
+        if isinstance(spec, dict):
+            spec = spec.get("field")
+        alts = [r for r in (spec if isinstance(spec, list) else [spec]) if r]
+        if alts:
+            groups.append(alts)
+    if jmap.get("flagField"):
+        groups.append([jmap["flagField"]])
+    return groups
+
+
+def _missing(jmap, names):
+    """Mapped fields with no alternative in this Jira, as display text."""
+    out = []
+    for alts in _field_groups(jmap):
+        _, unresolved = _resolve(alts, names)
+        if len(unresolved) == len(alts):
+            out.append(" or ".join(repr(a) for a in alts))
+    return out
+
+
 def _field_refs(jmap):
     """Every field name or id JIRA_MAP points at."""
     refs = []
@@ -455,9 +480,9 @@ def fetch_jira(jmap, jql=None, env=None, log=print):
 
     fields = _jira_get("%s/rest/api/%s/field" % (site, api), headers)
     names = {f["id"]: f.get("name", f["id"]) for f in fields}
-    ids, unresolved = _resolve(_field_refs(jmap), names)
-    for ref in unresolved:
-        log("  warning: no field called %r in this Jira" % ref)
+    ids, _ = _resolve(_field_refs(jmap), names)
+    for ref in _missing(jmap, names):
+        log("  warning: no field called %s in this Jira" % ref)
     want = JIRA_SYSTEM_FIELDS + ids + (JIRA_TEXT_FIELDS if jmap.get("includeText") else [])
     expand = "changelog" if jmap.get("includeChangelog") else ""
 
@@ -495,9 +520,9 @@ def precheck(snap, jmap):
     names = snap.get("names") or {}
     present = {k for i in snap["issues"] for k in (i.get("fields") or {})}
     lines.append("%d issues" % len(snap["issues"]))
-    _, unresolved = _resolve(_field_refs(jmap), {**{k: k for k in present}, **names})
+    unresolved = _missing(jmap, {**{k: k for k in present}, **names})
     for ref in unresolved:
-        lines.append("  field not found: %r" % ref)
+        lines.append("  field not found: %s" % ref)
     stages = {k.lower() for k in (jmap.get("stages") or {})}
     done = {k.lower() for k in (jmap.get("doneStatuses") or [])}
     counts = {}
