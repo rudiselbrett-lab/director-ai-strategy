@@ -51,6 +51,11 @@ for the board to be honest; the rest sharpens it.
 | metric, baseline | Success Metric, Baseline Captured | text / checkbox | from triage | Triage grades red/amber |
 | waitingOn | Waiting On, else the Flagged field | text | no | Flags still show as "Flagged in Jira" |
 | next, closedReason | Next Step, Close Reason | text | no | Blank |
+| techReady | Technology Readiness: Ready / Partial / Not ready | select | from discovery | "Not assessed" |
+| pattern | AI Pattern (Summarization, Document extraction, ...) | select | no | Shared-patterns panel cannot spot reuse |
+| live | Target Go-Live | date | from approval | Not on the roadmap (by design before approval) |
+| realized | Realized Annual Value ($K) | number | once live | Benefits shows "not measured" |
+| dependsOn | Issue links of type Blocks / Depends (`is blocked by`) | links | no | No sequencing check |
 | closed | Status category Done or `doneStatuses`, with Resolution | system | — | — |
 
 Risk flags ride on labels by default because adding a custom field to a bank's

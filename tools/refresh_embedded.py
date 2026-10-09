@@ -6,11 +6,14 @@ and of the sample portfolio so it runs as one file anywhere. Run this after
 changing either, or the copied-alone script builds yesterday's page:
 
     python3 tools/refresh_embedded.py
+
+The data block is JavaScript, so it is read by evaluating it with node.
 """
 import base64
 import json
 import pathlib
 import re
+import subprocess
 import sys
 import zlib
 
@@ -29,12 +32,14 @@ def pack(text):
 
 def main():
     page = PAGE.read_text(encoding="utf-8")
-    m = re.search(r"const JIRA_MAP = (\{.*?\n\});", page, re.S)
-    if not m:
-        sys.exit("error: no JIRA_MAP in the page's data block")
-    data = bp.builtin_data()
-    data["JIRA_MAP"] = json.loads(m.group(1))
-    data["JIRA_SNAPSHOT"] = None
+    block = page[page.index(bp.START):page.index(bp.END)]
+    js = (block + "\nprocess.stdout.write(JSON.stringify({%s}));"
+          % ", ".join(bp.CONSTS))
+    try:
+        out = subprocess.run(["node", "-e", js], check=True, capture_output=True, text=True).stdout
+    except (OSError, subprocess.CalledProcessError) as e:
+        sys.exit("error: could not evaluate the data block with node: %s" % getattr(e, "stderr", e))
+    data = json.loads(out)
     src = SCRIPT.read_text(encoding="utf-8")
     for name, text in (("TEMPLATE_B64", page),
                        ("DATA_B64", json.dumps(data, ensure_ascii=False))):

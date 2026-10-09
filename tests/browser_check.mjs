@@ -51,7 +51,8 @@ console.log("sample page");
   const out = await page.evaluate(f => JiraMapper.map(f, JIRA_MAP), fx("jira_clean.json"));
   check(out.report.shown === sample.length && out.report.total === sample.length, "all " + sample.length + " issues placed");
   const KEYS = ["id", "name", "func", "stage", "owner", "sponsor", "wsjf", "est", "size", "impact", "metric",
-                "dataReady", "baseline", "risk", "waitingOn", "opened", "lastUpdate", "target", "next", "closed"];
+                "dataReady", "baseline", "risk", "waitingOn", "opened", "lastUpdate", "target", "next", "closed",
+                "pattern", "techReady", "live", "realized", "dependsOn"];
   let diffs = [];
   for (const s of sample) {
     const m = out.useCases.find(u => u.id === s.id);

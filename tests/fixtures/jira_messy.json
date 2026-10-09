@@ -26,6 +26,11 @@
   "customfield_10111": "Next Step",
   "customfield_10112": "Close Reason",
   "customfield_10021": "Flagged",
+  "customfield_10113": "Technology Readiness",
+  "customfield_10114": "AI Pattern",
+  "customfield_10115": "Target Go-Live",
+  "customfield_10116": "Realized Annual Value",
+  "issuelinks": "Linked Issues",
   "customfield_10028": "Story Points"
  },
  "issues": [
@@ -118,6 +123,29 @@
     "customfield_10110": "2026-09-25",
     "customfield_10111": "Benefits baseline capture",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Summarization",
+     "id": "700"
+    },
+    "customfield_10115": "2026-05-15",
+    "customfield_10116": 610,
+    "issuelinks": [
+     {
+      "id": "80",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -240,6 +268,29 @@
     "customfield_10110": "2026-08-23",
     "customfield_10111": "Weekly Intake",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Partial",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Classification & routing",
+     "id": "700"
+    },
+    "customfield_10115": null,
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "81",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -376,6 +427,29 @@
     "customfield_10110": "2026-08-08",
     "customfield_10111": "Tactical Standup",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Risk scoring",
+     "id": "700"
+    },
+    "customfield_10115": "2026-12-15",
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "82",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -508,6 +582,43 @@
     "customfield_10110": "2026-08-15",
     "customfield_10111": "Weekly Intake",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Partial",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Document extraction",
+     "id": "700"
+    },
+    "customfield_10115": "2027-03-31",
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "93",
+      "type": {
+       "name": "Blocks",
+       "inward": "is blocked by",
+       "outward": "blocks"
+      },
+      "inwardIssue": {
+       "key": "AI-011",
+       "fields": {
+        "summary": "x"
+       }
+      }
+     },
+     {
+      "id": "83",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -642,6 +753,29 @@
     "customfield_10110": null,
     "customfield_10111": "Portfolio Council",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Propensity & timing",
+     "id": "700"
+    },
+    "customfield_10115": "2026-11-30",
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "84",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -771,6 +905,29 @@
     "customfield_10110": "2026-08-20",
     "customfield_10111": "Portfolio Council",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Forecasting",
+     "id": "700"
+    },
+    "customfield_10115": "2026-12-31",
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "85",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -876,6 +1033,29 @@
     "customfield_10110": "2026-08-16",
     "customfield_10111": "Weekly Intake — fast-lane candidate",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Content generation",
+     "id": "700"
+    },
+    "customfield_10115": null,
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "86",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1006,6 +1186,29 @@
     "customfield_10110": "2026-09-01",
     "customfield_10111": "Pilot exit review",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Conversational assistant",
+     "id": "700"
+    },
+    "customfield_10115": "2026-10-15",
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "87",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1116,6 +1319,25 @@
     "customfield_10110": "2026-08-17",
     "customfield_10111": "Weekly Intake",
     "customfield_10112": null,
+    "customfield_10113": null,
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Risk scoring",
+     "id": "700"
+    },
+    "customfield_10115": null,
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "88",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1222,6 +1444,25 @@
     "customfield_10110": "2026-08-13",
     "customfield_10111": "Blocked at intake — awaiting a named sponsor",
     "customfield_10112": null,
+    "customfield_10113": null,
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Summarization",
+     "id": "700"
+    },
+    "customfield_10115": null,
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "89",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1357,6 +1598,29 @@
     "customfield_10110": "2026-09-30",
     "customfield_10111": "Portfolio Council (Q3)",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Document extraction",
+     "id": "700"
+    },
+    "customfield_10115": "2026-03-31",
+    "customfield_10116": 1150,
+    "issuelinks": [
+     {
+      "id": "810",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1463,6 +1727,25 @@
     "customfield_10110": "2026-08-19",
     "customfield_10111": "Second triage return — decision due this cycle",
     "customfield_10112": null,
+    "customfield_10113": null,
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Conversational assistant",
+     "id": "700"
+    },
+    "customfield_10115": null,
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "811",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1586,6 +1869,43 @@
     "customfield_10110": "2026-08-29",
     "customfield_10111": "Weekly Intake",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Partial",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Forecasting",
+     "id": "700"
+    },
+    "customfield_10115": "2026-12-15",
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "912",
+      "type": {
+       "name": "Blocks",
+       "inward": "is blocked by",
+       "outward": "blocks"
+      },
+      "inwardIssue": {
+       "key": "AI-006",
+       "fields": {
+        "summary": "x"
+       }
+      }
+     },
+     {
+      "id": "812",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1716,6 +2036,43 @@
     "customfield_10110": "2026-09-04",
     "customfield_10111": "Portfolio Council",
     "customfield_10112": null,
+    "customfield_10113": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/600",
+     "value": "Ready",
+     "id": "600"
+    },
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Summarization",
+     "id": "700"
+    },
+    "customfield_10115": "2027-01-31",
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "913",
+      "type": {
+       "name": "Blocks",
+       "inward": "is blocked by",
+       "outward": "blocks"
+      },
+      "inwardIssue": {
+       "key": "AI-001",
+       "fields": {
+        "summary": "x"
+       }
+      }
+     },
+     {
+      "id": "813",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1819,6 +2176,25 @@
     "customfield_10110": "2026-07-22",
     "customfield_10111": null,
     "customfield_10112": "Low quantifiable value; duplicates enterprise CRM assistant",
+    "customfield_10113": null,
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Content generation",
+     "id": "700"
+    },
+    "customfield_10115": null,
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "814",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,
@@ -1953,6 +2329,25 @@
     "customfield_10110": "2026-07-15",
     "customfield_10111": null,
     "customfield_10112": "Employee-facing chat belongs to the Enterprise AI team",
+    "customfield_10113": null,
+    "customfield_10114": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/700",
+     "value": "Conversational assistant",
+     "id": "700"
+    },
+    "customfield_10115": null,
+    "customfield_10116": null,
+    "issuelinks": [
+     {
+      "id": "815",
+      "type": {
+       "name": "Relates"
+      },
+      "outwardIssue": {
+       "key": "AI-001"
+      }
+     }
+    ],
     "description": {
      "type": "doc",
      "version": 1,

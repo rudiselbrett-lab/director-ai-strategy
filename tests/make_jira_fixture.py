@@ -35,6 +35,9 @@ NAMES = {
     "customfield_10108": "Baseline Captured", "customfield_10109": "Waiting On",
     "customfield_10110": "Stage Target Date", "customfield_10111": "Next Step",
     "customfield_10112": "Close Reason", "customfield_10021": "Flagged",
+    "customfield_10113": "Technology Readiness", "customfield_10114": "AI Pattern",
+    "customfield_10115": "Target Go-Live", "customfield_10116": "Realized Annual Value",
+    "issuelinks": "Linked Issues",
 }
 STATUS = {"intake": ("Backlog", "new"), "triage": ("Triage", "new"),
           "discovery": ("In Discovery", "indeterminate"), "design": ("In Design", "indeterminate"),
@@ -44,6 +47,7 @@ IMPACT = {"revenue": "Revenue / growth", "cost": "Cost / productivity", "cycle":
           "risk": "Risk / control", "insight": "Decision / insight"}
 LABEL = {"NPI": "npi", "Reg report": "reg-report", "No human review": "no-human-review"}
 READY = {"ready": "Ready", "partial": "Partial", "unavailable": "Not available"}
+TECH = {"ready": "Ready", "partial": "Partial", "unavailable": "Not ready"}
 
 
 def adf(text):
@@ -88,6 +92,13 @@ def issue(u, n):
         "customfield_10110": u["target"],
         "customfield_10111": None if u["next"] in (None, "—") else u["next"],
         "customfield_10112": closed["reason"] if closed else None,
+        "customfield_10113": opt(TECH[u["techReady"]], 600) if u.get("techReady") else None,
+        "customfield_10114": opt(u["pattern"], 700) if u.get("pattern") else None,
+        "customfield_10115": u.get("live"),
+        "customfield_10116": u.get("realized"),
+        "issuelinks": [{"id": "9%d" % n, "type": {"name": "Blocks", "inward": "is blocked by", "outward": "blocks"},
+                        "inwardIssue": {"key": d, "fields": {"summary": "x"}}} for d in u.get("dependsOn", [])]
+                      + [{"id": "8%d" % n, "type": {"name": "Relates"}, "outwardIssue": {"key": "AI-001"}}],
         "description": adf("Problem statement for " + u["name"] + "."),
         "comment": {"comments": [{"author": {"displayName": u["owner"], "accountId": "x"},
                                   "created": ts(u["lastUpdate"], "15:00"),

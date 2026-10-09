@@ -297,6 +297,38 @@
   .mbar:hover, .mbar:focus-visible,
   .colbar:hover, .colbar:focus-visible { filter: brightness(1.14); }
   .bnote { color: var(--ink-3); font-size: var(--fs-caption); margin-top: var(--s3); }
+
+  /* roadmap: four quarter lanes, a bar from today to go-live */
+  .roadrow { grid-template-columns: 1.5fr 1fr; }
+  @media (max-width: 860px) { .roadrow { grid-template-columns: 1fr; } }
+  .rmgrid { position: relative; --lab: 236px; }
+  .rmrow { display: grid; grid-template-columns: var(--lab) 1fr; gap: var(--s3); align-items: center; min-height: 26px; }
+  .rmlab { font-size: var(--fs-small); color: var(--ink-2); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rmtrack { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); height: 22px; }
+  .rmtrack.lanes { background: repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), var(--hairline) calc(25% - 1px) 25%); }
+  .rmhead .rmtrack { height: auto; border-bottom: 1px solid var(--rule); }
+  .rmq { font: 700 var(--fs-micro)/1.6 var(--sans); letter-spacing: 0.08em; color: var(--ink-3); padding-left: var(--s1); }
+  .rmbar { position: absolute; top: 5px; height: 12px; background: var(--link); border-radius: var(--r); cursor: default; }
+  .rmbar.planned { background: repeating-linear-gradient(135deg, #cde2fb 0 4px, #e6f0fc 4px 8px); border: 1px solid var(--link); }
+  .rmbar.flag { box-shadow: 0 0 0 2px var(--status-warning); }
+  .rmbar:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .rmdec { position: absolute; top: 6px; width: 10px; height: 10px; margin-left: -5px; background: var(--brand); transform: rotate(45deg); }
+  .rmdep { position: absolute; right: 2px; top: 3px; font-size: var(--fs-micro); color: var(--ink-3); background: #fff; padding: 0 3px; }
+  .rmtoday { position: absolute; top: 0; bottom: 0; left: calc(var(--lab) + var(--s3) + (100% - var(--lab) - var(--s3)) * var(--x) / 100);
+             border-left: 1px dashed var(--brand); pointer-events: none; }
+  .legend .sw.rmk { width: 14px; height: 10px; background: var(--link); border-radius: var(--r); display: inline-block; }
+  .legend .sw.rmk.planned { background: repeating-linear-gradient(135deg, #cde2fb 0 3px, #e6f0fc 3px 6px); border: 1px solid var(--link); }
+  .legend .sw.rmk.dec { width: 8px; height: 8px; background: var(--brand); transform: rotate(45deg); border-radius: 0; }
+  .benefits .qrow { grid-template-columns: 52px 1fr auto; }
+  .benefits .qlab { border: none; background: none; padding: 0; cursor: pointer; color: var(--link); font: inherit; font-size: var(--fs-caption); }
+  .qfill.short { background: var(--status-warning); }
+  @media (max-width: 600px) {
+    .rmgrid { --lab: 56px; }
+    .rmname, .rmdep { display: none; }
+    .rmq { letter-spacing: 0; font-size: 9px; }
+    .benefits .qrow { grid-template-columns: 52px 1fr; }
+    .benefits .qval { grid-column: 2; white-space: normal; }
+  }
   .backlog .empty, .mix .empty, .actions .empty { color: var(--ink-3); padding: var(--s2) 0; }
   .backlog .bsub { color: var(--ink-2); font-size: var(--fs-caption); margin: -var(--s1) 0 var(--s3); }
   .backlog .bsub b { color: var(--ink); font-weight: 700; }
@@ -1496,6 +1528,33 @@
     </section>
   </div>
 
+  <div class="row2 roadrow">
+    <section class="card roadmap" aria-label="Roadmap for the next four quarters">
+      <div class="cardhead">
+        <h2>Roadmap &mdash; next four quarters</h2>
+        <div class="legend">
+          <span class="key"><span class="sw rmk"></span> Approved, in build</span>
+          <span class="key"><span class="sw rmk planned"></span> Not yet approved</span>
+          <span class="key"><span class="sw rmk dec"></span> Gate decision</span>
+        </div>
+      </div>
+      <div id="roadmap"></div>
+      <div class="bnote" id="roadmap-note"></div>
+    </section>
+
+    <section class="card trend benefits" aria-label="Benefits realized against the approved estimate">
+      <div class="cardhead">
+        <h2>Benefits &mdash; realized vs. approved</h2>
+        <div class="legend">
+          <span class="key"><span class="sw real"></span> Realized</span>
+          <span class="key"><span class="sw proj"></span> Approved estimate</span>
+        </div>
+      </div>
+      <div id="benefits"></div>
+      <div class="bnote" id="benefits-note"></div>
+    </section>
+  </div>
+
   <details class="ref tablefold">
     <summary>All use cases <span class="tablecount" id="tablecount"></span></summary>
     <div class="refbody">
@@ -1542,7 +1601,7 @@
         </section>
       </div>
       <!-- what kind of portfolio is this: reported from the fields intake collects -->
-      <div class="row2">
+      <div class="row3">
         <section class="card mix" aria-label="Impact mix">
           <div class="cardhead"><h2>Impact mix</h2></div>
           <div id="impactmix"></div>
@@ -1553,6 +1612,12 @@
           <div class="cardhead"><h2>Risk flags in flight</h2></div>
           <div id="riskmix"></div>
           <div class="bnote" id="risk-note"></div>
+        </section>
+
+        <section class="card mix" aria-label="AI patterns in flight">
+          <div class="cardhead"><h2>Shared patterns</h2></div>
+          <div id="patternmix"></div>
+          <div class="bnote" id="pattern-note"></div>
         </section>
       </div>
     </div>
@@ -2170,6 +2235,7 @@ const USE_CASES = [
     size: 8, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
+    pattern: "Summarization", techReady: "ready", live: "2026-05-15", realized: 610, dependsOn: [],
     opened: "2026-02-10", lastUpdate: "2026-08-07", target: "2026-09-25", next: "Benefits baseline capture" },
 
   { id: "AI-002", name: "Complaint triage and routing", func: "Customer Care",
@@ -2177,6 +2243,7 @@ const USE_CASES = [
     size: 5, impact: ["cycle", "risk"],
     metric: true, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
+    pattern: "Classification & routing", techReady: "partial", live: null, realized: null, dependsOn: [],
     opened: "2026-07-05", lastUpdate: "2026-08-08", target: "2026-08-23", next: "Weekly Intake" },
 
   { id: "AI-003", name: "Fraud alert prioritization", func: "Fraud Operations",
@@ -2184,6 +2251,7 @@ const USE_CASES = [
     size: 8, impact: ["risk", "insight"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: "MRM model designation",
+    pattern: "Risk scoring", techReady: "ready", live: "2026-12-15", realized: null, dependsOn: [],
     opened: "2026-06-10", lastUpdate: "2026-08-09", target: "2026-08-08", next: "Tactical Standup" },
 
   { id: "AI-004", name: "KYC document extraction", func: "Onboarding",
@@ -2191,6 +2259,7 @@ const USE_CASES = [
     size: 13, impact: ["cost", "cycle", "risk"],
     metric: true, dataReady: null, baseline: false,
     risk: ["NPI", "Reg report"], waitingOn: "Data access approval for KYC repository",
+    pattern: "Document extraction", techReady: "partial", live: "2027-03-31", realized: null, dependsOn: ["AI-011"],
     opened: "2026-05-20", lastUpdate: "2026-08-05", target: "2026-08-15", next: "Weekly Intake" },
 
   { id: "AI-005", name: "Collections outreach timing", func: "Collections",
@@ -2198,6 +2267,7 @@ const USE_CASES = [
     size: 5, impact: ["revenue", "insight", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: [], waitingOn: null,
+    pattern: "Propensity & timing", techReady: "ready", live: "2026-11-30", realized: null, dependsOn: [],
     opened: "2026-06-25", lastUpdate: "2026-08-08", target: "2026-08-27", next: "Portfolio Council" },
 
   { id: "AI-006", name: "Branch staffing forecast", func: "Branch Network",
@@ -2205,6 +2275,7 @@ const USE_CASES = [
     size: 8, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: true,
     risk: [], waitingOn: null,
+    pattern: "Forecasting", techReady: "ready", live: "2026-12-31", realized: null, dependsOn: [],
     opened: "2026-06-30", lastUpdate: "2026-07-30", target: "2026-08-20", next: "Portfolio Council" },
 
   { id: "AI-007", name: "Marketing copy assistant", func: "Marketing",
@@ -2212,6 +2283,7 @@ const USE_CASES = [
     size: 2, impact: ["revenue", "cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
+    pattern: "Content generation", techReady: "ready", live: null, realized: null, dependsOn: [],
     opened: "2026-08-01", lastUpdate: "2026-08-09", target: "2026-08-16", next: "Weekly Intake — fast-lane candidate" },
 
   { id: "AI-008", name: "Chat deflection FAQ assistant", func: "Digital Banking",
@@ -2219,6 +2291,7 @@ const USE_CASES = [
     size: 5, impact: ["cost", "cycle"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["No human review"], waitingOn: null,
+    pattern: "Conversational assistant", techReady: "ready", live: "2026-10-15", realized: null, dependsOn: [],
     opened: "2026-03-15", lastUpdate: "2026-08-06", target: "2026-09-01", next: "Pilot exit review" },
 
   { id: "AI-009", name: "Wire fraud anomaly detection", func: "Payments",
@@ -2226,6 +2299,7 @@ const USE_CASES = [
     size: 8, impact: ["risk", "insight"],
     metric: false, dataReady: "partial", baseline: false,
     risk: ["NPI"], waitingOn: null,
+    pattern: "Risk scoring", techReady: null, live: null, realized: null, dependsOn: [],
     opened: "2026-08-06", lastUpdate: "2026-08-10", target: "2026-08-17", next: "Weekly Intake" },
 
   { id: "AI-010", name: "Statement insight summaries", func: "Digital Banking",
@@ -2233,6 +2307,7 @@ const USE_CASES = [
     size: 3, impact: ["insight"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Named business sponsor",
+    pattern: "Summarization", techReady: null, live: null, realized: null, dependsOn: [],
     opened: "2026-07-21", lastUpdate: "2026-08-02", target: "2026-08-13", next: "Blocked at intake — awaiting a named sponsor" },
 
   { id: "AI-011", name: "Loan document pre-fill", func: "Consumer Lending",
@@ -2240,6 +2315,7 @@ const USE_CASES = [
     size: 3, impact: ["revenue", "cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
+    pattern: "Document extraction", techReady: "ready", live: "2026-03-31", realized: 1150, dependsOn: [],
     opened: "2026-01-20", lastUpdate: "2026-08-01", target: "2026-09-30", next: "Portfolio Council (Q3)" },
 
   { id: "AI-012", name: "Teller balancing assistant", func: "Branch Network",
@@ -2247,6 +2323,7 @@ const USE_CASES = [
     size: 3, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: "Prep incomplete — deferred one cycle",
+    pattern: "Conversational assistant", techReady: null, live: null, realized: null, dependsOn: [],
     opened: "2026-07-24", lastUpdate: "2026-08-03", target: "2026-08-19", next: "Second triage return — decision due this cycle" },
 
   { id: "AI-013", name: "ATM cash forecasting", func: "Branch Network",
@@ -2254,6 +2331,7 @@ const USE_CASES = [
     size: 5, impact: ["cost", "insight"],
     metric: true, dataReady: "partial", baseline: false,
     risk: [], waitingOn: null,
+    pattern: "Forecasting", techReady: "partial", live: "2026-12-15", realized: null, dependsOn: ["AI-006"],
     opened: "2026-07-28", lastUpdate: "2026-08-07", target: "2026-08-29", next: "Weekly Intake" },
 
   { id: "AI-014", name: "Dispute intake summarizer", func: "Customer Care",
@@ -2261,6 +2339,7 @@ const USE_CASES = [
     size: 8, impact: ["cycle", "cost"],
     metric: true, dataReady: "ready", baseline: true,
     risk: ["NPI"], waitingOn: null,
+    pattern: "Summarization", techReady: "ready", live: "2027-01-31", realized: null, dependsOn: ["AI-001"],
     opened: "2026-06-20", lastUpdate: "2026-08-05", target: "2026-09-04", next: "Portfolio Council" },
 
   { id: "AI-015", name: "RM email auto-drafting", func: "Small Business",
@@ -2268,6 +2347,7 @@ const USE_CASES = [
     size: 2, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
+    pattern: "Content generation", techReady: null, live: null, realized: null, dependsOn: [],
     opened: "2026-07-08", lastUpdate: "2026-07-24", target: "2026-07-22", next: "—",
     closed: { outcome: "Declined", reason: "Low quantifiable value; duplicates enterprise CRM assistant", date: "2026-07-22" } },
 
@@ -2276,6 +2356,7 @@ const USE_CASES = [
     size: 3, impact: ["cost"],
     metric: false, dataReady: null, baseline: false,
     risk: [], waitingOn: null,
+    pattern: "Conversational assistant", techReady: null, live: null, realized: null, dependsOn: [],
     opened: "2026-07-01", lastUpdate: "2026-07-15", target: "2026-07-15", next: "—",
     closed: { outcome: "Transferred", reason: "Employee-facing chat belongs to the Enterprise AI team", date: "2026-07-15" } },
 ];
@@ -2321,7 +2402,13 @@ const JIRA_MAP = {
     "target": "Stage Target Date",
     "next": "Next Step",
     "stage": null,
-    "closedReason": "Close Reason"
+    "closedReason": "Close Reason",
+    "techReady": { "field": "Technology Readiness", "values": {
+      "Ready": "ready", "Partial": "partial", "Not ready": "unavailable" } },
+    "pattern": "AI Pattern",
+    "live": "Target Go-Live",
+    "realized": { "field": "Realized Annual Value", "scale": 1 },
+    "dependsOn": { "field": "issuelinks", "linkTypes": "block|depend" }
   }
 };
 
@@ -2367,6 +2454,11 @@ const JiraMapper = (() => {
     next:         { type: "text",   label: "Next step" },
     stage:        { type: "enum",   label: "Lifecycle stage (overrides status)" },
     closedReason: { type: "text",   label: "Close reason" },
+    techReady:    { type: "enum",   label: "Technology readiness" },
+    pattern:      { type: "text",   label: "AI pattern" },
+    live:         { type: "date",   label: "Target go-live" },
+    realized:     { type: "number", label: "Realized annual value ($K)" },
+    dependsOn:    { type: "links",  label: "Depends on (issue links)" },
   };
 
   /* Atlassian Document Format (Cloud, API v3) to plain text. Wiki markup
@@ -2517,6 +2609,15 @@ const JiraMapper = (() => {
       if (type === "bool") return asBool(raw);
       if (type === "date") return asDate(raw);
       if (type === "text") return asText(raw);
+      if (type === "links") {
+        /* On issue X, a link whose inwardIssue is Y reads "X is blocked by Y"
+           (or "depends on", by the link type's own wording). Those are X's
+           dependencies; links the other way are X's dependants. */
+        const types = new RegExp(spec.linkTypes || "block|depend", "i");
+        return (Array.isArray(raw) ? raw : [])
+          .filter(l => l && l.inwardIssue && l.type && types.test(l.type.name || ""))
+          .map(l => l.inwardIssue.key);
+      }
       const vals = type === "list" ? asList(raw) : [asText(raw)].filter(Boolean);
       const out = [];
       for (const v of vals) {
@@ -2597,6 +2698,11 @@ const JiraMapper = (() => {
         opened, lastUpdate,
         target: read(is, "target") || asDate(f.duedate),
         next: read(is, "next") || "—",
+        pattern: read(is, "pattern") || null,
+        techReady: read(is, "techReady") || null,
+        live: read(is, "live") || null,
+        realized: read(is, "realized") ?? null,
+        dependsOn: read(is, "dependsOn") || [],
       };
       if (!uc.func) { uc.func = "Unassigned"; problem("warn", "nofunc", "No business function, so the risk tier cannot see where the use case lands.", key); }
       if (!uc.sponsor) uc.sponsor = null;
@@ -2715,6 +2821,7 @@ if (SHIFT) {
     u.opened = slide(u.opened);
     u.lastUpdate = slide(u.lastUpdate);
     u.target = slide(u.target);
+    u.live = slide(u.live);
   }
   /* A report week is a Monday. Sliding by a raw day count lands it wherever
      the offset happens to fall, so snap it back — otherwise the picker offers
@@ -3024,6 +3131,11 @@ function renderJira() {
   add("WSJF", u.wsjf != null ? u.wsjf.toFixed(1) : "—");
   add("Impact", u.impact.map(k => (IMPACTS.find(i => i.key === k) || {}).label || k).join(", "));
   add("Data Readiness", u.dataReady ? u.dataReady.charAt(0).toUpperCase() + u.dataReady.slice(1) : "Not assessed");
+  add("Technology Readiness", u.techReady ? u.techReady.charAt(0).toUpperCase() + u.techReady.slice(1) : "Not assessed");
+  add("AI Pattern", u.pattern || "—");
+  add("Target Go-Live", u.live ? fmtDate(u.live) : "—");
+  if (u.realized != null) add("Realized Annual Value", fmtMoney(u.realized));
+  if ((u.dependsOn || []).length) add("Is blocked by", u.dependsOn.join(", "));
   add("Success Metric", u.metric ? "Defined" : "Not defined");
   add("Baseline Captured", u.baseline ? "Yes" : "No");
 
@@ -3480,10 +3592,13 @@ function openUseCase(u) {
     : "not yet scored — scoring needs a completed discovery package"));
   vs.append(detailLine("Estimated annual value", u.est == null ? "not yet estimated" : fmtMoney(u.est)));
   vs.append(detailLine("Job size", u.size == null ? "not yet sized" : u.size + " points"));
+  if (u.realized != null && u.est)
+    vs.append(detailLine("Realized to date", fmtMoney(u.realized) + " a year, " +
+      Math.round(u.realized / u.est * 100) + "% of the approved estimate"));
   if (!u.closed) {
     const active = USE_CASES.map(x => enrich(x, todayUTC())).filter(x => !x.closed);
     const plan = capacityPlan(active);
-    if (u.stage === "delivery" || u.stage === "value")
+    if (COMMITTED.has(u.stage))
       vs.append(detailLine("Capacity", "committed — already in flight, so it consumes the budget rather than competing for it"));
     else if (u.wsjf != null)
       vs.append(detailLine("Capacity", plan.fits.some(x => x.id === u.id)
@@ -3513,6 +3628,17 @@ function openUseCase(u) {
   const imp = (u.impact || []).map(k => (IMPACTS.find(i => i.key === k) || {}).label).filter(Boolean);
   ri.append(detailLine("Impact", imp.join(", ") || "not tagged"));
   body.append(ri);
+
+  // Delivery: readiness, the plan and what it builds on
+  const RD = { ready: "ready", partial: "partial, gaps known", unavailable: "not ready" };
+  body.append(el("h3", null, "Delivery"));
+  const dl = el("ul");
+  dl.append(detailLine("Data readiness", u.dataReady ? RD[u.dataReady] || u.dataReady : "not assessed"));
+  dl.append(detailLine("Technology readiness", u.techReady ? RD[u.techReady] || u.techReady : "not assessed"));
+  dl.append(detailLine("AI pattern", u.pattern || "not tagged"));
+  dl.append(detailLine("Target go-live", u.live ? fmtDate(u.live) : "set at approval"));
+  if ((u.dependsOn || []).length) dl.append(detailLine("Depends on", u.dependsOn.join(", ")));
+  body.append(dl);
 
   const foot = document.getElementById("pb-foot");
   foot.replaceChildren();
@@ -3641,6 +3767,9 @@ function render() {
   renderPipeline(active);
   renderBacklog(allActive); // capacity is a portfolio fact, not a slice fact
   renderMix(active);
+  renderPatterns(active);
+  renderRoadmap(all);    // the plan and the value are portfolio facts, like capacity
+  renderBenefits(all);
   renderStatus(allActive); // the weekly report describes the portfolio, not a slice
   renderTable(visible);
   renderStatic();
@@ -3735,13 +3864,16 @@ function renderPipeline(active) {
 /* Capacity model: committed points, open points, and where the ranked
    candidate list runs past what's left. Shared by the chart, the weekly
    status, and the suggested actions, so they never disagree. */
+/* Past approval the work is funded: build, scale and benefits review all draw
+   on delivery capacity rather than competing for it. */
+const COMMITTED = new Set(["delivery", "scale", "value"]);
 function capacityPlan(active) {
   const committed = active
-    .filter(u => u.stage === "delivery" || u.stage === "value")
+    .filter(u => COMMITTED.has(u.stage))
     .reduce((s, u) => s + (u.size || 0), 0);
   const open = Math.max(0, CAPACITY.points - committed);
   const candidates = active
-    .filter(u => u.wsjf != null && u.stage !== "delivery" && u.stage !== "value")
+    .filter(u => u.wsjf != null && !COMMITTED.has(u.stage))
     .sort((a, b) => b.wsjf - a.wsjf);
 
   // Strict cut: once one doesn't fit, everything below it waits. Rank is the
@@ -3884,6 +4016,206 @@ function renderMix(active) {
   rnote.textContent = active.length
     ? flagged + " of " + active.length + " in flight carry at least one flag; each routes to Risk or MRM before approval."
     : "No use cases in this slice.";
+}
+
+/* ---------- roadmap, benefits and shared patterns ----------
+   The multi-quarter view the Council funds against, the value each live use
+   case has actually returned against the hypothesis it was approved on, and
+   the patterns that repeat across the portfolio. All three read the same
+   records as everything else: a go-live date, a realized figure and an
+   issue link in Jira, nothing kept on the side. */
+
+/* Realized value under this share of the approved estimate sends a live use
+   case to a benefits review at the Council. */
+const BENEFIT_FLOOR = 0.75;
+
+const quarterOf = ms => { const d = new Date(ms); return { y: d.getUTCFullYear(), q: Math.floor(d.getUTCMonth() / 3) }; };
+const qStart = (y, q) => Date.UTC(y, q * 3, 1);
+const qLabel = (y, q) => "Q" + (q + 1) + " ’" + String(y).slice(2);
+
+function deliveryFacts(all) {
+  const today = todayUTC();
+  const byId = Object.fromEntries(all.map(u => [u.id, u]));
+  const active = all.filter(u => !u.closed);
+  const isLive = u => !!u.live && utc(u.live) <= today;
+
+  // value: everything live with an estimate to hold it to
+  const benefits = active.filter(u => isLive(u) && u.est != null)
+    .map(u => ({ u, pct: u.realized != null ? u.realized / u.est : null }))
+    .sort((a, b) => (a.pct ?? -1) - (b.pct ?? -1));
+  const below = benefits.filter(b => b.pct != null && b.pct < BENEFIT_FLOOR);
+  const unmeasured = benefits.filter(b => b.pct == null);
+
+  // sequence: a use case cannot go live before what it is built on
+  const conflicts = [], atRisk = [];
+  for (const u of active) for (const id of u.dependsOn || []) {
+    const d = byId[id];
+    if (!d) continue;
+    if (d.closed && d.closed.outcome !== "Done") {
+      conflicts.push({ u, d, why: "depends on " + id + ", which was " + d.closed.outcome.toLowerCase() });
+      continue;
+    }
+    if (isLive(d) || d.closed) continue;
+    if (u.live && (!d.live || utc(d.live) > utc(u.live)))
+      conflicts.push({ u, d, why: "is planned live " + fmtDate(u.live) + ", before " + id +
+        (d.live ? " (" + fmtDate(d.live) + ")" : ", which has no go-live date") + " that it builds on" });
+    else if (d.health === "critical" || d.waitingOn)
+      atRisk.push({ u, d, why: "builds on " + id + ", which is " +
+        (d.waitingOn ? "waiting on " + softLower(d.waitingOn) : Math.abs(d.daysTo) + days(Math.abs(d.daysTo)) + " overdue") });
+  }
+
+  // roadmap rows: in flight, not yet live, with a date to plan against
+  const planned = active.filter(u => u.live && !isLive(u)).sort((a, b) => utc(a.live) - utc(b.live));
+  const unscheduled = active.filter(u => !u.live);
+  return { benefits, below, unmeasured, conflicts, atRisk, planned, unscheduled, byId };
+}
+
+function renderRoadmap(all) {
+  const host = document.getElementById("roadmap");
+  const note = document.getElementById("roadmap-note");
+  const f = deliveryFacts(all);
+  const today = todayUTC();
+  const { y, q } = quarterOf(today);
+  const quarters = [0, 1, 2, 3].map(i => { const n = q + i; return { y: y + Math.floor(n / 4), q: n % 4 }; });
+  const t0 = qStart(quarters[0].y, quarters[0].q);
+  const t1 = qStart(quarters[3].y + (quarters[3].q === 3 ? 1 : 0), (quarters[3].q + 1) % 4);
+  const pos = ms => Math.max(0, Math.min(100, (ms - t0) / (t1 - t0) * 100));
+
+  const grid = el("div", "rmgrid");
+  const head = el("div", "rmrow rmhead");
+  head.append(el("div", "rmlab", ""));
+  const hq = el("div", "rmtrack");
+  for (const qq of quarters) hq.append(el("span", "rmq", qLabel(qq.y, qq.q)));
+  head.append(hq);
+  grid.append(head);
+
+  const flagged = new Map();
+  for (const c of f.conflicts) flagged.set(c.u.id, c);
+  for (const r of f.atRisk) if (!flagged.has(r.u.id)) flagged.set(r.u.id, r);
+
+  for (const u of f.planned) {
+    const row = el("div", "rmrow");
+    const lab = el("div", "rmlab");
+    const btn = el("button", "linky", u.id);
+    btn.append(el("span", "rmname", " · " + u.name));
+    btn.type = "button";
+    btn.addEventListener("click", () => openUseCase(u));
+    lab.append(btn);
+    const track = el("div", "rmtrack lanes");
+    const approved = stageOrder[u.stage] > stageOrder.approval;
+    const start = pos(Math.max(today, utc(u.opened)));
+    const end = pos(utc(u.live));
+    const bar = el("span", "rmbar" + (approved ? "" : " planned") + (flagged.has(u.id) ? " flag" : ""));
+    bar.style.left = start + "%";
+    bar.style.width = Math.max(1.5, end - start) + "%";
+    bar.tabIndex = 0;
+    const tipLines = [
+      [u.stageName, approved ? "approved, in build" : "not yet approved"],
+      [fmtDate(u.live), "target go-live"],
+      ...(u.techReady ? [[u.techReady === "unavailable" ? "Not ready" : u.techReady[0].toUpperCase() + u.techReady.slice(1), "technology readiness"]] : []),
+      ...((u.dependsOn || []).length ? [[u.dependsOn.join(", "), "depends on"]] : []),
+    ];
+    bar.setAttribute("aria-label", u.id + ": " + tipLines.map(l => l[1] + " " + l[0]).join(", "));
+    const enter = ev => {
+      tip.replaceChildren(el("div", "tt", u.id + " · " + u.name));
+      for (const [v, l] of tipLines) { const r = el("div", "tr"); r.append(el("span", "tv", v), el("span", "tl", l)); tip.append(r); }
+      if (flagged.has(u.id)) tip.append(el("div", "tl", u.id + " " + flagged.get(u.id).why + "."));
+      if (ev.clientX !== undefined && ev.type !== "focus") showTipAt(ev.clientX, ev.clientY);
+      else { const b = bar.getBoundingClientRect(); showTipAt(b.left + b.width / 2, b.bottom); }
+    };
+    bar.addEventListener("pointermove", enter);
+    bar.addEventListener("pointerleave", hideTip);
+    bar.addEventListener("focus", enter);
+    bar.addEventListener("blur", hideTip);
+    track.append(bar);
+    /* The decision point: a use case short of approval still has its funding
+       call ahead of it, at the date its current gate is due. */
+    if (!approved && utc(u.target) >= t0 && utc(u.target) < t1) {
+      const dm = el("span", "rmdec");
+      dm.style.left = pos(utc(u.target)) + "%";
+      dm.title = "Gate decision due " + fmtDate(u.target);
+      track.append(dm);
+    }
+    if ((u.dependsOn || []).length) track.append(el("span", "rmdep", "after " + u.dependsOn.join(", ")));
+    row.append(lab, track);
+    grid.append(row);
+  }
+  const todayMark = el("div", "rmtoday");
+  todayMark.style.setProperty("--x", String(pos(today)));
+  todayMark.title = "Today";
+  grid.append(todayMark);
+
+  host.replaceChildren(grid);
+  if (!f.planned.length) host.replaceChildren(el("p", "empty",
+    "No use case in flight has a target go-live yet. Dates are set at approval."));
+
+  const pre = f.unscheduled.filter(u => stageOrder[u.stage] <= stageOrder.approval).length;
+  const parts = [];
+  if (f.conflicts.length) parts.push(f.conflicts.map(c => c.u.id + " " + c.why).join("; ") + ".");
+  if (f.atRisk.length) parts.push(f.atRisk.map(c => c.u.id + " " + c.why).join("; ") + ".");
+  parts.push(pre + " earlier-stage use case" + (pre === 1 ? " has" : "s have") +
+    " no go-live yet; a date is set at approval, not guessed at intake.");
+  note.textContent = parts.join(" ");
+}
+
+function renderBenefits(all) {
+  const host = document.getElementById("benefits");
+  const note = document.getElementById("benefits-note");
+  const f = deliveryFacts(all);
+  host.replaceChildren();
+  if (!f.benefits.length) {
+    host.append(el("p", "empty", "Nothing is live with an approved estimate yet."));
+    note.textContent = "";
+    return;
+  }
+  const max = Math.max(...f.benefits.map(b => b.u.est));
+  for (const { u, pct } of f.benefits) {
+    const row = el("div", "qrow bfrow");
+    const lab = el("button", "linky qlab", u.id);
+    lab.type = "button";
+    lab.title = u.name;
+    lab.addEventListener("click", () => openUseCase(u));
+    const track = el("div", "qtrack");
+    track.style.width = (u.est / max * 100) + "%";
+    if (pct != null) {
+      const fill = el("div", "qfill" + (pct < BENEFIT_FLOOR ? " short" : ""));
+      fill.style.width = Math.min(100, Math.round(pct * 100)) + "%";
+      track.append(fill);
+    }
+    const imp = (u.impact || []).map(k => (IMPACTS.find(i => i.key === k) || {}).label).filter(Boolean);
+    track.setAttribute("role", "img");
+    track.setAttribute("aria-label", u.id + ": " + (pct == null ? "not yet measured" :
+      fmtMoney(u.realized) + " realized of " + fmtMoney(u.est) + " approved") + ". Outcomes: " + imp.join(", "));
+    row.append(lab, track, el("div", "qval", pct == null ? "not measured"
+      : fmtMoney(u.realized) + " / " + fmtMoney(u.est) + " · " + Math.round(pct * 100) + "%"));
+    host.append(row);
+  }
+  const rz = f.benefits.reduce((a, b) => a + (b.u.realized || 0), 0);
+  const est = f.benefits.reduce((a, b) => a + b.u.est, 0);
+  note.textContent = fmtMoney(rz) + " realized against " + fmtMoney(est) + " approved across " +
+    f.benefits.length + " live use case" + (f.benefits.length === 1 ? "" : "s") + ". " +
+    (f.below.length ? f.below.map(b => b.u.id).join(", ") + (f.below.length === 1 ? " is" : " are") +
+      " under " + Math.round(BENEFIT_FLOOR * 100) + "% of the hypothesis it was approved on and goes to a benefits review at the Council. " : "") +
+    (f.unmeasured.length ? f.unmeasured.map(b => b.u.id).join(", ") + " live but not yet measured." : "");
+}
+
+function renderPatterns(active) {
+  const wrap = document.getElementById("patternmix");
+  const note = document.getElementById("pattern-note");
+  wrap.replaceChildren();
+  const groups = {};
+  for (const u of active) if (u.pattern) (groups[u.pattern] = groups[u.pattern] || []).push(u);
+  const rows = Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
+  const max = Math.max(1, ...rows.map(r => r[1].length));
+  for (const [p, items] of rows) mixRow(wrap, p, items, max, p);
+  const none = active.filter(u => !u.pattern);
+  if (none.length) mixRow(wrap, "Not tagged", none, max, "No pattern tagged", true);
+  const shared = rows.filter(r => r[1].length > 1);
+  note.textContent = !active.length ? "No use cases in this slice."
+    : shared.length
+      ? shared.map(([p, items]) => p.toLowerCase() + " (" + items.map(u => u.id).join(", ") + ")").join(", ") +
+        (shared.length === 1 ? " repeats" : " repeat") + " across use cases: candidates to build once and reuse rather than fund twice."
+      : "No pattern repeats yet; each use case is building its own.";
 }
 
 /* ---------- suggested actions ----------
@@ -4084,6 +4416,7 @@ function routineReports(active, plan) {
                               live.reduce((a, v) => a + v.projected, 0) * 100) : null;
       const partial = TRENDS.value.find(v => v.partial);
       const overTier = active.filter(u => u.overTier);
+      const dv = deliveryFacts(USE_CASES.map(x => enrich(x, todayUTC())));
       return [
         { h: "What's new", items: fresh.length
             ? fresh.map(u => name(u) + " — moved " + u.sinceUpdate + days(u.sinceUpdate) +
@@ -4101,6 +4434,8 @@ function routineReports(active, plan) {
               : [(plan.open - plan.used) + " of " + plan.open + " capacity points remain this quarter."]),
             ...(overTier.length ? [] : ["Everything in flight is inside its tier window."]),
             ...portfolioRisks(active, plan).slice(0, 3).map(r => r.title + ". " + r.text),
+            ...dv.conflicts.map(c => name(c.u) + " — " + c.why + ". The roadmap needs resequencing or the dependency pulled forward."),
+            ...dv.atRisk.map(c => name(c.u) + " — " + c.why + "."),
           ] },
         /* A use case awaiting the vote and carrying a suggested action is one
            item on the agenda, not two: the vote line leads and the action
@@ -4115,7 +4450,12 @@ function routineReports(active, plan) {
                 (u.est != null ? ", " + fmtMoney(u.est) + " a year" : "") +
                 (own ? ". " + own.slice(own.indexOf("—") + 2).trim().replace(/^./, c => c.toUpperCase()) : ".");
             });
-            return [...votes, ...acts];
+            /* Benefits reviews: a live use case returning less than the
+               hypothesis it was funded on is a Council decision, not a note. */
+            const reviews = dv.below.map(b => name(b.u) + " — benefits review: " + fmtMoney(b.u.realized) +
+              " realized of " + fmtMoney(b.u.est) + " approved (" + Math.round(b.pct * 100) +
+              "%). Decide whether to fix adoption, re-baseline, or stop investing.");
+            return [...votes, ...reviews, ...acts];
           })() },
       ];
     },

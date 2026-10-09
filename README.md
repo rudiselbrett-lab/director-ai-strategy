@@ -16,7 +16,10 @@ what's worth building. Built as a single self-contained HTML page with six views
 - **Intake Form** — a mock of the fifteen-minute use case intake form with
   live answer coaching.
 - **Portfolio Dashboard** — health and staleness tracking, a WSJF-ranked backlog
-  against a capacity line, per-use-case suggested actions, a filterable use case
+  against a capacity line, a four-quarter roadmap with gate decisions and
+  dependency sequencing checks, benefits realized against the approved
+  estimate (under 75% goes to a Council benefits review), shared AI patterns
+  across use cases, per-use-case suggested actions, a filterable use case
   table carrying each one's risk tier, and the trend panels.
 - **Weekly Status** — RAG for the portfolio and its three elements, then the
   week as its three sittings produced it: what the front door took in and
