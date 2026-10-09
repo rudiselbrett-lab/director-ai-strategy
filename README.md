@@ -60,6 +60,11 @@ in the browser and stores nothing. The page never holds a credential.
 mapping; [cowork/SKILL.md](cowork/SKILL.md) is the playbook for an agent
 (Cowork, Copilot, Claude) with the Jira MCP.
 
+For a lighter build, `cowork/command-center.html` is a 20 KB single file:
+what to ask this week, who has to fill in what, what changed, what went
+quiet. It reads the same Jira conventions, and `cowork/PROMPT.md` is the
+one-paste prompt to refresh it in Cowork.
+
 Checks: `python3 -m unittest discover tests` for the pull, and
 `node tests/browser_check.mjs` (after `npm i --no-save playwright`) for the
 mapping round-trip and the page. After editing the page, run
