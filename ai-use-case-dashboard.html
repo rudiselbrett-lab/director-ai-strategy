@@ -241,6 +241,7 @@
   .dot.critical { background: var(--status-critical); color: #fff; }
   .dot.serious  { background: var(--status-serious);  color: var(--ink); }
   .dot.neutral  { background: var(--ink-3);          color: #fff; }
+  .dot.pending  { background: var(--hairline);       color: var(--ink-2); }
 
   /* ---------- panels ---------- */
   .row2 { display: grid; grid-template-columns: 1.15fr 1fr; gap: var(--s4); margin-bottom: var(--s4); }
@@ -1117,6 +1118,45 @@
     .port th, .port td { padding: var(--s2) var(--s2); }
     .tip, dialog.playbook { display: none !important; }
   }
+
+  /* ---------- data source: sample or Jira, and what the mapping found ---------- */
+  .srcbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s3);
+            font-size: var(--fs-caption); color: var(--ink-2); padding: var(--s2) var(--s3);
+            border: 1px solid var(--hairline); border-left: 3px solid var(--ink-3);
+            background: var(--panel); margin-bottom: var(--s5); }
+  .srcbar.live { border-left-color: var(--link); }
+  .srcbar.trouble { border-left-color: var(--status-critical); }
+  .srcbar b { color: var(--ink); }
+  .srcbar .sep { color: var(--rule); }
+  .dcsum { font-size: var(--fs-body); color: var(--ink-2); max-width: var(--measure); margin: 0 0 var(--s3); }
+  .dcsum b { color: var(--ink); }
+  .dcgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: var(--s5); }
+  @media (max-width: 900px) { .dcgrid { grid-template-columns: 1fr; } }
+  .dcprob { list-style: none; margin: 0; padding: 0; }
+  .dcprob li { display: grid; grid-template-columns: 18px 1fr; gap: var(--s2); padding: var(--s2) 0;
+               border-bottom: 1px solid var(--hairline); font-size: var(--fs-small); color: var(--ink-2); }
+  .dcprob li:last-child { border-bottom: none; }
+  .dcprob .keys { display: block; color: var(--ink-3); font-size: var(--fs-caption); margin-top: 2px; word-break: break-word; }
+  .dcid { display: block; color: var(--ink-3); font-size: var(--fs-caption); }
+  .mini td.nw { white-space: nowrap; }
+  .dcstate { font-size: var(--fs-caption); font-weight: 600; }
+  .dcstate.ok { color: #0a7a0a; } .dcstate.missing { color: var(--status-critical); } .dcstate.unmapped { color: var(--ink-3); }
+  .dcload { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-top: var(--s4);
+            padding: var(--s4); border: 1px dashed var(--field); background: #fff; }
+  .dcload.over { border-color: var(--link); background: var(--brand-wash); }
+  .dcload p { margin: 0; font-size: var(--fs-small); color: var(--ink-2); flex: 1 1 280px; }
+  .dcload .err { color: var(--status-critical); font-weight: 600; }
+  .dcbtn { font: 600 var(--fs-small) var(--sans); padding: var(--s2) var(--s4); border: 1px solid var(--brand);
+           background: var(--brand); color: #fff; cursor: pointer; border-radius: var(--r); }
+  .dcbtn:hover { background: var(--brand-2); }
+  .dcbtn.ghost { background: #fff; color: var(--brand); }
+  .jira tbody tr { cursor: pointer; }
+  .jira tbody tr:focus-visible { outline: 2px solid var(--j-blue); outline-offset: -2px; }
+  .jira tbody tr.open td { box-shadow: inset 0 -2px 0 var(--j-blue); }
+  .jira a.jkey { text-decoration: none; }
+  .jira a.jkey:hover { text-decoration: underline; }
+  .jira .jempty { padding: var(--s4); color: var(--j-ink-2); }
+  .trend-empty { color: var(--ink-3); font-size: var(--fs-small); margin: var(--s2) 0; }
 </style>
 </head>
 <body>
@@ -1141,6 +1181,8 @@
 </nav>
 
 <main class="wrap">
+
+<div class="srcbar" id="srcbar" role="status"></div>
 
 <!-- ================= OPERATING MODEL TAB =================
      This tab is the operating model document, rendered section for section.
@@ -1401,8 +1443,9 @@
     <div class="kicker">Portfolio dashboard</div>
     <h1>Where every use case stands</h1>
     <div class="note">
-      <span class="note-lab">Mock-up</span>
-      <p>Where each use case sits, what has slipped, and what fits our capacity. Nobody writes a status here &mdash; the board reads the record. <span data-count="usecases">Sixteen</span> invented use cases, recomputed on every load.</p>
+      <span class="note-lab" data-when="sample">Mock-up</span>
+      <span class="note-lab" data-when="live" hidden>From Jira</span>
+      <p>Where each use case sits, what has slipped, and what fits our capacity. Nobody writes a status here &mdash; the board reads the record. <span data-when="sample"><span data-count="usecases">Sixteen</span> invented use cases, recomputed on every load.</span><span data-when="live" hidden><span data-count="usecases">Sixteen</span> use cases read from Jira, recomputed against today on every load.</span></p>
     </div>
   </div>
 
@@ -1546,8 +1589,9 @@
     <div class="kicker">Weekly status</div>
     <h1 id="status-week">Weekly portfolio status</h1>
     <div class="note">
-      <span class="note-lab">Mock-up</span>
-      <p>The standing weekly report: the output of the three sittings, in the order they happen. Each routine reports what its own definition says it produces, computed from the record all three read. Sample data throughout.</p>
+      <span class="note-lab" data-when="sample">Mock-up</span>
+      <span class="note-lab" data-when="live" hidden>From Jira</span>
+      <p>The standing weekly report: the output of the three sittings, in the order they happen. Each routine reports what its own definition says it produces, computed from the record all three read. <span data-when="sample">Sample data throughout.</span><span data-when="live" hidden>Computed from the Jira issues; previous weeks appear once reports have been issued from real data.</span></p>
     </div>
     <div class="metaline">
       <span>Computed from the portfolio</span><span class="msep" aria-hidden="true">·</span>
@@ -1578,15 +1622,20 @@
     <div class="kicker">Jira</div>
     <h1>The system of record</h1>
     <div class="note">
-      <span class="note-lab">Mock-up</span>
-      <p>The same portfolio in Jira, one issue per use case &mdash; the one place the work lives, and every other tab is a view of it. A picture, not a live connection; every issue is invented.</p>
+      <span class="note-lab" data-when="sample">Mock-up</span>
+      <span class="note-lab" data-when="live" hidden>From Jira</span>
+      <p>The same portfolio in Jira, one issue per use case &mdash; the one place the work lives, and every other tab is a view of it. <span data-when="sample">A picture, not a live connection; every issue is invented.</span><span data-when="live" hidden>A snapshot of the issues the JQL returned, read through JIRA_MAP. The data check says what did not map.</span></p>
     </div>
     <div class="metaline">
-      <span>Project: AI Use Case Capability (AI)</span><span class="msep" aria-hidden="true">·</span>
+      <span>Project: <span id="jira-project">AI Use Case Capability (AI)</span></span><span class="msep" aria-hidden="true">·</span>
       <span>Issue type: Capability</span><span class="msep" aria-hidden="true">·</span>
       <span>Declines stay as issues</span>
     </div>
   </div>
+
+  <h2 class="jsect" id="datacheck">Data check</h2>
+  <p class="jsub">Whether Jira&rsquo;s issues made it onto the board intact: which fields were found, how full they are, and anything left off. Read this first whenever the data is new.</p>
+  <div id="datacheck-body"></div>
 
   <h2 class="jsect">The backlog</h2>
   <p class="jsub">The same <span data-count="usecases">sixteen</span> use cases as Jira issues, with the workflow status and the flag riding on top. This is what every other tab is a view of &mdash; the board, the gates and the weekly report all read this and nothing else.</p>
@@ -2231,7 +2280,388 @@ const USE_CASES = [
     closed: { outcome: "Transferred", reason: "Employee-facing chat belongs to the Enterprise AI team", date: "2026-07-15" } },
 ];
 
+/* How this portfolio reads out of Jira. Fields are named as Jira shows them
+   (or by id, e.g. "customfield_10231"); docs/JIRA_SETUP.md walks through it.
+   build_portfolio.py and an agent with the Jira MCP both read jql and the
+   field list from here, so the search asks for exactly what is mapped and
+   nothing else lands in the file. */
+const JIRA_MAP = {
+  "site": "https://your-company.atlassian.net",
+  "jql": "project = AIUC AND issuetype = Capability ORDER BY key",
+  "includeText": false,
+  "includeChangelog": true,
+  "stages": {
+    "Backlog": "intake",
+    "Triage": "triage",
+    "In Discovery": "discovery",
+    "In Design": "design",
+    "Awaiting Approval": "approval",
+    "In Progress": "delivery",
+    "In Scale": "scale",
+    "In Benefits Review": "value"
+  },
+  "doneStatuses": ["Done", "Closed", "Declined", "Transferred", "Won't Do"],
+  "flagField": "Flagged",
+  "fields": {
+    "func": "Consumer Bank function",
+    "sponsor": "Business Sponsor",
+    "wsjf": "WSJF",
+    "est": { "field": "Estimated Annual Value", "scale": 1 },
+    "size": "Story Points",
+    "impact": { "field": "Impact", "values": {
+      "Revenue / growth": "revenue", "Cost / productivity": "cost", "Cycle time": "cycle",
+      "Risk / control": "risk", "Decision / insight": "insight" } },
+    "risk": { "field": "labels", "values": {
+      "npi": "NPI", "reg-report": "Reg report", "no-human-review": "No human review" } },
+    "dataReady": { "field": "Data Readiness", "values": {
+      "Ready": "ready", "Partial": "partial", "Not available": "unavailable" } },
+    "metric": "Success Metric",
+    "baseline": "Baseline Captured",
+    "waitingOn": "Waiting On",
+    "target": "Stage Target Date",
+    "next": "Next Step",
+    "stage": null,
+    "closedReason": "Close Reason"
+  }
+};
+
+/* Raw issues as Jira returned them, written by build_portfolio.py --jira or
+   --jira-file. When present it replaces USE_CASES above. null = the sample. */
+const JIRA_SNAPSHOT = null;
+
 /* ===== DATA BLOCK END ===================================================== */
+
+/* ===== JIRA MAPPER START ===================================================
+   Turns raw Jira issues into USE_CASES, and says exactly what it could not
+   map. The input is what Jira itself returns, from any of three routes:
+
+     - build_portfolio.py --jira          REST API, token from the environment
+     - an agent with the Jira MCP         same issue JSON, saved to a file
+     - "Load a Jira export" on the page   a search response saved from Jira
+
+   so there is one mapper and one set of rules however the data arrives.
+   Nothing here talks to Jira; the page never holds a credential.
+
+   The mapping is JIRA_MAP in the data block. Fields are referred to by their
+   Jira display name ("Business Sponsor") or id ("customfield_10231"); names
+   are resolved against the `names` map Jira returns, so the config survives
+   being moved between a test and a production Jira whose ids differ.
+   ========================================================================= */
+const JiraMapper = (() => {
+  const lc = s => String(s == null ? "" : s).trim().toLowerCase();
+
+  /* What each use case field is, so the right reader is applied to it. */
+  const TARGETS = {
+    func:         { type: "text",   label: "Business function",   needed: true },
+    sponsor:      { type: "text",   label: "Business sponsor",    needed: true },
+    wsjf:         { type: "number", label: "WSJF" },
+    est:          { type: "number", label: "Estimated annual value ($K)" },
+    size:         { type: "number", label: "Job size (points)" },
+    impact:       { type: "list",   label: "Impact",              needed: true },
+    risk:         { type: "list",   label: "Risk flags",          needed: true },
+    dataReady:    { type: "enum",   label: "Data readiness" },
+    metric:       { type: "bool",   label: "Success metric" },
+    baseline:     { type: "bool",   label: "Baseline captured" },
+    waitingOn:    { type: "text",   label: "Waiting on" },
+    target:       { type: "date",   label: "Stage target date",   needed: true },
+    next:         { type: "text",   label: "Next step" },
+    stage:        { type: "enum",   label: "Lifecycle stage (overrides status)" },
+    closedReason: { type: "text",   label: "Close reason" },
+  };
+
+  /* Atlassian Document Format (Cloud, API v3) to plain text. Wiki markup
+     from Data Center (API v2) is already a string and passes straight through. */
+  function adfText(node) {
+    if (!node || typeof node !== "object") return "";
+    if (node.type === "text") return node.text || "";
+    if (node.type === "hardBreak") return "\n";
+    if (node.type === "mention") return (node.attrs && node.attrs.text) || "";
+    const inner = (node.content || []).map(adfText).join("");
+    return /^(paragraph|heading|listItem|blockquote|codeBlock)$/.test(node.type) ? inner + "\n" : inner;
+  }
+
+  function asText(v) {
+    if (v == null) return null;
+    if (typeof v === "string") return v.trim() || null;
+    if (typeof v === "number" || typeof v === "boolean") return String(v);
+    if (Array.isArray(v)) {
+      const xs = v.map(asText).filter(Boolean);
+      return xs.length ? xs.join(", ") : null;
+    }
+    if (v.type === "doc") return adfText(v).trim() || null;
+    return asText(v.displayName != null ? v.displayName : v.value != null ? v.value
+                 : v.name != null ? v.name : v.key != null ? v.key : null);
+  }
+  function asList(v) {
+    if (v == null) return [];
+    if (Array.isArray(v)) return v.flatMap(asList);
+    if (typeof v === "string") return v.split(/[,;|]/).map(s => s.trim()).filter(Boolean);
+    const t = asText(v);
+    return t ? [t] : [];
+  }
+  function asNumber(v) {
+    if (v == null || v === "") return null;
+    if (typeof v === "number") return isFinite(v) ? v : null;
+    const t = asText(v);
+    if (t == null) return null;
+    const n = parseFloat(t.replace(/[$,\s]/g, ""));
+    return isFinite(n) ? n : NaN;   // NaN = present but unreadable, reported
+  }
+  const YES = /^(y|yes|true|1|done|defined|captured|set|complete|completed)$/;
+  const NO  = /^(n|no|false|0|none|not set|not defined|n\/a|na|-|—)$/;
+  function asBool(v) {
+    if (v == null) return false;
+    if (typeof v === "boolean") return v;
+    if (Array.isArray(v)) return v.some(asBool);
+    const t = lc(asText(v));
+    if (!t || NO.test(t)) return false;
+    return true;     // "yes", or any written metric or baseline counts as defined
+  }
+  function asDate(v) {
+    const t = asText(v);
+    const m = t && /^(\d{4}-\d{2}-\d{2})/.exec(t);
+    return m ? m[1] : null;
+  }
+
+  function normSpec(spec) {
+    if (spec == null || spec === "") return null;
+    return typeof spec === "string" ? { field: spec } : spec;
+  }
+
+  function map(snapshot, cfg) {
+    cfg = cfg || {};
+    const issues = (snapshot && snapshot.issues) || [];
+    const names = Object.assign({}, snapshot && snapshot.names);
+    const problems = [];
+    const problem = (sev, key, msg, issueKey) => {
+      let p = problems.find(x => x.key === key);
+      if (!p) problems.push(p = { sev, key, msg, issues: [] });
+      if (issueKey && !p.issues.includes(issueKey)) p.issues.push(issueKey);
+    };
+
+    /* ---- field resolution: display name or id -> the id in this Jira ---- */
+    const present = new Set();
+    for (const is of issues) for (const k of Object.keys(is.fields || {})) present.add(k);
+    const idsByName = {};
+    for (const [id, n] of Object.entries(names)) (idsByName[lc(n)] = idsByName[lc(n)] || []).push(id);
+    const filled = id => issues.filter(is => {
+      const v = (is.fields || {})[id];
+      return v != null && v !== "" && !(Array.isArray(v) && !v.length);
+    }).length;
+
+    const fieldRows = [];
+    const resolved = {};
+    for (const [target, meta] of Object.entries(TARGETS)) {
+      const spec = normSpec((cfg.fields || {})[target]);
+      const row = { target, label: meta.label, ref: spec ? spec.field : null, id: null,
+                    jiraName: null, populated: 0, total: issues.length, state: "unmapped" };
+      fieldRows.push(row);
+      if (!spec) {
+        if (meta.needed) problem("warn", "unmapped:" + target,
+          meta.label + " has no Jira field in JIRA_MAP, so every use case reads it as empty.");
+        continue;
+      }
+      let id = null;
+      if (present.has(spec.field) || names[spec.field]) id = spec.field;
+      else {
+        const cands = idsByName[lc(spec.field)] || [];
+        if (cands.length > 1) {
+          /* Big Jira instances often have two fields with one name (two
+             "Story Points" is the classic). Take the one that is filled in
+             and say so, rather than guess silently. */
+          cands.sort((a, b) => filled(b) - filled(a));
+          problem("warn", "ambiguous:" + target, "“" + spec.field + "” matches " + cands.length +
+            " Jira fields (" + cands.join(", ") + "). Using " + cands[0] +
+            ", the most filled in. Put the id in JIRA_MAP to pin it.");
+        }
+        id = cands[0] || null;
+      }
+      if (!id) {
+        row.state = "missing";
+        problem(meta.needed ? "error" : "warn", "missing:" + target,
+          meta.label + ": no field called “" + spec.field + "” came back from Jira. " +
+          "Check the name, or that the search asked for it.");
+        continue;
+      }
+      row.id = id;
+      row.jiraName = names[id] || null;
+      row.populated = filled(id);
+      row.state = "ok";
+      resolved[target] = Object.assign({}, spec, { id });
+    }
+
+    const stageMap = {};
+    for (const [st, stage] of Object.entries(cfg.stages || {})) stageMap[lc(st)] = stage;
+    const doneSet = new Set((cfg.doneStatuses || []).map(lc));
+    const lookup = (spec, raw) => {
+      if (!spec.values) return raw;
+      for (const [k, v] of Object.entries(spec.values)) if (lc(k) === lc(raw)) return v;
+      return undefined;
+    };
+    const IMPACT_KEYS = new Set(IMPACTS.map(i => i.key));
+    const RISK_KEYS = new Set(RISK_FLAGS.map(r => r.key));
+    const STAGE_IDS = new Set(STAGES.map(s => s.id));
+    const flagId = cfg.flagField
+      ? (present.has(cfg.flagField) ? cfg.flagField : (idsByName[lc(cfg.flagField)] || [])[0]) : null;
+
+    const read = (is, target) => {
+      const spec = resolved[target];
+      if (!spec) return undefined;
+      const raw = (is.fields || {})[spec.id];
+      const type = TARGETS[target].type;
+      if (type === "number") {
+        const n = asNumber(raw);
+        if (Number.isNaN(n)) { problem("warn", "nan:" + target, TARGETS[target].label + " is not a number on some issues.", is.key); return null; }
+        return n == null ? null : Math.round(n * (spec.scale || 1) * 100) / 100;
+      }
+      if (type === "bool") return asBool(raw);
+      if (type === "date") return asDate(raw);
+      if (type === "text") return asText(raw);
+      const vals = type === "list" ? asList(raw) : [asText(raw)].filter(Boolean);
+      const out = [];
+      for (const v of vals) {
+        const m = lookup(spec, v);
+        if (m === undefined) {
+          /* Labels carry everything a team ever tagged, so a label that is not
+             in the map is simply not ours. A select field's options are a
+             closed list, so an unknown one is a mapping gap. */
+          if (spec.id !== "labels")
+            problem("warn", "value:" + target + ":" + v, TARGETS[target].label + " value “" + v +
+              "” has no entry in JIRA_MAP, so it is ignored.", is.key);
+          continue;
+        }
+        if (m != null && !out.includes(m)) out.push(m);
+      }
+      return type === "list" ? out : (out[0] || null);
+    };
+
+    /* The stage a closed issue stopped at. Its status now says Done, so the
+       stage it was in comes from the stage field if there is one, then from
+       the status it left when it closed, read off the changelog. */
+    const stageBeforeClose = is => {
+      const hist = ((is.changelog || {}).histories || []).slice()
+        .sort((a, b) => String(b.created).localeCompare(String(a.created)));
+      for (const h of hist) for (const it of h.items || [])
+        if (it.field === "status" && stageMap[lc(it.fromString)]) return stageMap[lc(it.fromString)];
+      return null;
+    };
+
+    const useCases = [], skipped = [];
+    for (const is of issues) {
+      const f = is.fields || {};
+      const key = is.key;
+      const statusName = asText(f.status) || "";
+      const cat = lc(f.status && f.status.statusCategory && f.status.statusCategory.key);
+      const isDone = cat === "done" || doneSet.has(lc(statusName));
+
+      let stage = read(is, "stage");
+      if (stage && !STAGE_IDS.has(stage)) {
+        problem("warn", "badstage:" + stage, "Stage field value maps to “" + stage + "”, which is not a lifecycle stage.", key);
+        stage = null;
+      }
+      if (!stage && !isDone) stage = stageMap[lc(statusName)] || null;
+      if (!stage && isDone) stage = stageBeforeClose(is);
+      if (!stage && isDone) {
+        stage = "intake";
+        problem("info", "closedstage", "Closed issues with no stage history are filed under Intake. " +
+          "Pull the changelog or map a stage field to place them where they stopped.", key);
+      }
+      if (!stage) {
+        skipped.push({ key, reason: "status “" + statusName + "”" });
+        problem("error", "status:" + lc(statusName), "Status “" + statusName +
+          "” is not mapped to a stage, so these issues are left off the board.", key);
+        continue;
+      }
+
+      const opened = asDate(f.created);
+      const lastUpdate = asDate(f.updated) || opened;
+      if (!opened) { skipped.push({ key, reason: "no created date" });
+        problem("error", "nodate", "Issues without a created date cannot be placed and are left off.", key); continue; }
+
+      const uc = {
+        id: key,
+        name: asText(f.summary) || key,
+        func: read(is, "func") || null,
+        stage,
+        owner: asText(f.assignee) || "Unassigned",
+        sponsor: read(is, "sponsor") || null,
+        wsjf: read(is, "wsjf") ?? null,
+        est: read(is, "est") ?? null,
+        size: read(is, "size") ?? null,
+        impact: (read(is, "impact") || []).filter(k => IMPACT_KEYS.has(k)),
+        metric: !!read(is, "metric"),
+        dataReady: read(is, "dataReady") || null,
+        baseline: !!read(is, "baseline"),
+        risk: (read(is, "risk") || []).filter(k => RISK_KEYS.has(k)),
+        waitingOn: read(is, "waitingOn") || null,
+        opened, lastUpdate,
+        target: read(is, "target") || asDate(f.duedate),
+        next: read(is, "next") || "—",
+      };
+      if (!uc.func) { uc.func = "Unassigned"; problem("warn", "nofunc", "No business function, so the risk tier cannot see where the use case lands.", key); }
+      if (!uc.sponsor) uc.sponsor = null;
+      if (!uc.waitingOn && flagId && asList(f[flagId]).length) uc.waitingOn = "Flagged in Jira";
+      if (!uc.target) {
+        /* No date to hold the stage to. Rather than invent a deadline, the
+           stage's own review window is used from the last update — the same
+           clock staleness runs on — and the board says so. */
+        uc.target = iso(utc(lastUpdate) + stageById[stage].staleDays * DAY);
+        uc.targetDerived = true;
+        if (!isDone) problem("warn", "notarget", "No stage target date. Health is read against the last update plus the stage’s review window until one is set.", key);
+      }
+      if (isDone) uc.closed = {
+        outcome: asText(f.resolution) || statusName || "Closed",
+        reason: read(is, "closedReason") || "",
+        date: asDate(f.resolutiondate) || lastUpdate,
+      };
+      uc._jira = {
+        status: statusName, cat: isDone ? "done" : cat === "new" ? "todo" : "prog",
+        description: f.description != null ? asText(f.description) : undefined,
+        comments: f.comment && Array.isArray(f.comment.comments)
+          ? f.comment.comments.slice(-3).reverse().map(c => ({
+              who: asText(c.author) || "Unknown", when: asDate(c.created), body: asText(c.body) || "" }))
+          : undefined,
+      };
+      useCases.push(uc);
+    }
+
+    /* The tier floor is set by function name. A credit function spelled
+       differently in Jira would quietly drop to a lower tier, so every function
+       seen is listed with the tier treatment it gets. */
+    const funcs = {};
+    for (const u of useCases) funcs[u.func] = (funcs[u.func] || 0) + 1;
+    const funcRows = Object.entries(funcs).sort((a, b) => b[1] - a[1])
+      .map(([name, n]) => ({ name, n, high: TIER_FUNCS.includes(name) }));
+    if (useCases.length && !funcRows.some(r => r.high))
+      problem("warn", "tierfuncs", "None of the functions in Jira match the high-tier list (" +
+        TIER_FUNCS.join(", ") + "). If credit, collections, payments or fraud work is named differently, " +
+        "nothing is being held to the 70-day tier by function.");
+    if (!issues.length) problem("error", "empty", "The Jira response had no issues. Check the JQL and the account’s project access.");
+
+    const rank = { error: 0, warn: 1, info: 2 };
+    problems.sort((a, b) => rank[a.sev] - rank[b.sev] || b.issues.length - a.issues.length);
+    return { useCases, report: { total: issues.length, shown: useCases.length, skipped,
+      closed: useCases.filter(u => u.closed).length, fields: fieldRows, problems, funcs: funcRows } };
+  }
+
+  /* Accepts what Jira and the tools around it actually hand back: one search
+     response, several pages of them, a bare array of issues, or a snapshot
+     written by build_portfolio.py. */
+  function normalize(data) {
+    if (!data) return null;
+    if (Array.isArray(data)) {
+      if (data.length && data[0] && Array.isArray(data[0].issues)) {
+        return { issues: data.flatMap(p => p.issues), names: Object.assign({}, ...data.map(p => p.names || {})) };
+      }
+      return { issues: data, names: {} };
+    }
+    if (Array.isArray(data.issues)) return Object.assign({ names: {} }, data);
+    return null;
+  }
+
+  return { map, normalize, TARGETS, asText };
+})();
+/* ===== JIRA MAPPER END ===================================================== */
 
 /* =====================================================================
    ENGINE — no edits needed below this line.
@@ -2254,7 +2684,29 @@ function iso(ms) { return new Date(ms).toISOString().slice(0, 10); }
 
    Real data does not want this. Set ANCHOR to null and dates are used exactly
    as given, which is what a Jira export needs. */
-const SHIFT = (typeof ANCHOR === "string" && ANCHOR)
+/* ---------- live data ----------
+   A Jira snapshot in the data block replaces the sample. One loaded on the
+   page ("Load a Jira export") does the same in memory only: nothing is
+   written to the browser, and a reload returns to what the file carries. */
+let SOURCE = { kind: "sample" };
+let JIRA_REPORT = null;
+function applyJira(snapshot, origin, fileName) {
+  const { useCases, report } = JiraMapper.map(snapshot, JIRA_MAP);
+  USE_CASES.splice(0, USE_CASES.length, ...useCases);
+  if (origin === "file") {
+    /* The sample's history and issued reports describe invented work. Next to
+       real issues they would read as fact, so they go. */
+    STATUS_HISTORY.length = 0;
+    TRENDS.value.length = TRENDS.decisions.length = TRENDS.cycle.length = 0;
+  }
+  JIRA_REPORT = report;
+  SOURCE = { kind: "jira", origin, fileName: fileName || null,
+             pulledAt: snapshot.pulledAt || null, jql: snapshot.jql || null,
+             site: (snapshot.site || JIRA_MAP.site || "").replace(/\/+$/, "") };
+}
+if (JIRA_SNAPSHOT) applyJira(JIRA_SNAPSHOT, "build");
+
+const SHIFT = (SOURCE.kind === "sample" && typeof ANCHOR === "string" && ANCHOR)
   ? Math.round((todayUTC() - utc(ANCHOR)) / DAY) : 0;
 function slide(dstr) { return SHIFT && dstr ? iso(utc(dstr) + SHIFT * DAY) : dstr; }
 
@@ -2340,17 +2792,45 @@ function jiraNav(active) {
    a filter with nothing in it is dropped rather than shown at zero: a board
    that is mostly zeroes stops being read. */
 
+/* Live issues carry the status Jira gave them; the sample's are named for
+   the stage. Keys sort as Jira sorts them, by number within the project. */
+function jiraStatusOf(u) {
+  if (u._jira) return { label: u._jira.status, cat: u._jira.cat };
+  return u.closed ? { label: "Done", cat: "done" } : JIRA_STATUS[u.stage];
+}
+const keyNum = k => { const m = /-(\d+)$/.exec(k); return m ? +m[1] : 0; };
+const byKey = (a, b) => a.id.split("-")[0].localeCompare(b.id.split("-")[0]) || keyNum(a.id) - keyNum(b.id);
+function jiraProject() {
+  if (SOURCE.kind !== "jira") return "AI Use Case Capability";
+  const keys = [...new Set(USE_CASES.map(u => u.id.split("-")[0]))];
+  return keys.join(", ") || "Jira";
+}
+/* A link back to the issue in Jira, when the site is known. Opened in a new
+   tab with no opener, and only ever to the configured site. */
+function issueLink(u, cls) {
+  const site = SOURCE.kind === "jira" && /^https:\/\//.test(SOURCE.site) && !/your-company/.test(SOURCE.site)
+    ? SOURCE.site : null;
+  if (!site) return el("span", cls, u.id);
+  const a = el("a", cls, u.id);
+  a.href = site + "/browse/" + encodeURIComponent(u.id);
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.addEventListener("click", ev => ev.stopPropagation());
+  return a;
+}
+let jiraOpenKey = null;
+
 function renderJira() {
-  const issues = USE_CASES.slice().sort((a, b) => a.id.localeCompare(b.id));
+  const issues = USE_CASES.slice().sort(byKey);
 
   /* --- the backlog, as an issue list --- */
   const body = el("div", "jbody");
-  body.append(el("div", "jcrumb", "Projects / AI Use Case Capability / Issues"),
+  body.append(el("div", "jcrumb", "Projects / " + jiraProject() + " / Issues"),
               el("h3", "jtitle", "All issues"));
 
   const bar = el("div", "jtoolbar");
   bar.append(el("span", "jsearch", "Search issues"));
-  for (const f of ["Type: Capability", "Status: All", "Assignee", "+ More"]) {
+  for (const f of [SOURCE.kind === "jira" ? "JQL" : "Type: Capability", "Status: All", "Assignee", "+ More"]) {
     const chip = el("span", "jsel");
     chip.append(document.createTextNode(f), el("span", "jcar", "▾"));
     bar.append(chip);
@@ -2370,8 +2850,18 @@ function renderJira() {
 
   const tb = el("tbody");
   for (const u of issues) {
-    const st = u.closed ? { label: "Done", cat: "done" } : JIRA_STATUS[u.stage];
-    const tr = el("tr", u.waitingOn ? "flagged" : null);
+    const st = jiraStatusOf(u);
+    const tr = el("tr", (u.waitingOn ? "flagged" : "") + (u.id === jiraOpenKey ? " open" : "") || null);
+    /* A row opens its issue below, as clicking one does in Jira. */
+    tr.tabIndex = 0;
+    tr.title = "Open " + u.id + " below";
+    const open = () => {
+      jiraOpenKey = u.id;
+      renderJira();
+      document.getElementById("jira-issue").scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    tr.addEventListener("click", open);
+    tr.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); open(); } });
 
     const typeCell = el("td");
     typeCell.append(capabilityIcon());
@@ -2388,7 +2878,9 @@ function renderJira() {
     who.append(avatar(u.owner), document.createTextNode(u.owner));
     whoCell.append(who);
 
-    tr.append(typeCell, el("td", "jkey", u.id), sumCell, stCell, whoCell,
+    const keyCell = el("td");
+    keyCell.append(issueLink(u, "jkey"));
+    tr.append(typeCell, keyCell, sumCell, stCell, whoCell,
               el("td", "jnum", u.size != null ? String(u.size) : "—"),
               el("td", "jnum", u.wsjf != null ? u.wsjf.toFixed(1) : "—"),
               el("td", "jnum", fmtMoney(u.est)),
@@ -2398,16 +2890,26 @@ function renderJira() {
   t.append(thead, tb);
   scroll.append(t);
   body.append(scroll);
+  if (!issues.length) body.append(el("p", "jempty", "No issues to show. The data check above says why."));
   document.getElementById("jira-list").replaceChildren(jiraNav("Issues"), body);
 
   /* --- one issue, opened --- */
-  const u = USE_CASES.find(x => x.id === "AI-003") || issues[0];
-  const st = JIRA_STATUS[u.stage];
+  /* The sample opens on its held fraud model. Live, it opens on what most
+     needs reading: the first flagged issue in flight, else the top of the
+     ranked backlog. */
+  const inFlight = issues.filter(x => !x.closed);
+  const u = issues.find(x => x.id === jiraOpenKey)
+    || (SOURCE.kind === "sample" && issues.find(x => x.id === "AI-003"))
+    || inFlight.find(x => x.waitingOn)
+    || inFlight.slice().sort((a, b) => (b.wsjf || 0) - (a.wsjf || 0))[0]
+    || issues[0];
+  if (!u) { document.getElementById("jira-issue").replaceChildren(); return; }
+  const st = jiraStatusOf(u);
 
   const ibody = el("div", "jbody issue");
   const crumb = el("div", "jcrumb");
-  crumb.append(document.createTextNode("Projects / AI Use Case Capability / "),
-               capabilityIcon(), document.createTextNode(" Capability " + u.id));
+  crumb.append(document.createTextNode("Projects / " + jiraProject() + " / "),
+               capabilityIcon(), document.createTextNode(" "), issueLink(u));
   ibody.append(crumb, el("h3", "jtitle", u.name));
 
   const acts = el("div", "jacts");
@@ -2422,7 +2924,12 @@ function renderJira() {
      the forum reads, which is the whole argument for keeping intake short. */
   main.append(el("span", "jlab", "Description"));
   const desc = el("div", "jdesc");
-  for (const [q, a] of [
+  if (u._jira) {
+    if (u._jira.description === undefined)
+      desc.append(el("p", "ja jmuted", "Not pulled. includeText is off in JIRA_MAP, so descriptions and comments stay in Jira."));
+    else for (const para of (u._jira.description || "No description.").split(/\n{2,}|\n/).filter(Boolean))
+      desc.append(el("p", "ja", para));
+  } else for (const [q, a] of [
     ["What problem are we solving, and why now?",
      "Fraud analysts work one queue ordered by alert age, so a high-risk alert can sit behind " +
      "low-risk ones for most of a shift. Alert volume is up 34% year on year and the team has not " +
@@ -2465,7 +2972,13 @@ function renderJira() {
   tabs.append(el("span", "on", "Comments"), el("span", null, "History"), el("span", null, "Work log"));
   main.append(el("span", "jlab", "Activity"), tabs);
 
-  for (const c of [
+  const ago = d => { const n = Math.round((todayUTC() - utc(d)) / DAY);
+    return n <= 0 ? "today" : n === 1 ? "yesterday" : n + " days ago"; };
+  const comments = !u._jira ? null
+    : u._jira.comments === undefined ? [{ who: "Not pulled", when: "", body: "Comments stay in Jira while includeText is off." }]
+    : u._jira.comments.length ? u._jira.comments.map(c => ({ who: c.who, when: c.when ? ago(c.when) : "", body: c.body }))
+    : [{ who: "No comments", when: "", body: "Nothing logged on this issue yet." }];
+  for (const c of comments || [
     { who: "S. Okafor", when: "2 days ago",
       body: "Still held at the design gate awaiting MRM model designation. Nothing on our side is blocking; " +
             "Model Risk is in Tuesday's standup and it is on Thursday's Council agenda." },
@@ -2519,13 +3032,183 @@ function renderJira() {
   else labels.textContent = "None";
   add("Labels", labels);
 
-  add("Stage Target Date", fmtDate(u.target));
+  add("Stage Target Date", u.targetDerived ? "Not set in Jira" : fmtDate(u.target));
   add("Updated", fmtDate(u.lastUpdate));
   panel.append(dl);
 
   grid.append(main, panel);
   ibody.append(grid);
   document.getElementById("jira-issue").replaceChildren(jiraNav("Issues"), ibody);
+}
+
+/* ---------- where the data came from, and what the mapping found ----------
+   A board built from real issues has to say so, and say what it dropped. A
+   field nobody filled in reads the same on the board as a field that was
+   never mapped; only this panel tells the two apart. */
+const SEV_UI = { error: ["critical", "✕"], warn: ["warning", "!"], info: ["neutral", "i"] };
+const fmtStamp = s => { const d = new Date(s);
+  return isNaN(d) ? s : d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); };
+
+function renderSource() {
+  const bar = document.getElementById("srcbar");
+  const live = SOURCE.kind === "jira";
+  for (const n of document.querySelectorAll("[data-when]")) n.hidden = n.dataset.when !== (live ? "live" : "sample");
+  const proj = document.getElementById("jira-project");
+  if (proj) proj.textContent = live ? jiraProject() : "AI Use Case Capability (AI)";
+  const toCheck = el("button", "xlink", live ? "Data check" : "Load Jira data");
+  toCheck.type = "button";
+  toCheck.addEventListener("click", () => {
+    selectTab("jira");
+    document.getElementById("datacheck").scrollIntoView({ block: "start" });
+  });
+  const sep = () => el("span", "sep", "·");
+  if (!live) {
+    bar.className = "srcbar";
+    bar.replaceChildren(el("b", null, "Sample data"), sep(),
+      document.createTextNode("Invented use cases, dates kept current on load."), sep(), toCheck);
+    return;
+  }
+  const r = JIRA_REPORT;
+  const errors = r.problems.filter(p => p.sev === "error").length;
+  bar.className = "srcbar live" + (errors || r.shown < r.total ? " trouble" : "");
+  const kids = [el("b", null, "Live from Jira"), sep(),
+    document.createTextNode(r.shown + " of " + r.total + " issues on the board")];
+  if (SOURCE.pulledAt) kids.push(sep(), document.createTextNode("pulled " + fmtStamp(SOURCE.pulledAt)));
+  else if (SOURCE.fileName) kids.push(sep(), document.createTextNode("from " + SOURCE.fileName));
+  if (r.problems.length) kids.push(sep(), document.createTextNode(
+    r.problems.length + (r.problems.length === 1 ? " mapping issue" : " mapping issues")));
+  kids.push(sep(), toCheck);
+  bar.replaceChildren(...kids);
+}
+
+function loaderBox() {
+  const box = el("div", "dcload");
+  const input = document.createElement("input");
+  input.type = "file"; input.accept = ".json,application/json"; input.hidden = true;
+  const btn = el("button", "dcbtn", SOURCE.kind === "jira" ? "Load a different export" : "Load a Jira export");
+  btn.type = "button";
+  btn.addEventListener("click", () => input.click());
+  const msg = el("p", null,
+    "Drop a Jira search response here (.json): the file build_portfolio.py or an agent wrote, or what " +
+    "Jira returns at /rest/api/3/search/jql. It is read in this browser tab only; nothing is uploaded " +
+    "or stored, and reloading the page puts back what the file carries.");
+  box.append(btn, msg, input);
+  if (SOURCE.origin === "file") {
+    const back = el("button", "dcbtn ghost", "Back to the built-in data");
+    back.type = "button";
+    back.addEventListener("click", () => location.reload());
+    box.insertBefore(back, msg);
+  }
+  const load = file => {
+    if (!file) return;
+    file.text().then(txt => {
+      let data;
+      try { data = JSON.parse(txt); } catch (e) { throw new Error("That file is not JSON."); }
+      const snap = JiraMapper.normalize(data);
+      if (!snap) throw new Error("No issues array in that file. Expected a Jira search response or a list of issues.");
+      applyJira(snap, "file", file.name);
+      refreshAll();
+      document.getElementById("datacheck").scrollIntoView({ block: "start" });
+    }).catch(e => {
+      msg.replaceChildren(el("span", "err", e.message || String(e)));
+    });
+  };
+  input.addEventListener("change", () => load(input.files[0]));
+  box.addEventListener("dragover", ev => { ev.preventDefault(); box.classList.add("over"); });
+  box.addEventListener("dragleave", () => box.classList.remove("over"));
+  box.addEventListener("drop", ev => { ev.preventDefault(); box.classList.remove("over");
+    load(ev.dataTransfer.files[0]); });
+  return box;
+}
+
+function renderDataCheck() {
+  const host = document.getElementById("datacheck-body");
+  if (SOURCE.kind !== "jira") {
+    host.replaceChildren(
+      el("p", "dcsum", "Running on the bundled sample, so there is nothing to check. Point it at Jira one of three ways: " +
+        "build the page with build_portfolio.py --jira (token from the environment), have an agent pull the issues " +
+        "through the Jira MCP and write them in, or load a saved search response below. All three read the same " +
+        "JIRA_MAP, and docs/JIRA_SETUP.md covers matching it to your fields."),
+      loaderBox());
+    return;
+  }
+  const r = JIRA_REPORT;
+  const sum = el("p", "dcsum");
+  sum.append(el("b", null, r.total + " issues"), document.createTextNode(" came back from Jira. "),
+    el("b", null, r.shown + " are on the board"),
+    document.createTextNode(" (" + r.closed + " closed)" + (r.skipped.length
+      ? ", " + r.skipped.length + " left off because " + (r.skipped.length === 1 ? "it" : "they") + " could not be placed. " : ". ")));
+  if (SOURCE.jql) sum.append(document.createTextNode("JQL: " + SOURCE.jql));
+
+  const grid = el("div", "dcgrid");
+
+  const left = el("div", "card");
+  left.append(el("div", "cardhead", el("h2", null, "What needs fixing")));
+  if (!r.problems.length) left.append(el("p", "dcsum", "Nothing. Every mapped field resolved and every issue was placed."));
+  else {
+    const ul = el("ul", "dcprob");
+    for (const p of r.problems) {
+      const [cls, glyph] = SEV_UI[p.sev];
+      const d = el("span", "dot " + cls, glyph);
+      d.setAttribute("aria-label", p.sev === "error" ? "Error" : p.sev === "warn" ? "Warning" : "Note");
+      const txt = el("div", null, p.msg);
+      if (p.issues.length) txt.append(el("span", "keys", p.issues.length + (p.issues.length === 1 ? " issue: " : " issues: ") +
+        p.issues.slice(0, 10).join(", ") + (p.issues.length > 10 ? " and " + (p.issues.length - 10) + " more" : "")));
+      ul.append(el("li", null, d, txt));
+    }
+    left.append(ul);
+  }
+
+  const right = el("div", "card");
+  right.append(el("div", "cardhead", el("h2", null, "Field by field")));
+  const t = el("table", "mini");
+  const hr = el("tr");
+  for (const h of ["Board field", "Jira field", "Filled in", ""]) { const th = el("th", null, h); th.scope = "col"; hr.append(th); }
+  t.append(el("thead", null, hr));
+  const tb = el("tbody");
+  for (const f of r.fields) {
+    const jira = el("td", null, f.id ? (f.jiraName || f.id) : (f.ref || "not mapped"));
+    if (f.id && f.jiraName && f.jiraName !== f.id) jira.append(el("span", "dcid", f.id));
+    const fill = f.id ? f.populated + " of " + f.total : "—";
+    const state = f.state === "ok" ? (f.total && !f.populated ? ["missing", "Empty"] : ["ok", "Found"])
+      : f.state === "missing" ? ["missing", "Not found"] : ["unmapped", "Off"];
+    const tr = el("tr");
+    tr.append(el("td", null, f.label), jira, el("td", "nw", fill), el("td", null, el("span", "dcstate " + state[0], state[1])));
+    tb.append(tr);
+  }
+  t.append(tb);
+  right.append(t);
+
+  if (r.funcs.length) {
+    right.append(el("div", "cardhead", el("h2", null, "Functions and their tier floor")));
+    const ft = el("table", "mini");
+    const fh = el("tr");
+    for (const h of ["Function", "Issues", "Tier floor"]) { const th = el("th", null, h); th.scope = "col"; fh.append(th); }
+    ft.append(el("thead", null, fh));
+    const fb = el("tbody");
+    for (const f of r.funcs) {
+      const row = el("tr");
+      row.append(el("td", null, f.name), el("td", null, String(f.n)), el("td", null, f.high ? "High, by function" : "Set by flags and impact"));
+      fb.append(row);
+    }
+    ft.append(fb);
+    right.append(ft);
+  }
+
+  grid.append(left, right);
+  host.replaceChildren(sum, grid, loaderBox());
+}
+
+/* After a file is loaded: everything that was drawn once is drawn again. */
+function refreshAll() {
+  statusIndex = 0;
+  jiraOpenKey = null;
+  fillCounts();
+  renderJira();
+  renderTrends();
+  renderSource();
+  renderDataCheck();
+  render();
 }
 
 function fmtMoney(k) {
@@ -2537,6 +3220,7 @@ const HEALTH = {
   good:     { label: "On track", glyph: "✓", rank: 0 },
   warning:  { label: "At risk",  glyph: "!", rank: 1 },
   critical: { label: "Overdue",  glyph: "✕", rank: 2 },
+  pending:  { label: "Not rated", glyph: "–", rank: -1 },
 };
 const FRESH = {
   fresh: { label: "Fresh", rank: 0 },
@@ -3396,8 +4080,8 @@ function routineReports(active, plan) {
       const fresh = mine.filter(u => u.sinceUpdate <= CYCLE);
       const waiting = at(["approval"]);
       const live = TRENDS.value.filter(v => !v.partial);
-      const rate = Math.round(live.reduce((a, v) => a + v.realized, 0) /
-                              live.reduce((a, v) => a + v.projected, 0) * 100);
+      const rate = live.length ? Math.round(live.reduce((a, v) => a + v.realized, 0) /
+                              live.reduce((a, v) => a + v.projected, 0) * 100) : null;
       const partial = TRENDS.value.find(v => v.partial);
       const overTier = active.filter(u => u.overTier);
       return [
@@ -3406,7 +4090,8 @@ function routineReports(active, plan) {
                 " ago, now at " + u.stageName.toLowerCase() + ".")
             : ["Nothing moved at the Council's stages this week."] },
         { h: "What we need to know", items: [
-            rate + "% of projected value realized across the last " + live.length + " closed quarters" +
+            rate == null ? "No realized value on record yet; it is measured here and entered in TRENDS."
+            : rate + "% of projected value realized across the last " + live.length + " closed quarters" +
               (partial ? ", with " + partial.q + " in flight at " + fmtMoney(partial.realized) +
                          " of " + fmtMoney(partial.projected) : "") + ".",
             /* When the board is full, "No room to start" below says the same
@@ -3631,7 +4316,7 @@ function portfolioRisks(active, plan) {
   return out.slice(0, 4);
 }
 
-const RAG = { good: "Green", warning: "Amber", critical: "Red" };
+const RAG = { good: "Green", warning: "Amber", critical: "Red", pending: "Not rated" };
 
 function ragFor(active) {
   const n = Math.max(1, active.length);
@@ -3653,7 +4338,13 @@ function ragFor(active) {
   const rz = done.reduce((a, v) => a + v.realized, 0), pj = done.reduce((a, v) => a + v.projected, 0);
   const rate = Math.round(rz / pj * 100);
   const live = TRENDS.value[TRENDS.value.length - 1];
-  const value = {
+  /* No closed quarter on record means value has not been measured, which is
+     not the same as value being fine. It is shown as unrated and left out of
+     the overall, rather than painted green. */
+  const value = !done.length || !pj ? {
+    name: "Value", status: "pending", metric: "Not measured",
+    note: "No closed quarter of realized value on record yet. It is measured at the Portfolio Council and entered in TRENDS, not read from Jira.",
+  } : {
     name: "Value", status: rate >= 90 ? "good" : rate >= 75 ? "warning" : "critical",
     metric: rate + "%",
     note: "of projected value realized across the last " + done.length + " closed quarters. " +
@@ -3682,7 +4373,8 @@ function ragFor(active) {
 
   const parts = [flow, value, risk];
   const rank = { good: 0, warning: 1, critical: 2 };
-  const overall = parts.reduce((w, p) => rank[p.status] > rank[w.status] ? p : w, parts[0]);
+  const rated = parts.filter(p => p.status in rank);
+  const overall = rated.reduce((w, p) => rank[p.status] > rank[w.status] ? p : w, rated[0]);
   return { parts, overall: {
     status: overall.status,
     note: overall.status === "good"
@@ -4089,6 +4781,8 @@ function renderStatic() {
   fillCounts();
   renderJira();
   renderTrends();
+  renderSource();
+  renderDataCheck();
 
   // intake team criteria grid
   const CRITERIA = ["Strategic alignment", "Business value", "Scale", "Feasibility", "Risk exposure", "Confidence in stated value"];
@@ -4113,8 +4807,21 @@ function renderStatic() {
 
 /* ---------- trend panels (portfolio history — rendered once) ---------- */
 function renderTrends() {
+  for (const id of ["trend-value", "trend-decisions", "trend-decisions-labels", "trend-cycle", "trend-cycle-labels"])
+    document.getElementById(id).replaceChildren();
+  /* History is not in Jira: realized value is measured at the Council, and
+     decisions and cycle time need the record over time. With no history the
+     panel says so rather than drawing the sample's. */
+  const none = (wrapId, noteId, what) => {
+    document.getElementById(wrapId).append(el("p", "trend-empty", "No history yet. " + what));
+    document.getElementById(noteId).textContent = "";
+  };
+
   // Value: per-quarter track (projected) with fill (realized), one hue
   const vwrap = document.getElementById("trend-value");
+  if (!TRENDS.value.length) none("trend-value", "tv-note",
+    "Realized value is measured at the Portfolio Council, not held in Jira; add each quarter to TRENDS.value.");
+  else {
   const maxP = Math.max(...TRENDS.value.map(v => v.projected));
   for (const v of TRENDS.value) {
     const row = el("div", "qrow");
@@ -4149,10 +4856,14 @@ function renderTrends() {
   const vLast = TRENDS.value[TRENDS.value.length - 1];
   document.getElementById("tv-note").textContent =
     fmtMoney(vLast.realized) + " realized of " + fmtMoney(vLast.projected) + " projected — " + vLast.q + " still in flight.";
+  }
 
   // Decisions: single-series columns with value on the cap
   const dwrap = document.getElementById("trend-decisions");
   const dlabs = document.getElementById("trend-decisions-labels");
+  if (!TRENDS.decisions.length) none("trend-decisions", "td-note",
+    "Add each month's decisions to TRENDS.decisions as the front door and Council record them.");
+  else {
   const maxN = Math.max(...TRENDS.decisions.map(d => d.n));
   for (const d of TRENDS.decisions) {
     const cw = el("div", "colwrap");
@@ -4184,15 +4895,18 @@ function renderTrends() {
   const dFirst = TRENDS.decisions[0], dLast = TRENDS.decisions[TRENDS.decisions.length - 1];
   document.getElementById("td-note").textContent =
     dLast.n + " decisions in " + dLast.m + ", up from " + dFirst.n + " in " + dFirst.m + " — throughput, not backlog.";
+  }
 
   // Cycle time: single 2px line with end labels
   const cwrap = document.getElementById("trend-cycle");
   const clabs = document.getElementById("trend-cycle-labels");
   const pts = TRENDS.cycle;
+  if (pts.length < 2) { none("trend-cycle", "tc-note",
+    "Needs at least two months of intake-to-decision medians in TRENDS.cycle."); return; }
   const W = 330, H = 100, padX = 26, padTop = 24, padBot = 12;
   const dMin = Math.min(...pts.map(p => p.days)), dMax = Math.max(...pts.map(p => p.days));
   const x = i => padX + i * (W - 2 * padX) / (pts.length - 1);
-  const y = d => padTop + (dMax - d) / (dMax - dMin) * (H - padTop - padBot);
+  const y = d => padTop + (dMax - d) / ((dMax - dMin) || 1) * (H - padTop - padBot);
   const svgNS = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(svgNS, "svg");
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);

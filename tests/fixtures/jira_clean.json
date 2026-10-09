@@ -1,0 +1,2014 @@
+{
+ "isLast": true,
+ "names": {
+  "summary": "Summary",
+  "status": "Status",
+  "assignee": "Assignee",
+  "created": "Created",
+  "updated": "Updated",
+  "duedate": "Due date",
+  "resolution": "Resolution",
+  "resolutiondate": "Resolved",
+  "labels": "Labels",
+  "description": "Description",
+  "comment": "Comment",
+  "customfield_10101": "Consumer Bank function",
+  "customfield_10102": "Business Sponsor",
+  "customfield_10103": "WSJF",
+  "customfield_10104": "Estimated Annual Value",
+  "customfield_10016": "Story Points",
+  "customfield_10105": "Impact",
+  "customfield_10106": "Data Readiness",
+  "customfield_10107": "Success Metric",
+  "customfield_10108": "Baseline Captured",
+  "customfield_10109": "Waiting On",
+  "customfield_10110": "Stage Target Date",
+  "customfield_10111": "Next Step",
+  "customfield_10112": "Close Reason",
+  "customfield_10021": "Flagged"
+ },
+ "issues": [
+  {
+   "id": "10000",
+   "key": "AI-001",
+   "self": "https://example.atlassian.net/rest/api/3/issue/0",
+   "fields": {
+    "summary": "Contact center call summarization",
+    "status": {
+     "name": "In Scale",
+     "id": "0",
+     "statusCategory": {
+      "key": "indeterminate",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "M. Alvarez",
+     "accountId": "5b10ac8d82e05b22cc7d4ef0",
+     "emailAddress": "someone0@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-02-10T09:14:00.000-0400",
+    "updated": "2026-08-07T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/100",
+     "value": "Contact Center",
+     "id": "100"
+    },
+    "customfield_10102": "Contact Center Ops",
+    "customfield_10103": 4.2,
+    "customfield_10104": 850,
+    "customfield_10016": 8,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Cycle time",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Ready",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/400",
+      "value": "Yes",
+      "id": "400"
+     }
+    ],
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-09-25",
+    "customfield_10111": "Benefits baseline capture",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Contact center call summarization."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "M. Alvarez",
+        "accountId": "x"
+       },
+       "created": "2026-08-07T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to In Scale."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10001",
+   "key": "AI-002",
+   "self": "https://example.atlassian.net/rest/api/3/issue/1",
+   "fields": {
+    "summary": "Complaint triage and routing",
+    "status": {
+     "name": "In Discovery",
+     "id": "1",
+     "statusCategory": {
+      "key": "indeterminate",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "J. Whitfield",
+     "accountId": "5b10ac8d82e05b22cc7d4ef1",
+     "emailAddress": "someone1@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-07-05T09:14:00.000-0400",
+    "updated": "2026-08-08T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/101",
+     "value": "Customer Care",
+     "id": "101"
+    },
+    "customfield_10102": "Head of Customer Care",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 5,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cycle time",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Risk / control",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Partial",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": null,
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-08-23",
+    "customfield_10111": "Weekly Intake",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Complaint triage and routing."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "J. Whitfield",
+        "accountId": "x"
+       },
+       "created": "2026-08-08T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to In Discovery."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10002",
+   "key": "AI-003",
+   "self": "https://example.atlassian.net/rest/api/3/issue/2",
+   "fields": {
+    "summary": "Fraud alert prioritization",
+    "status": {
+     "name": "In Design",
+     "id": "2",
+     "statusCategory": {
+      "key": "indeterminate",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "S. Okafor",
+     "accountId": "5b10ac8d82e05b22cc7d4ef2",
+     "emailAddress": "someone2@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-06-10T09:14:00.000-0400",
+    "updated": "2026-08-09T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/102",
+     "value": "Fraud Operations",
+     "id": "102"
+    },
+    "customfield_10102": "Fraud Ops Director",
+    "customfield_10103": 6.8,
+    "customfield_10104": 1200,
+    "customfield_10016": 8,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Risk / control",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Decision / insight",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Ready",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/400",
+      "value": "Yes",
+      "id": "400"
+     }
+    ],
+    "customfield_10109": "MRM model designation",
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ],
+    "customfield_10110": "2026-08-08",
+    "customfield_10111": "Tactical Standup",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Fraud alert prioritization."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "S. Okafor",
+        "accountId": "x"
+       },
+       "created": "2026-08-09T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to In Design."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10003",
+   "key": "AI-004",
+   "self": "https://example.atlassian.net/rest/api/3/issue/3",
+   "fields": {
+    "summary": "KYC document extraction",
+    "status": {
+     "name": "In Discovery",
+     "id": "3",
+     "statusCategory": {
+      "key": "indeterminate",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "R. Patel",
+     "accountId": "5b10ac8d82e05b22cc7d4ef3",
+     "emailAddress": "someone3@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-05-20T09:14:00.000-0400",
+    "updated": "2026-08-05T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "reg-report",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/103",
+     "value": "Onboarding",
+     "id": "103"
+    },
+    "customfield_10102": "Deposits Operations",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 13,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Cycle time",
+      "id": "201"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/202",
+      "value": "Risk / control",
+      "id": "202"
+     }
+    ],
+    "customfield_10106": null,
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": null,
+    "customfield_10109": "Data access approval for KYC repository",
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ],
+    "customfield_10110": "2026-08-15",
+    "customfield_10111": "Weekly Intake",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for KYC document extraction."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "R. Patel",
+        "accountId": "x"
+       },
+       "created": "2026-08-05T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to In Discovery."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10004",
+   "key": "AI-005",
+   "self": "https://example.atlassian.net/rest/api/3/issue/4",
+   "fields": {
+    "summary": "Collections outreach timing",
+    "status": {
+     "name": "Awaiting Approval",
+     "id": "4",
+     "statusCategory": {
+      "key": "new",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "D. Kim",
+     "accountId": "5b10ac8d82e05b22cc7d4ef4",
+     "emailAddress": "someone4@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-06-25T09:14:00.000-0400",
+    "updated": "2026-08-08T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/104",
+     "value": "Collections",
+     "id": "104"
+    },
+    "customfield_10102": "Collections VP",
+    "customfield_10103": 7.5,
+    "customfield_10104": 950,
+    "customfield_10016": 5,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Revenue / growth",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Decision / insight",
+      "id": "201"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/202",
+      "value": "Cost / productivity",
+      "id": "202"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Ready",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/400",
+      "value": "Yes",
+      "id": "400"
+     }
+    ],
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-08-27",
+    "customfield_10111": "Portfolio Council",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Collections outreach timing."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "D. Kim",
+        "accountId": "x"
+       },
+       "created": "2026-08-08T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Awaiting Approval."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10005",
+   "key": "AI-006",
+   "self": "https://example.atlassian.net/rest/api/3/issue/5",
+   "fields": {
+    "summary": "Branch staffing forecast",
+    "status": {
+     "name": "Awaiting Approval",
+     "id": "5",
+     "statusCategory": {
+      "key": "new",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "L. Nguyen",
+     "accountId": "5b10ac8d82e05b22cc7d4ef5",
+     "emailAddress": "someone5@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-06-30T09:14:00.000-0400",
+    "updated": "2026-07-30T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/105",
+     "value": "Branch Network",
+     "id": "105"
+    },
+    "customfield_10102": "Retail Distribution",
+    "customfield_10103": 5.1,
+    "customfield_10104": 400,
+    "customfield_10016": 8,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Decision / insight",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Partial",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/400",
+      "value": "Yes",
+      "id": "400"
+     }
+    ],
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-08-20",
+    "customfield_10111": "Portfolio Council",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Branch staffing forecast."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "L. Nguyen",
+        "accountId": "x"
+       },
+       "created": "2026-07-30T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Awaiting Approval."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10006",
+   "key": "AI-007",
+   "self": "https://example.atlassian.net/rest/api/3/issue/6",
+   "fields": {
+    "summary": "Marketing copy assistant",
+    "status": {
+     "name": "Triage",
+     "id": "6",
+     "statusCategory": {
+      "key": "new",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "5b10ac8d82e05b22cc7d4ef6",
+     "emailAddress": "someone6@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-08-01T09:14:00.000-0400",
+    "updated": "2026-08-09T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/106",
+     "value": "Marketing",
+     "id": "106"
+    },
+    "customfield_10102": "Consumer Marketing",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 2,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Revenue / growth",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Cost / productivity",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": null,
+    "customfield_10107": null,
+    "customfield_10108": null,
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-08-16",
+    "customfield_10111": "Weekly Intake — fast-lane candidate",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Marketing copy assistant."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "Intake team",
+        "accountId": "x"
+       },
+       "created": "2026-08-09T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Triage."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10007",
+   "key": "AI-008",
+   "self": "https://example.atlassian.net/rest/api/3/issue/7",
+   "fields": {
+    "summary": "Chat deflection FAQ assistant",
+    "status": {
+     "name": "In Progress",
+     "id": "7",
+     "statusCategory": {
+      "key": "indeterminate",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "M. Alvarez",
+     "accountId": "5b10ac8d82e05b22cc7d4ef7",
+     "emailAddress": "someone7@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-03-15T09:14:00.000-0400",
+    "updated": "2026-08-06T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "no-human-review",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/107",
+     "value": "Digital Banking",
+     "id": "107"
+    },
+    "customfield_10102": "Digital Channels",
+    "customfield_10103": 5.9,
+    "customfield_10104": 600,
+    "customfield_10016": 5,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Cycle time",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Ready",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/400",
+      "value": "Yes",
+      "id": "400"
+     }
+    ],
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-09-01",
+    "customfield_10111": "Pilot exit review",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Chat deflection FAQ assistant."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "M. Alvarez",
+        "accountId": "x"
+       },
+       "created": "2026-08-06T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to In Progress."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10008",
+   "key": "AI-009",
+   "self": "https://example.atlassian.net/rest/api/3/issue/8",
+   "fields": {
+    "summary": "Wire fraud anomaly detection",
+    "status": {
+     "name": "Backlog",
+     "id": "8",
+     "statusCategory": {
+      "key": "new",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "5b10ac8d82e05b22cc7d4ef8",
+     "emailAddress": "someone8@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-08-06T09:14:00.000-0400",
+    "updated": "2026-08-10T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/108",
+     "value": "Payments",
+     "id": "108"
+    },
+    "customfield_10102": "Payments Risk",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 8,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Risk / control",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Decision / insight",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Partial",
+     "id": "300"
+    },
+    "customfield_10107": null,
+    "customfield_10108": null,
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-08-17",
+    "customfield_10111": "Weekly Intake",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Wire fraud anomaly detection."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "Intake team",
+        "accountId": "x"
+       },
+       "created": "2026-08-10T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Backlog."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10009",
+   "key": "AI-010",
+   "self": "https://example.atlassian.net/rest/api/3/issue/9",
+   "fields": {
+    "summary": "Statement insight summaries",
+    "status": {
+     "name": "Backlog",
+     "id": "9",
+     "statusCategory": {
+      "key": "new",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "5b10ac8d82e05b22cc7d4ef9",
+     "emailAddress": "someone9@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-07-21T09:14:00.000-0400",
+    "updated": "2026-08-02T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/109",
+     "value": "Digital Banking",
+     "id": "109"
+    },
+    "customfield_10102": "— (sponsor not named)",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 3,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Decision / insight",
+      "id": "200"
+     }
+    ],
+    "customfield_10106": null,
+    "customfield_10107": null,
+    "customfield_10108": null,
+    "customfield_10109": "Named business sponsor",
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ],
+    "customfield_10110": "2026-08-13",
+    "customfield_10111": "Blocked at intake — awaiting a named sponsor",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Statement insight summaries."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "Intake team",
+        "accountId": "x"
+       },
+       "created": "2026-08-02T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Backlog."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10010",
+   "key": "AI-011",
+   "self": "https://example.atlassian.net/rest/api/3/issue/10",
+   "fields": {
+    "summary": "Loan document pre-fill",
+    "status": {
+     "name": "In Benefits Review",
+     "id": "10",
+     "statusCategory": {
+      "key": "indeterminate",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "T. Brooks",
+     "accountId": "5b10ac8d82e05b22cc7d4ef10",
+     "emailAddress": "someone10@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-01-20T09:14:00.000-0400",
+    "updated": "2026-08-01T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/110",
+     "value": "Consumer Lending",
+     "id": "110"
+    },
+    "customfield_10102": "Lending Operations",
+    "customfield_10103": 8.9,
+    "customfield_10104": 1400,
+    "customfield_10016": 3,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Revenue / growth",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Cycle time",
+      "id": "201"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/202",
+      "value": "Cost / productivity",
+      "id": "202"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Ready",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/400",
+      "value": "Yes",
+      "id": "400"
+     }
+    ],
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-09-30",
+    "customfield_10111": "Portfolio Council (Q3)",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Loan document pre-fill."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "T. Brooks",
+        "accountId": "x"
+       },
+       "created": "2026-08-01T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to In Benefits Review."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10011",
+   "key": "AI-012",
+   "self": "https://example.atlassian.net/rest/api/3/issue/11",
+   "fields": {
+    "summary": "Teller balancing assistant",
+    "status": {
+     "name": "Triage",
+     "id": "11",
+     "statusCategory": {
+      "key": "new",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "5b10ac8d82e05b22cc7d4ef11",
+     "emailAddress": "someone11@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-07-24T09:14:00.000-0400",
+    "updated": "2026-08-03T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/111",
+     "value": "Branch Network",
+     "id": "111"
+    },
+    "customfield_10102": "Branch Operations",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 3,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     }
+    ],
+    "customfield_10106": null,
+    "customfield_10107": null,
+    "customfield_10108": null,
+    "customfield_10109": "Prep incomplete — deferred one cycle",
+    "customfield_10021": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/500",
+      "value": "Impediment",
+      "id": "500"
+     }
+    ],
+    "customfield_10110": "2026-08-19",
+    "customfield_10111": "Second triage return — decision due this cycle",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Teller balancing assistant."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "Intake team",
+        "accountId": "x"
+       },
+       "created": "2026-08-03T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Triage."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10012",
+   "key": "AI-013",
+   "self": "https://example.atlassian.net/rest/api/3/issue/12",
+   "fields": {
+    "summary": "ATM cash forecasting",
+    "status": {
+     "name": "In Discovery",
+     "id": "12",
+     "statusCategory": {
+      "key": "indeterminate",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "R. Patel",
+     "accountId": "5b10ac8d82e05b22cc7d4ef12",
+     "emailAddress": "someone12@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-07-28T09:14:00.000-0400",
+    "updated": "2026-08-07T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/112",
+     "value": "Branch Network",
+     "id": "112"
+    },
+    "customfield_10102": "Treasury Services",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 5,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Decision / insight",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Partial",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": null,
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-08-29",
+    "customfield_10111": "Weekly Intake",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for ATM cash forecasting."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "R. Patel",
+        "accountId": "x"
+       },
+       "created": "2026-08-07T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to In Discovery."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10013",
+   "key": "AI-014",
+   "self": "https://example.atlassian.net/rest/api/3/issue/13",
+   "fields": {
+    "summary": "Dispute intake summarizer",
+    "status": {
+     "name": "Awaiting Approval",
+     "id": "13",
+     "statusCategory": {
+      "key": "new",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "D. Kim",
+     "accountId": "5b10ac8d82e05b22cc7d4ef13",
+     "emailAddress": "someone13@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-06-20T09:14:00.000-0400",
+    "updated": "2026-08-05T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": null,
+    "resolutiondate": null,
+    "labels": [
+     "npi",
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/113",
+     "value": "Customer Care",
+     "id": "113"
+    },
+    "customfield_10102": "Card Services",
+    "customfield_10103": 3.4,
+    "customfield_10104": 300,
+    "customfield_10016": 8,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cycle time",
+      "id": "200"
+     },
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/201",
+      "value": "Cost / productivity",
+      "id": "201"
+     }
+    ],
+    "customfield_10106": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/300",
+     "value": "Ready",
+     "id": "300"
+    },
+    "customfield_10107": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Defined in the discovery package."
+        }
+       ]
+      }
+     ]
+    },
+    "customfield_10108": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/400",
+      "value": "Yes",
+      "id": "400"
+     }
+    ],
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-09-04",
+    "customfield_10111": "Portfolio Council",
+    "customfield_10112": null,
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for Dispute intake summarizer."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "D. Kim",
+        "accountId": "x"
+       },
+       "created": "2026-08-05T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Awaiting Approval."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   }
+  },
+  {
+   "id": "10014",
+   "key": "AI-015",
+   "self": "https://example.atlassian.net/rest/api/3/issue/14",
+   "fields": {
+    "summary": "RM email auto-drafting",
+    "status": {
+     "name": "Declined",
+     "id": "14",
+     "statusCategory": {
+      "key": "done",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "5b10ac8d82e05b22cc7d4ef14",
+     "emailAddress": "someone14@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-07-08T09:14:00.000-0400",
+    "updated": "2026-07-24T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": {
+     "name": "Declined",
+     "id": "10"
+    },
+    "resolutiondate": "2026-07-22T11:00:00.000-0400",
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/114",
+     "value": "Small Business",
+     "id": "114"
+    },
+    "customfield_10102": "Small Business Banking",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 2,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     }
+    ],
+    "customfield_10106": null,
+    "customfield_10107": null,
+    "customfield_10108": null,
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-07-22",
+    "customfield_10111": null,
+    "customfield_10112": "Low quantifiable value; duplicates enterprise CRM assistant",
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for RM email auto-drafting."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "Intake team",
+        "accountId": "x"
+       },
+       "created": "2026-07-24T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Triage."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   },
+   "changelog": {
+    "histories": [
+     {
+      "id": "1",
+      "created": "2026-07-08T10:00:00.000-0400",
+      "items": [
+       {
+        "field": "status",
+        "fromString": "Backlog",
+        "toString": "Triage"
+       }
+      ]
+     },
+     {
+      "id": "2",
+      "created": "2026-07-22T11:00:00.000-0400",
+      "items": [
+       {
+        "field": "status",
+        "fromString": "Triage",
+        "toString": "Declined"
+       },
+       {
+        "field": "resolution",
+        "fromString": null,
+        "toString": "Declined"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "10015",
+   "key": "AI-016",
+   "self": "https://example.atlassian.net/rest/api/3/issue/15",
+   "fields": {
+    "summary": "HR policy chatbot",
+    "status": {
+     "name": "Transferred",
+     "id": "15",
+     "statusCategory": {
+      "key": "done",
+      "id": 3
+     }
+    },
+    "assignee": {
+     "displayName": "Intake team",
+     "accountId": "5b10ac8d82e05b22cc7d4ef15",
+     "emailAddress": "someone15@example.com",
+     "avatarUrls": {
+      "48x48": "x"
+     }
+    },
+    "created": "2026-07-01T09:14:00.000-0400",
+    "updated": "2026-07-15T16:02:00.000-0400",
+    "duedate": null,
+    "resolution": {
+     "name": "Transferred",
+     "id": "10"
+    },
+    "resolutiondate": "2026-07-15T11:00:00.000-0400",
+    "labels": [
+     "q3-planning"
+    ],
+    "customfield_10101": {
+     "self": "https://example.atlassian.net/rest/api/3/customFieldOption/115",
+     "value": "Human Resources",
+     "id": "115"
+    },
+    "customfield_10102": "HR Shared Services",
+    "customfield_10103": null,
+    "customfield_10104": null,
+    "customfield_10016": 3,
+    "customfield_10105": [
+     {
+      "self": "https://example.atlassian.net/rest/api/3/customFieldOption/200",
+      "value": "Cost / productivity",
+      "id": "200"
+     }
+    ],
+    "customfield_10106": null,
+    "customfield_10107": null,
+    "customfield_10108": null,
+    "customfield_10109": null,
+    "customfield_10021": null,
+    "customfield_10110": "2026-07-15",
+    "customfield_10111": null,
+    "customfield_10112": "Employee-facing chat belongs to the Enterprise AI team",
+    "description": {
+     "type": "doc",
+     "version": 1,
+     "content": [
+      {
+       "type": "paragraph",
+       "content": [
+        {
+         "type": "text",
+         "text": "Problem statement for HR policy chatbot."
+        }
+       ]
+      }
+     ]
+    },
+    "comment": {
+     "comments": [
+      {
+       "author": {
+        "displayName": "Intake team",
+        "accountId": "x"
+       },
+       "created": "2026-07-15T15:00:00.000-0400",
+       "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Moved to Triage."
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ],
+     "total": 1,
+     "maxResults": 1
+    }
+   },
+   "changelog": {
+    "histories": [
+     {
+      "id": "1",
+      "created": "2026-07-01T10:00:00.000-0400",
+      "items": [
+       {
+        "field": "status",
+        "fromString": "Backlog",
+        "toString": "Triage"
+       }
+      ]
+     },
+     {
+      "id": "2",
+      "created": "2026-07-15T11:00:00.000-0400",
+      "items": [
+       {
+        "field": "status",
+        "fromString": "Triage",
+        "toString": "Transferred"
+       },
+       {
+        "field": "resolution",
+        "fromString": null,
+        "toString": "Transferred"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}
