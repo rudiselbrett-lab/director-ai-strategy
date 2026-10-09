@@ -1,6 +1,6 @@
 # Rebuild the command center in Cowork
 
-Attach `command-center.html` and paste this. It is one small file (no build step), so a refresh costs one Jira query and one file write.
+Attach `command-center.html` and paste this. It is one small file (no build step), so a refresh costs one Jira query and one file write. The weekly status and the by-function report compute from the same data; the page does not keep past weeks, so save each week's copied status where your team keeps records.
 
 ```
 Refresh my AI portfolio command center from Jira.
@@ -15,8 +15,10 @@ Refresh my AI portfolio command center from Jira.
 2. Cut every person object down to {displayName}. Drop accountId, email, avatars.
 3. In command-center.html, replace `const JIRA = null;` with
    `const JIRA = {"issues": [...]};` and give me the file back.
-4. Then summarize in under 10 lines: issues not placed (no stage),
-   the NOW items from "Ask this week", and the owner with the longest chase list.
+4. Then give me the weekly status exactly as the page's "Copy for email /
+   Teams" button would produce it (overall and the three ratings, updated
+   this week, going live in 30 days, risks and blockers, decisions needed,
+   asks of owners), followed by any issues not placed (no stage).
 Do not ask me for an API token. Do not invent values for empty fields.
 ```
 

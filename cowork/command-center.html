@@ -48,6 +48,17 @@
   th { font-size: 11px; color: var(--ink3); text-transform: uppercase; letter-spacing: .06em; }
   td.wrap { white-space: normal; }
   .empty { color: var(--ink3); }
+  .rag { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+  @media (max-width: 700px) { .rag { grid-template-columns: 1fr 1fr; } }
+  .rag div { border-top: 4px solid var(--line); padding: 6px 0; font-size: 12px; color: var(--ink2); }
+  .rag div b { display: block; font-size: 15px; color: var(--ink); }
+  .rag .good { border-top-color: var(--good); } .rag .warn { border-top-color: var(--warn); } .rag .bad { border-top-color: var(--bad); }
+  .status h3 { font-size: 13px; margin: 12px 0 4px; }
+  .status ul { margin: 0; padding-left: 18px; }
+  .status li { margin: 2px 0; }
+  .bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .bar button { font-family: inherit; font-size: 12px; font-weight: 600; padding: 6px 12px; border: 1px solid var(--brand); background: var(--brand); color: #fff; cursor: pointer; }
+  .bar span { font-size: 12px; color: var(--ink3); }
 </style>
 </head>
 <body>
@@ -59,6 +70,12 @@
 </header>
 <main>
   <div class="kpis" id="kpis"></div>
+  <section class="status">
+    <h2>Weekly status</h2>
+    <div class="bar"><button type="button" id="copy">Copy for email / Teams</button><span id="copied">Computed from Jira as it stands now. Paste it out to keep a record; this page does not store past weeks.</span></div>
+    <div class="rag" id="rag"></div>
+    <div id="report"></div>
+  </section>
   <section><h2>Pipeline</h2><div class="pipe" id="pipe"></div></section>
   <div class="grid2">
     <section>
@@ -76,6 +93,7 @@
     <section><h2>What changed (7 days)</h2><ul class="list" id="changed"></ul></section>
     <section><h2>Gone quiet</h2><p class="hint">No update for longer than the stage's review window.</p><ul class="list" id="quiet"></ul></section>
   </div>
+  <section><h2>Reporting: by function</h2><div class="tbl"><table id="byfunc"></table></div></section>
   <section><h2>Every use case</h2><div class="tbl"><table id="all"></table></div></section>
 </main>
 
@@ -219,6 +237,79 @@ function question(u) {
   return null;
 }
 
+/* ===== WEEKLY STATUS =====
+   Three ratings and an overall that takes the worst, then the week in the
+   order a leadership reader wants it. Thresholds are here to argue with. */
+const RAG_TXT = { good: "Green", warn: "Amber", bad: "Red" };
+function weekly(active, all) {
+  const n = Math.max(1, active.length);
+  const late = active.filter(u => u.health === "bad"), worst = Math.max(0, ...late.map(u => -u.late));
+  const stale = active.filter(u => u.stale), flagged = active.filter(u => u.flagged);
+  const gaps = active.filter(u => u.missing.length);
+  const deps = active.filter(u => u.blockedBy.length);
+  const parts = [
+    { name: "Flow", st: late.length / n > .2 || worst > 21 ? "bad" : late.length || stale.length >= 3 ? "warn" : "good",
+      note: late.length + " past a gate date, " + stale.length + " gone quiet" },
+    { name: "Blockers", st: flagged.some(u => u.health === "bad") ? "bad" : flagged.length || deps.length ? "warn" : "good",
+      note: flagged.length + " flagged, " + deps.length + " waiting on a dependency" },
+    { name: "Record quality", st: gaps.length / n > .4 ? "bad" : gaps.length / n > .15 ? "warn" : "good",
+      note: gaps.length + " of " + active.length + " missing what their stage needs" },
+  ];
+  const rank = { good: 0, warn: 1, bad: 2 };
+  const overall = parts.reduce((w, p) => rank[p.st] > rank[w.st] ? p : w, parts[0]);
+  const t = today(), soon = active.filter(u => u.live && Date.parse(u.live) > t && Date.parse(u.live) <= t + 30 * DAY);
+  const name = u => u.id + " " + u.name;
+  const sections = [
+    ["Updated this week", all.filter(u => u.quiet != null && u.quiet <= 7)
+      .map(u => name(u) + ": " + (u.done ? "closed (" + u.status + ")" : "now at " + ST[u.stage].name) + ", " + u.owner)],
+    ["Going live in the next 30 days", soon.map(u => name(u) + ": " + u.live)],
+    ["Risks and blockers", [
+      ...flagged.map(u => name(u) + ": flagged in Jira, " + u.owner + " to confirm what it waits on and the return date"),
+      ...late.filter(u => !u.flagged).map(u => name(u) + ": " + ST[u.stage].name + " gate " + -u.late + " days late"),
+      ...deps.map(u => name(u) + ": depends on " + u.blockedBy.map(d => d.id).join(", ") + ", not live yet"),
+      ...stale.map(u => name(u) + ": no update in " + u.quiet + " days")]],
+    ["Decisions needed", [
+      ...active.filter(u => u.stage === "approval").map(u => name(u) + ": funding decision" + (u.live ? ", go-live planned " + u.live : ", no go-live date yet")),
+      ...late.filter(u => u.stage !== "approval").map(u => name(u) + ": agree a new " + ST[u.stage].name.toLowerCase() + " date or stop")]],
+    ["Asks of owners", Object.entries(gaps.reduce((a, u) => ((a[u.owner] = a[u.owner] || []).push(u.id), a), {}))
+      .map(([o, ids]) => o + ": complete " + ids.join(", "))],
+  ];
+  return { parts, overall, sections };
+}
+function paintWeekly(w) {
+  $("rag").replaceChildren(...[{ name: "Overall", st: w.overall.st, note: w.overall.name + " is the constraint" }, ...w.parts].map(p => {
+    const d = el("div", p.st); d.append(el("b", null, p.name + ": " + RAG_TXT[p.st]), document.createTextNode(p.note)); return d; }));
+  $("report").replaceChildren(...w.sections.flatMap(([h, items]) => {
+    const ul = el("ul"); for (const i of items.length ? items : ["Nothing to report."]) ul.append(el("li", null, i));
+    return [el("h3", null, h), ul]; }));
+  $("copy").onclick = () => {
+    const wk = new Date(); wk.setDate(wk.getDate() - ((wk.getDay() + 6) % 7));
+    const txt = ["AI portfolio status, week of " + wk.toISOString().slice(0, 10),
+      "Overall: " + RAG_TXT[w.overall.st] + " (" + w.overall.name + " is the constraint)",
+      ...w.parts.map(p => p.name + ": " + RAG_TXT[p.st] + " - " + p.note), "",
+      ...w.sections.flatMap(([h, items]) => [h + ":", ...(items.length ? items : ["Nothing to report."]).map(i => "- " + i), ""])].join("\n");
+    const done = () => $("copied").textContent = "Copied. Paste it into the email or channel.";
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(done).catch(() => {
+      const ta = el("textarea"); ta.value = txt; document.body.append(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch (e) { $("copied").textContent = "Copy blocked; select the text above."; } ta.remove(); });
+  };
+}
+function paintByFunc(active) {
+  const t = $("byfunc"); t.replaceChildren();
+  const hr = el("tr"); for (const h of ["Function", "In flight", "Late", "Flagged", "Gone quiet", "Missing info", "Live in 90d"]) hr.append(el("th", null, h));
+  t.append(hr);
+  const groups = {};
+  for (const u of active) (groups[u.func || "No component"] = groups[u.func || "No component"] || []).push(u);
+  const t90 = today() + 90 * DAY;
+  for (const [f, xs] of Object.entries(groups).sort((a, b) => b[1].length - a[1].length)) {
+    const tr = el("tr");
+    tr.append(el("td", null, f), ...[xs.length, xs.filter(u => u.health === "bad").length, xs.filter(u => u.flagged).length,
+      xs.filter(u => u.stale).length, xs.filter(u => u.missing.length).length,
+      xs.filter(u => u.live && Date.parse(u.live) > today() && Date.parse(u.live) <= t90).length].map(n => el("td", null, n)));
+    t.append(tr);
+  }
+}
+
 let SOURCE = "Sample data";
 function render(raw) {
   const mapped = (raw.issues || []).map(mapIssue);
@@ -267,6 +358,9 @@ function render(raw) {
   $("quiet").replaceChildren(...(quiet.length ? quiet.map(u => { const li = el("li"); li.append(el("span", "id", u.id),
     document.createTextNode(" " + u.name), el("span", "muted q", u.quiet + " days without an update (" + ST[u.stage].name + " window is " + ST[u.stage].stale + ") · " + u.owner)); return li; })
     : [el("li", "empty", "Everything has moved inside its window.")]));
+
+  paintWeekly(weekly(active, all));
+  paintByFunc(active);
 
   const t = $("all"); t.replaceChildren();
   const hr = el("tr"); for (const h of ["", "Key", "Use case", "Stage", "Owner", "Sponsor", "Gate due", "Go-live", "Missing"]) hr.append(el("th", null, h));
