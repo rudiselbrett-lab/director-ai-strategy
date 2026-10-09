@@ -64,6 +64,7 @@
 <body>
 <header>
   <h1>AI Portfolio Command Center</h1>
+  <button type="button" id="refresh" hidden>Refresh from Jira</button>
   <button type="button" id="load">Load Jira export</button>
   <input type="file" id="file" accept=".json" hidden>
   <span class="src" id="src"></span>
@@ -135,7 +136,14 @@ const STATUS_STAGE = { "backlog": "intake", "to do": "intake", "triage": "triage
 const DAY = 864e5;
 const d10 = v => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}/.test(v)) ? v.slice(0, 10) : null;
 const tag = (labels, prefix) => { const l = labels.find(x => x.startsWith(prefix)); return l ? l.slice(prefix.length) : null; };
-function mapIssue(is) {
+/* Story Points and Flagged are custom fields whose ids differ between Jira
+   sites. Find them by name when the response carries a names map. */
+function fieldIds(names) {
+  const find = (...ns) => Object.keys(names || {}).find(id => ns.includes(String(names[id]).toLowerCase()));
+  return { points: find("story points", "story point estimate") || "customfield_10016",
+           flag: find("flagged") || "customfield_10021" };
+}
+function mapIssue(is, ids) {
   const f = is.fields || {}, labels = (f.labels || []).map(l => String(l).toLowerCase());
   const status = (f.status && f.status.name) || "";
   const done = (f.status && f.status.statusCategory && f.status.statusCategory.key === "done");
@@ -147,13 +155,13 @@ function mapIssue(is) {
     owner: (f.assignee && f.assignee.displayName) || "Unassigned",
     sponsor: (f.reporter && f.reporter.displayName) || null,
     func: (f.components && f.components[0] && f.components[0].name) || null,
-    size: f.customfield_10016 ?? f["Story Points"] ?? null,
+    size: f[ids.points] ?? null,
     impact: labels.filter(l => l.startsWith("impact-")).map(l => l.slice(7)),
     metric: labels.includes("metric-defined"), baseline: labels.includes("baseline-set"),
     dataReady: dr && /^(ready|partial|unavailable)$/.test(dr) ? dr : null,
     techReady: tr && /^(ready|partial|not-ready)$/.test(tr) ? tr : null,
     risk: labels.filter(l => ["npi", "reg-report", "no-human-review"].includes(l)),
-    flagged: !!(f.customfield_10021 && f.customfield_10021.length),
+    flagged: !!(f[ids.flag] && f[ids.flag].length),
     target: d10(f.duedate), live: vers.length ? vers[vers.length - 1] : null,
     deps: (f.issuelinks || []).filter(l => l.inwardIssue && /block|depend/i.test((l.type || {}).name || "")).map(l => l.inwardIssue.key),
     opened: d10(f.created), updated: d10(f.updated),
@@ -312,7 +320,8 @@ function paintByFunc(active) {
 
 let SOURCE = "Sample data";
 function render(raw) {
-  const mapped = (raw.issues || []).map(mapIssue);
+  const ids = fieldIds(raw.names);
+  const mapped = (raw.issues || []).map(is => mapIssue(is, ids));
   const unplaced = mapped.filter(u => !u.stage && !u.done);
   const all0 = mapped.filter(u => u.stage);
   const all = all0.map(u => enrich(u, all0));
@@ -381,6 +390,23 @@ $("file").onchange = () => {
   f.text().then(txt => { const d = JSON.parse(txt); SOURCE = "Jira · " + f.name; render(Array.isArray(d) ? { issues: d } : d); })
     .catch(e => alert("Could not read that file: " + e.message));
 };
+/* Refresh from Jira works when the page is opened through cowork/serve.py,
+   which holds the API token on this machine and calls Jira for the page.
+   The page never sees the token. Opened as a plain file, the button hides. */
+if (location.protocol.startsWith("http")) {
+  const btn = $("refresh");
+  btn.hidden = false;
+  const pull = () => {
+    btn.disabled = true; btn.textContent = "Pulling\u2026";
+    fetch("refresh", { cache: "no-store" })
+      .then(r => r.json().then(d => { if (!r.ok) throw new Error(d.error || r.statusText); return d; }))
+      .then(d => { SOURCE = "Jira · pulled " + new Date(d.pulledAt || Date.now()).toLocaleString(); render(d); })
+      .catch(e => { $("src").textContent = "Refresh failed: " + e.message; })
+      .finally(() => { btn.disabled = false; btn.textContent = "Refresh from Jira"; });
+  };
+  btn.onclick = pull;
+  if (!JIRA) pull();
+}
 if (JIRA) SOURCE = "Jira snapshot";
 render(JIRA || sample());
 </script>

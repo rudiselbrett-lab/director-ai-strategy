@@ -7,6 +7,7 @@ import pathlib
 import sys
 import threading
 import unittest
+import urllib.error
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -23,6 +24,7 @@ FIELDS = [{"id": k, "name": v, "custom": k.startswith("customfield_")}
 class FakeJira(BaseHTTPRequestHandler):
     seen = []
     status = 200
+    issues = None   # None = the custom-field fixture
 
     def log_message(self, *a):
         pass
@@ -40,7 +42,7 @@ class FakeJira(BaseHTTPRequestHandler):
         FakeJira.seen.append((url.path, q, self.headers.get("Authorization")))
         if FakeJira.status != 200:
             return self._send(FakeJira.status, {"errorMessages": ["nope"]})
-        issues = FIXTURE["issues"]
+        issues = FakeJira.issues or FIXTURE["issues"]
         if url.path.endswith("/field"):
             return self._send(200, FIELDS)
         if url.path == "/rest/api/3/search/jql":
@@ -72,7 +74,7 @@ class FetchTest(unittest.TestCase):
         cls.srv.shutdown()
 
     def setUp(self):
-        FakeJira.seen, FakeJira.status = [], 200
+        FakeJira.seen, FakeJira.status, FakeJira.issues = [], 200, None
 
     def env(self, **kw):
         return dict({"JIRA_SITE": self.site, "JIRA_ALLOW_HTTP": "1"}, **kw)
@@ -138,3 +140,44 @@ class FetchTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ServeTest(unittest.TestCase):
+    """cowork/serve.py: the refresh button's helper."""
+
+    def test_refresh_returns_trimmed_issues_and_refuses_foreign_hosts(self):
+        import os
+        import urllib.request
+        sys.path.insert(0, str(ROOT / "cowork"))
+        import serve
+        jira = HTTPServer(("127.0.0.1", 0), FakeJira)
+        threading.Thread(target=jira.serve_forever, daemon=True).start()
+        FakeJira.issues, FakeJira.status = GENERIC["issues"], 200
+        env = {"JIRA_SITE": "http://127.0.0.1:%d" % jira.server_port, "JIRA_ALLOW_HTTP": "1",
+               "JIRA_EMAIL": "a@b.c", "JIRA_API_TOKEN": "s3cret"}
+        old = {k: os.environ.get(k) for k in env}
+        os.environ.update(env)
+        srv = serve.ThreadingHTTPServer(("127.0.0.1", 0), FakeJira)
+        port = srv.server_port
+        srv.RequestHandlerClass = serve.make_handler(bp.builtin_data()["JIRA_MAP"], None, port)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            base = "http://127.0.0.1:%d" % port
+            page = urllib.request.urlopen(base + "/").read().decode()
+            self.assertIn("Refresh from Jira", page)
+            body = urllib.request.urlopen(base + "/refresh").read().decode()
+            snap = json.loads(body)
+            self.assertEqual(len(snap["issues"]), len(GENERIC["issues"]))
+            for leak in ("s3cret", "accountId", "emailAddress"):
+                self.assertNotIn(leak, body)
+            req = urllib.request.Request(base + "/refresh", headers={"Host": "evil.example:%d" % port})
+            with self.assertRaises(urllib.error.HTTPError) as cm:
+                urllib.request.urlopen(req)
+            self.assertEqual(cm.exception.code, 403)
+        finally:
+            srv.shutdown(); jira.shutdown(); FakeJira.issues = None
+            for k, v in old.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v

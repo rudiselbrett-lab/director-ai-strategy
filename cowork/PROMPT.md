@@ -22,6 +22,24 @@ Refresh my AI portfolio command center from Jira.
 Do not ask me for an API token. Do not invent values for empty fields.
 ```
 
+## Or: a Refresh button on your laptop
+
+With an API token, run the helper and open the page it serves. It pulls on
+open, and **Refresh from Jira** pulls again. The token stays in your
+environment; the page never sees it.
+
+```
+export JIRA_SITE=https://yourbank.atlassian.net
+export JIRA_EMAIL=you@yourbank.com JIRA_API_TOKEN=...    # Cloud
+# or: export JIRA_PAT=...                                # Data Center
+export JIRA_JQL='project = <KEY> ORDER BY key'
+python3 cowork/serve.py                                   # open http://127.0.0.1:8765
+```
+
+Needs Python 3.8+ and `build_portfolio.py` one folder up; nothing to install.
+It listens on your machine only. Don't run it on a shared server: anyone who
+can reach it would read Jira as you.
+
 ## The Jira conventions it reads (no custom fields, no admin)
 
 | Need | Put it in Jira as |
