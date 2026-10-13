@@ -2,6 +2,8 @@
 
 **Live demo:** https://rudiselbrett-lab.github.io/director-ai-strategy/
 
+Every tab is also available as Markdown in [docs/](docs/README.md).
+
 A working demonstration of one way in for every AI idea — so capacity goes to
 what's worth building. Built as a single self-contained HTML page with six views:
 
