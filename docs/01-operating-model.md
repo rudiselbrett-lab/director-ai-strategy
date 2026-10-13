@@ -1,4 +1,4 @@
-# Consumer Bank AI Portfolio: Operating Model
+# 1. Operating Model
 
 Director of AI Strategy operating model. One record. Eight stages. Three routines. Disciplined triage.
 
