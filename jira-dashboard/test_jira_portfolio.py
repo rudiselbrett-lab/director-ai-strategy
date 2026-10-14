@@ -244,6 +244,122 @@ class Page(unittest.TestCase):
             os.unlink(f.name)
 
 
+class History(unittest.TestCase):
+    def test_snapshot_round_trip_and_bad_files_skipped(self):
+        recs = jp.score([issue("A-1", due=5)], cfg(), TODAY)
+        with tempfile.TemporaryDirectory() as d:
+            jp.save_snapshot(d, TODAY, recs)
+            with open(os.path.join(d, "snapshot-2026-01-01.json"), "w") as f:
+                f.write("{not json")
+            with open(os.path.join(d, "notes.txt"), "w") as f:
+                f.write("ignored")
+            hist = jp.load_history(d)
+        self.assertEqual([h[0] for h in hist], [TODAY])
+        self.assertEqual(hist[0][1][0]["key"], "A-1")
+        self.assertNotIn("extra", hist[0][1][0])
+
+    def test_weekly_points_keep_latest_per_week_and_today_wins(self):
+        a, b = TODAY - dt.timedelta(days=8), TODAY - dt.timedelta(days=7)   # same ISO week
+        pts = jp.weekly_points([(a, ["a"]), (b, ["b"]), (TODAY, ["old today"])], TODAY, ["now"])
+        self.assertEqual([p[1] for p in pts], [["b"], ["now"]])
+
+    def test_missing_history_dir_is_empty(self):
+        self.assertEqual(jp.load_history("/nonexistent/dir"), [])
+
+
+class Report(unittest.TestCase):
+    def pair(self, before, after):
+        prev = [jp.compact(r) for r in jp.score(before, cfg(), TODAY - dt.timedelta(days=7))]
+        curr = [jp.compact(r) for r in jp.score(after, cfg(), TODAY)]
+        return jp.weekly_report(TODAY, curr, (TODAY - dt.timedelta(days=7), prev), cfg())
+
+    def groups(self, rep, title_start):
+        sec = next(s for s in rep["sections"] if s["title"].startswith(title_start))
+        return {g["label"]: [ln["key"] for ln in g["lines"]] for g in sec["groups"]}
+
+    def test_changes_week_over_week(self):
+        before = [issue("C-1", typ="Capability", due=90), issue("E-1", parent="C-1", due=30),
+                  issue("E-2", parent="C-1", due=20), issue("E-3", parent="C-1", due=40, updated=30),
+                  issue("E-4", parent="C-1", status="In Review", due=50)]
+        after = [issue("C-1", typ="Capability", due=90), issue("E-1", parent="C-1", due=-2),
+                 issue("E-2", parent="C-1", due=34), issue("E-3", parent="C-1", due=40),
+                 issue("E-4", parent="C-1", status="Done", cat="done", due=50),
+                 issue("E-5", parent="C-1", due=60, owner=None)]
+        ch = self.groups(self.pair(before, after), "What changed")
+        self.assertEqual(ch["Completed"], ["E-4"])
+        self.assertEqual(ch["New"], ["E-5"])
+        self.assertIn("E-1", ch["Now off track"])
+        self.assertIn("C-1", ch["Now off track"])
+        self.assertEqual(ch["Back on track"], ["E-3"])
+        self.assertIn("E-2", ch["Due dates moved"])
+
+    def test_first_report_falls_back_to_jira_dates(self):
+        recs = jp.score([issue("E-1", due=10, created=(TODAY - dt.timedelta(days=2)).isoformat()),
+                         issue("E-2", status="Done", cat="done",
+                               resolutiondate=(TODAY - dt.timedelta(days=3)).isoformat()),
+                         issue("E-3", status="Done", cat="done",
+                               resolutiondate=(TODAY - dt.timedelta(days=30)).isoformat())], cfg(), TODAY)
+        rep = jp.weekly_report(TODAY, [jp.compact(r) for r in recs], None, cfg())
+        ch = self.groups(rep, "What changed")
+        self.assertEqual(ch["Completed"], ["E-2"])
+        self.assertEqual(ch["New"], ["E-1"])
+        self.assertIsNone(rep["baseline"])
+        self.assertIsNotNone(rep["sections"][0]["note"])
+
+    def test_elements_and_overall(self):
+        rep = self.pair([issue("E-1", due=30)], [issue("E-1", due=-1)])
+        names = {e["name"]: e["rag"] for e in rep["elements"]}
+        self.assertEqual(names["Schedule"], "red")
+        self.assertEqual(rep["overall"], "red")
+        self.assertTrue(rep["headline"].startswith("Schedule and Data quality are the constraint. 1 of 1 item is off track"))
+        self.assertIn("(Oct 13)", rep["headline"])
+        self.assertEqual(self.groups(rep, "Needs a decision")["Re-baseline or escalate"], ["E-1"])
+
+    def test_all_green(self):
+        rep = self.pair([issue("E-1", due=30, parent="C-1"), issue("C-1", typ="Capability", due=60),
+                         issue("E-9", parent="C-1", status="In Progress", due=40)],
+                        [issue("E-1", due=30, parent="C-1"), issue("C-1", typ="Capability", due=60),
+                         issue("E-9", parent="C-1", status="Done", cat="done", due=40)])
+        self.assertEqual(rep["overall"], "green")
+        self.assertTrue(rep["headline"].startswith("Everything is on track"))
+
+    def test_coming_up_window(self):
+        rep = self.pair([issue("E-1", due=5), issue("E-2", due=30)], [issue("E-1", due=5), issue("E-2", due=30)])
+        self.assertEqual(self.groups(rep, "Coming up")["Due by Oct 28"], ["E-1"])
+
+    def test_markdown_has_links_and_every_section(self):
+        rep = self.pair([issue("E-1", due=30)], [issue("E-1", due=-1)])
+        md = jp.report_markdown(rep, cfg())
+        self.assertIn("[E-1](https://jira.example.com/browse/E-1)", md)
+        for s in rep["sections"]:
+            self.assertIn("## " + s["title"], md)
+        self.assertIn("**Overall: Red.**", md)
+
+    def test_reports_built_newest_first_with_baselines(self):
+        t = jp.deep_merge(cfg(), jp.SAMPLE_CONFIG)
+        recs = jp.score(jp.sample_issues(TODAY), t, TODAY)
+        pts = jp.weekly_points(jp.sample_history(TODAY, t), TODAY, [jp.compact(r) for r in recs])
+        reps = jp.build_reports(pts, t)
+        self.assertEqual(reps[0]["date"], TODAY.isoformat())
+        self.assertEqual(reps[0]["baseline"], (TODAY - dt.timedelta(days=7)).isoformat())
+        self.assertIsNone(reps[-1]["baseline"])
+
+
+class Trends(unittest.TestCase):
+    def test_monthly_completions_and_median_cycle(self):
+        def done(key, created_ago, resolved_ago):
+            return issue(key, status="Done", cat="done",
+                         created=(TODAY - dt.timedelta(days=created_ago)).isoformat(),
+                         resolutiondate=(TODAY - dt.timedelta(days=resolved_ago)).isoformat())
+        recs = jp.score([done("E-1", 40, 2), done("E-2", 30, 5), done("E-3", 100, 40), issue("E-4", due=5)], cfg(), TODAY)
+        tr = jp.trends(jp.weekly_points([], TODAY, [jp.compact(r) for r in recs]), recs, TODAY)
+        oct_ = next(m for m in tr["monthly"] if m["month"] == "2026-10")
+        self.assertEqual(oct_["completed"], 2)
+        self.assertEqual(oct_["medianCycle"], 32)   # 38 and 25 days -> 31.5 rounds to 32
+        self.assertEqual(len(tr["monthly"]), 6)
+        self.assertEqual(tr["weekly"][-1]["green"], 1)
+
+
 class Cli(unittest.TestCase):
     def run_cli(self, *args, cwd):
         here = os.path.dirname(os.path.abspath(__file__))
@@ -260,6 +376,23 @@ class Cli(unittest.TestCase):
             r = self.run_cli("--from-json", "raw.json", "--out", "f.html", cwd=d)
             self.assertEqual(r.returncode, 0, r.stderr)
             self.assertTrue(os.path.getsize(os.path.join(d, "f.html")) > 10000)
+
+    def test_history_accumulates_and_report_is_written(self):
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "raw.json"), "w") as f:
+                json.dump({"issues": jp.sample_issues(TODAY)}, f)
+            with open(os.path.join(d, "c.json"), "w") as f:
+                json.dump({"history_dir": "hist"}, f)
+            for day_ in ("2026-10-07", "2026-10-14"):
+                r = self.run_cli("--config", "c.json", "--from-json", "raw.json", "--out", "p.html", "--today", day_, cwd=d)
+                self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertEqual(sorted(os.listdir(os.path.join(d, "hist"))),
+                             ["snapshot-2026-10-07.json", "snapshot-2026-10-14.json"])
+            with open(os.path.join(d, "weekly-report-2026-10-14.md")) as f:
+                self.assertIn("compared with Oct 7", f.read())
+            r = self.run_cli("--config", "c.json", "--from-json", "raw.json", "--out", "q.html",
+                             "--today", "2026-10-21", "--no-history", cwd=d)
+            self.assertEqual(len(os.listdir(os.path.join(d, "hist"))), 2)
 
     def test_init_config_refuses_overwrite(self):
         with tempfile.TemporaryDirectory() as d:

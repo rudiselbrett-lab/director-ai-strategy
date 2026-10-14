@@ -7,7 +7,7 @@
   "base_url": "https://yourcompany.atlassian.net",
   "deployment": "cloud",
 
-  "jql": "project = AI AND issuetype in (Capability, Epic) AND (statusCategory != Done OR updated >= -90d) ORDER BY key",
+  "jql": "project = AI AND issuetype in (Capability, Epic) AND (statusCategory != Done OR resolved >= -180d) ORDER BY key",
   "capability_types": ["Capability"],
   "epic_types": ["Epic"],
 
@@ -35,5 +35,8 @@
   ],
 
   "disabled_checks": [],
-  "max_issues": 5000
+  "max_issues": 5000,
+
+  "history_dir": "C:/Users/you/Documents/ai-portfolio/history",
+  "coming_up_days": 14
 }

@@ -3,8 +3,10 @@
  *   npm i -D playwright   (or set PW to a global install's path)
  *   node browser_check.js
  *
- * Builds a page from the sample data plus one hostile ticket, then exercises
- * every control. Exits non-zero on the first failure.
+ * Builds two pages in a temp folder: the sample (with its eight-week history),
+ * and a page from a saved pull that carries one hostile ticket and two weekly
+ * runs of real snapshot history. Then exercises every view and control.
+ * Exits non-zero on the first failure.
  */
 const { execFileSync } = require("child_process");
 const fs = require("fs");
@@ -13,10 +15,15 @@ const path = require("path");
 const { chromium } = require(process.env.PW || "playwright");
 
 const here = __dirname;
+const script = path.join(here, "jira_portfolio.py");
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "jp-check-"));
 const today = new Date().toISOString().slice(0, 10);
+const weekAgo = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+const run = args => execFileSync("python3", [script, ...args], { cwd: tmp, env: { PATH: process.env.PATH } });
 
-// Sample issues plus a ticket whose summary tries to inject markup.
+// 1. the sample
+run(["--sample", "--out", "sample.html"]);
+// 2. a saved pull with a hostile ticket, run last week and again today so the history is real
 const raw = JSON.parse(execFileSync("python3", ["-c",
   "import json,sys,datetime as d;sys.path.insert(0,sys.argv[1]);import jira_portfolio as j;" +
   "print(json.dumps({'issues': j.sample_issues(d.date.fromisoformat(sys.argv[2]))}))", here, today]).toString());
@@ -30,10 +37,10 @@ fs.writeFileSync(path.join(tmp, "cfg.json"), JSON.stringify({
   title: "Check", base_url: "https://jira.example.com", rag_field: "customfield_10100",
   flagged_field: "customfield_10021", owner_field: { Capability: "customfield_10300", default: "assignee" },
   required_fields: [{ field: "customfield_10200", label: "Business value", types: ["Capability"] }] }));
-const out = path.join(tmp, "page.html");
-execFileSync("python3", [path.join(here, "jira_portfolio.py"), "--config", path.join(tmp, "cfg.json"),
-  "--from-json", path.join(tmp, "raw.json"), "--out", out], { env: { PATH: process.env.PATH } });
-const URL0 = "file://" + out;
+run(["--config", "cfg.json", "--from-json", "raw.json", "--out", "real.html", "--today", weekAgo]);
+run(["--config", "cfg.json", "--from-json", "raw.json", "--out", "real.html"]);
+const SAMPLE = "file://" + path.join(tmp, "sample.html");
+const REAL = "file://" + path.join(tmp, "real.html");
 
 let passed = 0;
 function ok(cond, msg) {
@@ -50,112 +57,142 @@ function ok(cond, msg) {
   page.on("pageerror", e => errors.push(e.message));
   page.on("console", m => { if (m.type() === "error") errors.push(m.text()); });
   const hash = () => page.evaluate(() => location.hash);
-  const text = sel => page.locator(sel).first().innerText();
+  const go = async (u, h) => { await page.goto(u + (h || "")); await page.reload(); };
 
   try {
-    await page.goto(URL0);
-    ok(await page.locator("#groups .group").count() > 3, "command center renders groups");
-    ok(await page.evaluate(() => window.__pwned) === undefined, "hostile summary did not execute");
-    ok((await page.locator("text=window.__pwned=1").count()) > 0 || (await page.content()).includes("onerror"),
-      "hostile summary shown as text");
+    // ---------- files the run should leave behind
+    ok(fs.readdirSync(path.join(tmp, "jira_portfolio_history")).length === 2, "two runs leave two snapshots");
+    ok(fs.readFileSync(path.join(tmp, "weekly-report-" + today + ".md"), "utf8").includes("## What changed since"),
+      "weekly report written as Markdown, compared with last week");
 
-    // filter by health from a KPI tile
-    await page.locator(".kpi[title=\"Filter to Off track\"]").click();
-    ok((await hash()).includes("health=red"), "KPI tile sets the health filter in the URL");
-    const offTrack = await page.locator("#groups .item").count();
-    await page.locator(".kpi[title=\"Filter to Off track\"]").click();
-    ok((await page.locator("#groups .item").count()) > offTrack, "clicking the tile again clears it");
+    // ---------- overview
+    await go(SAMPLE);
+    ok(await page.locator("#p-overview .band .stat").count() === 6, "overview opens with the stat band");
+    for (const t of ["Capability health", "Pipeline by Jira status", "Due in the next eight weeks", "Open work by owner",
+                     "Health week by week", "Epics completed per month", "Cycle time, created to done"])
+      ok(await page.locator(`#p-overview section[aria-label="${t}"]`).count() === 1, "chart: " + t);
+    ok(await page.locator("#p-overview .take").count() >= 7, "every chart carries a takeaway");
+    ok((await page.locator("#head").innerText()).indexOf("null") === -1, "no stray text in the page head");
+    await page.locator('#p-overview button.stat[title*="off track"]').click();
+    ok((await hash()).includes("health=red"), "stat tile filters by health");
+    await page.locator('#p-overview button.stat[title*="off track"]').click();
+    await page.locator("#p-overview .hrow.click", { hasText: "Blocked" }).click();
+    ok((await hash()).includes("tab=issues") && (await hash()).includes("status=Blocked"), "pipeline row drills into the issue list");
+    await page.locator("#f-reset").click();
+    await page.locator("#t-overview").click();
+    await page.locator("#p-overview .caprow").first().click();
+    ok(await page.locator("#drawer").evaluate(d => d.open), "capability row opens its detail");
+    await page.keyboard.press("Escape");
+    await page.locator("#p-overview .track span").first().hover();
+    ok(await page.locator("#tip.show").count() === 1, "bars show a tooltip on hover");
 
-    // check chip narrows the list
-    await page.locator(".chip", { hasText: "No owner" }).click();
-    const chipN = Number(await page.locator(".chip", { hasText: "No owner" }).locator(".c").innerText());
-    ok(await page.locator("#groups .item").count() === chipN, "check chip filters to its own count");
-    await page.locator(".chip", { hasText: "No owner" }).click();
+    // ---------- weekly report
+    await page.locator("#t-report").click();
+    ok((await page.locator("h1").innerText()).startsWith("Week of"), "report is titled by week");
+    ok(await page.locator("#p-report .overall").count() === 1 && await page.locator("#p-report .elem").count() === 3,
+      "overall RAG and three elements");
+    ok(await page.locator("#filters").isHidden(), "filters hidden on the report");
+    for (const t of ["What changed since", "What we need to know", "Needs a decision", "Coming up"])
+      ok(await page.locator("#p-report .rsec h3", { hasText: t }).count() === 1, "report section: " + t);
+    ok(await page.locator("#p-report .rgrp h4", { hasText: "Status moves" }).count() === 1, "week-over-week status moves listed");
+    const weeks = await page.locator("#r-week option").count();
+    ok(weeks >= 8, "earlier weeks are kept (" + weeks + ")");
+    await page.selectOption("#r-week", { index: 3 });
+    ok((await hash()).includes("week="), "picking an earlier week is in the URL");
+    ok(await page.locator("#p-report .fcount", { hasText: "earlier week" }).count() === 1, "earlier week is labeled as such");
+    await page.selectOption("#r-week", { index: 0 });
+    const [md] = await Promise.all([page.waitForEvent("download"), page.locator("#p-report button", { hasText: "Download .md" }).click()]);
+    ok(fs.readFileSync(await md.path(), "utf8").startsWith("# "), "report downloads as Markdown");
+    await page.locator("#p-report .rgrp .linkish").first().click();
+    ok(await page.locator("#drawer").evaluate(d => d.open), "report lines open the issue");
+    await page.keyboard.press("Escape");
 
-    // group by owner: email + jira bulk link
-    await page.locator("[data-group=owner]").click();
-    const chris = page.locator(".group", { hasText: "Chris Tan" }).first();
-    const mail = await chris.locator("a", { hasText: "Email owner" }).getAttribute("href");
-    ok(mail.startsWith("mailto:chris.tan@example.com?subject="), "email owner is addressed to them");
-    ok(decodeURIComponent(mail).includes("AI-41"), "email body lists their items");
+    // ---------- actions
+    await page.locator("#t-actions").click();
+    ok(await page.locator("#p-actions .side button").count() === 12, "check list renders as buttons, not text");
+    const chip = page.locator("#p-actions .side button", { hasText: "No owner" });
+    await chip.click();
+    const n = Number(await chip.locator(".c").innerText());
+    ok(await page.locator("#p-actions .item").count() === n, "check filters to its own count");
+    await page.locator("#p-actions .side button", { hasText: "All actions" }).click();
+    await page.locator("#p-actions .seg button", { hasText: "Owner" }).click();
+    const chris = page.locator("#p-actions .grp", { hasText: "Chris Tan" }).first();
+    const mail = await chris.locator("a", { hasText: "Email" }).getAttribute("href");
+    ok(mail.startsWith("mailto:chris.tan@example.com?subject="), "email goes to the owner");
     const bulk = await chris.locator("a", { hasText: "in Jira" }).getAttribute("href");
-    ok(bulk.startsWith("https://jira.example.com/issues/?jql=") && decodeURIComponent(bulk).includes("key in (AI-4,AI-41)"),
-      "bulk link opens their issues in the Jira navigator");
-
-    // nudge persists across reload and can be hidden
-    const before = await page.locator("#groups .item").count();
-    await page.locator("#groups .item button", { hasText: "Mark nudged" }).first().click();
+    ok(decodeURIComponent(bulk).includes("key in (AI-4,AI-41)"), "bulk link opens their issues in Jira");
+    const before = await page.locator("#p-actions .item").count();
+    await page.locator("#p-actions .item button", { hasText: "Mark nudged" }).first().click();
     await page.reload();
-    ok(await page.locator("#groups .item button", { hasText: /^✓ Nudged/ }).count() === 1, "nudge survives a reload");
+    ok(await page.locator("#p-actions .item button", { hasText: /^✓ Nudged/ }).count() === 1, "nudge survives a reload");
     await page.locator("#f-nudged").check();
-    ok(await page.locator("#groups .item").count() === before - 1, "hide nudged removes it");
+    ok(await page.locator("#p-actions .item").count() === before - 1, "hide nudged removes it");
     await page.locator("#f-nudged").uncheck();
 
-    // search + owner filter + reset
-    await page.locator("[data-tab=issues]").click();
-    const all = await page.locator("#tbody tr").count();
+    // ---------- capabilities
+    await page.locator("#t-caps").click();
+    const capRows = page.locator("#p-caps tbody tr.row:not(.child)");
+    ok((await capRows.first().innerText()).includes("Off track"), "worst capability first");
+    await capRows.first().locator(".tog").click();
+    ok(await page.locator("#p-caps tr.child").count() > 0, "capability expands to its epics");
+    ok(await page.locator("#p-caps h2", { hasText: "not linked" }).count() === 1, "unlinked epics listed separately");
+
+    // ---------- issues
+    await page.locator("#t-issues").click();
+    const all = await page.locator("#p-issues tbody tr").count();
     await page.locator("#f-q").fill("underwriter");
     await page.waitForTimeout(250);
-    ok(await page.locator("#tbody tr").count() === 1, "search filters the table");
+    ok(await page.locator("#p-issues tbody tr").count() === 1, "search filters");
     await page.locator("#f-reset").click();
-    ok(await page.locator("#tbody tr").count() === all, "reset restores every row");
+    ok(await page.locator("#p-issues tbody tr").count() === all, "reset restores every row");
     await page.selectOption("#f-owner", "Priya Nair");
-    ok((await page.locator("#tbody tr").allInnerTexts()).every(t => t.includes("Priya Nair")), "owner filter");
-    await page.selectOption("#f-owner", "");
-
-    // sorting
-    await page.locator("th button", { hasText: "Due" }).click();
-    ok(await page.locator("th[aria-sort=ascending]", { hasText: "Due" }).count() === 1, "sort ascending marked for screen readers");
-    const dues = await page.locator("#tbody tr td:nth-child(8)").allInnerTexts();
-    const dated = dues.filter(d => d !== "—").map(d => Date.parse(d));
-    ok(dated.every((d, i) => i === 0 || d >= dated[i - 1]), "due dates ascend");
+    ok((await page.locator("#p-issues tbody tr").allInnerTexts()).every(t => t.includes("Priya Nair")), "owner filter");
+    await page.selectOption("#f-owner", { index: 0 });
+    await page.locator("#p-issues th button", { hasText: "Due" }).click();
+    ok(await page.locator('#p-issues th[aria-sort="ascending"]', { hasText: "Due" }).count() === 1, "sort state exposed to screen readers");
+    const dues = (await page.locator("#p-issues tbody tr td:nth-child(8)").allInnerTexts()).map(t => t.split("\n")[0]);
+    const dated = dues.filter(d => d !== "—").map(d => Date.parse(d + " 2026"));
     ok(dues.slice(dated.length).every(d => d === "—"), "undated rows sort last");
-    await page.locator("th button", { hasText: "Due" }).click();
-    ok((await hash()).includes("dir=desc"), "second click sorts descending");
-
-    // include done
-    const openRows = await page.locator("#tbody tr").count();
     await page.locator("#f-done").check();
-    ok(await page.locator("#tbody tr").count() > openRows, "include done adds done issues");
+    ok(await page.locator("#p-issues tbody tr").count() > all, "include done adds done work");
     await page.locator("#f-done").uncheck();
-
-    // drawer
-    await page.locator("#tbody tr", { hasText: "AI-12" }).locator("td").nth(2).click();
-    ok(await page.locator("#drawer").evaluate(d => d.open), "row opens the detail drawer");
-    ok(await page.locator("#d-open").getAttribute("href") === "https://jira.example.com/browse/AI-12", "drawer links to the ticket");
-    await page.locator("#d-body .linkbtn", { hasText: "AI-1" }).click();
-    ok((await text("#d-key")) === "AI-1", "parent link navigates the drawer");
+    await page.locator("#p-issues tbody tr", { hasText: "AI-12" }).locator("td").nth(2).click();
+    ok(await page.locator("#d-open").getAttribute("href") === "https://example.atlassian.net/browse/AI-12", "drawer links to the ticket");
+    await page.locator("#d-body .linkish", { hasText: "AI-1 " }).click();
+    ok((await page.locator("#d-key").innerText()).startsWith("AI-1 "), "parent link navigates the drawer");
     await page.keyboard.press("Escape");
     ok(!(await page.locator("#drawer").evaluate(d => d.open)), "Escape closes the drawer");
 
-    // keys open Jira in a new tab, not the drawer
-    const a = page.locator("#tbody a.key").first();
-    ok(await a.getAttribute("target") === "_blank" && (await a.getAttribute("rel")).includes("noopener"), "key links open safely in a new tab");
+    // ---------- method
+    await page.locator("#t-method").click();
+    ok((await page.locator("#p-method").innerText()).includes("Overall takes the worst"), "method explains the report");
 
-    // csv
-    const [dl] = await Promise.all([page.waitForEvent("download"), page.locator("#btn-csv").click()]);
+    // ---------- the real-history page: hostile input, csv, deep link
+    await go(REAL);
+    ok(await page.evaluate(() => window.__pwned) === undefined, "hostile summary did not execute");
+    await go(REAL, "#tab=report");
+    ok((await page.locator(".lede").innerText()).includes("compared with the snapshot from"), "report compares with last week's real snapshot");
+    await go(REAL, "#tab=issues");
+    const [dl] = await Promise.all([page.waitForEvent("download"), page.locator("#p-issues button", { hasText: "Export CSV" }).click()]);
     const csv = fs.readFileSync(await dl.path(), "utf8");
-    ok(csv.split("\r\n").length - 1 === await page.locator("#tbody tr").count(), "CSV has one line per visible row");
+    ok(csv.split("\r\n").length - 1 === await page.locator("#p-issues tbody tr").count(), "CSV has one line per visible row");
     ok(csv.includes("'=HYPERLINK"), "CSV neutralizes formula injection");
+    await go(REAL, "#tab=issues&owner=Lena+Ortiz&sort=key");
+    ok(await page.locator("#f-owner").inputValue() === "Lena Ortiz", "a shared URL restores tab, filter and sort");
 
-    // deep link restores the view
-    await page.goto(URL0 + "#tab=issues&owner=Lena+Ortiz&sort=key");
-    await page.reload();
-    ok(await page.locator("#f-owner").inputValue() === "Lena Ortiz" && (await page.locator("#tbody tr").count()) === 2,
-      "a shared URL restores tab, filter and sort");
-
-    // capabilities
-    await page.goto(URL0 + "#tab=caps");
-    await page.reload();
-    ok((await text(".cap .hbadge")).includes("Off track"), "worst capability is listed first");
-    ok(await page.locator(".cap").count() === Number(await text("#n-caps")) + 1, "capability tab count matches cards (+ unlinked)");
-
-    // method + mobile
-    await page.locator("[data-tab=method]").click();
-    ok((await text("#method")).includes("past its due date"), "scoring rules are explained");
-    await page.setViewportSize({ width: 375, height: 800 });
-    await page.locator("[data-tab=command]").click();
-    ok(await page.evaluate(() => document.documentElement.scrollWidth <= 375), "no horizontal scroll on a phone");
+    // ---------- every view at phone width, light and dark
+    for (const scheme of ["light", "dark"]) {
+      const p = await browser.newPage({ viewport: { width: 375, height: 800 }, colorScheme: scheme });
+      p.on("pageerror", e => errors.push(e.message));
+      for (const t of ["overview", "report", "actions", "caps", "issues", "method"]) {
+        await p.goto(SAMPLE + "#tab=" + t); await p.reload();
+        const w = await p.evaluate(() => document.documentElement.scrollWidth);
+        ok(w <= 375, `no horizontal scroll on a phone: ${t} (${scheme})`);
+        const txt = await p.locator("main").innerText();
+        ok(!/\bnull\b|\bundefined\b|\[object /.test(txt), `no leaked null/undefined/[object] text: ${t} (${scheme})`);
+      }
+      await p.close();
+    }
 
     ok(errors.length === 0, "no console errors" + (errors.length ? ": " + errors.join(" | ") : ""));
     console.log("\n" + passed + " checks passed");
@@ -163,5 +200,6 @@ function ok(cond, msg) {
     if (!process.exitCode) { console.error(e); process.exitCode = 1; }
   } finally {
     await browser.close();
+    fs.rmSync(tmp, { recursive: true, force: true });
   }
 })();

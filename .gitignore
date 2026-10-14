@@ -10,3 +10,6 @@ jira-dashboard/*.html
 jira-dashboard/*.raw.json
 jira-dashboard/issues*.json
 jira-dashboard/raw*.json
+jira-dashboard/weekly-report-*.md
+jira-dashboard/jira_portfolio_history/
+jira_portfolio_history/
