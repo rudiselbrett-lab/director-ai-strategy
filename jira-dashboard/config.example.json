@@ -1,0 +1,39 @@
+{
+  "_readme": "Copy to jira_portfolio.config.json and edit. No credentials go in this file; they come from environment variables. Run `python3 jira_portfolio.py --discover` to find your issue type names, status names and custom field ids.",
+
+  "title": "AI Portfolio",
+  "brand_color": "#6b2c91",
+
+  "base_url": "https://yourcompany.atlassian.net",
+  "deployment": "cloud",
+
+  "jql": "project = AI AND issuetype in (Capability, Epic) AND (statusCategory != Done OR updated >= -90d) ORDER BY key",
+  "capability_types": ["Capability"],
+  "epic_types": ["Epic"],
+
+  "parent_field": "parent",
+  "owner_field": { "Capability": "customfield_10300", "default": "assignee" },
+  "rag_field": null,
+  "flagged_field": "customfield_10021",
+
+  "health": {
+    "red_statuses": ["Blocked"],
+    "amber_statuses": ["On Hold"],
+    "at_risk_days": 14,
+    "stale_days": 14
+  },
+
+  "required_fields": [
+    { "field": "customfield_10200", "label": "Business value", "types": ["Capability"] },
+    { "field": "customfield_10400", "label": "Model risk ID", "types": ["Epic"] }
+  ],
+
+  "display_fields": [
+    { "field": "priority", "label": "Priority" },
+    { "field": "labels", "label": "Labels" },
+    { "field": "fixVersions", "label": "Release" }
+  ],
+
+  "disabled_checks": [],
+  "max_issues": 5000
+}

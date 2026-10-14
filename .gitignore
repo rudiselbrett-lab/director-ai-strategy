@@ -3,3 +3,10 @@ __pycache__/
 
 # installed only to run the browser checks; never part of the deliverable
 node_modules/
+
+# Jira dashboard: real portfolio data and local config never get committed
+jira-dashboard/jira_portfolio.config.json
+jira-dashboard/*.html
+jira-dashboard/*.raw.json
+jira-dashboard/issues*.json
+jira-dashboard/raw*.json

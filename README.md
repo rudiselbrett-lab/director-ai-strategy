@@ -38,6 +38,13 @@ Jira is the system of record and this page is the view; health, staleness,
 capacity, and the weekly ratings recompute against the current date on every
 load.
 
+## The real one: Jira Portfolio Dashboard
+
+[`jira-dashboard/`](jira-dashboard/) is the production version of the portfolio
+view. It pulls capabilities and epics from Jira, scores their health, and
+writes a command center of what needs action, with every ticket one click
+away. See its [README](jira-dashboard/README.md).
+
 ## Building it from Python
 
 `build_portfolio.py` is a single file with no dependencies — Python 3.8 or
