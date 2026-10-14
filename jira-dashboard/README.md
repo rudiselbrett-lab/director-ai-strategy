@@ -13,14 +13,29 @@ python3 jira_portfolio.py --sample --open      # see it on invented data first
 
 | View | What it answers |
 |---|---|
-| **Overview** | Where does the portfolio stand? A stat band (open capabilities, open epics, and counts on track, at risk, off track and not assessed), plus these charts: capability health, pipeline by Jira status, what's due in the next eight weeks, and open work by owner. The **Trends** row has health week by week, completions per month, and cycle time from created to done. Every chart has a one-line takeaway that says what it shows. |
-| **Weekly report** | What happened this week, and what does leadership need to do about it? An overall RAG and three rated elements (schedule, momentum, data quality), then four sections: what changed since last week, what we need to know, what needs a decision, and what's coming up. Earlier weeks are kept. You can copy it for email or Teams with links intact, download it as Markdown, or print it to PDF. |
+| **Overview** | Where does the portfolio stand, and where are the gaps? A stat band (open capabilities, open epics, and counts on track, at risk, off track and not assessed), plus these charts: capability health, pipeline by Jira status, what's due in the next eight weeks (with a **No date** column), **what's missing** (each field filled against empty), open work by owner (with **No owner**), and **time in current status**. The **Trends** section has health week by week, **completeness week by week**, completions per month, and cycle time from created to done. Every chart has a one-line takeaway that says what it shows. |
+| **Weekly report** | What happened this week, what didn't, and what does leadership need to do about it? An overall RAG and three rated elements (schedule, momentum, data quality), then six sections: what changed, **what didn't move**, what we need to know, what needs a decision, what's coming up (including **work with no date**), and **what's missing**. Earlier weeks are kept. You can copy it for email or Teams with links intact, download it as Markdown, or print it to PDF. |
 | **Actions** | What needs fixing, and by whom? Grouped by check or by owner. From any group you can email the owner their list, copy it as a Teams message, open the set in Jira's issue navigator to bulk-edit, or mark items nudged. |
 | **Capabilities** | Each capability's health, rolled up from its epics, worst first. Expand one to see its epics. Epics that aren't linked to any capability are listed separately. |
 | **Issues** | Everything in a filterable, sortable table. Every key opens the ticket in Jira, and every row opens a detail panel. There's a CSV export with spreadsheet formula injection blocked. |
 | **Method** | The scoring rules, written out, so anyone reading a red can see why it's red. |
 
 Filters apply to every view except the report and the trends. They live in the URL, so a filtered view can be bookmarked or shared.
+
+## Showing the white space
+
+A board that only reports activity hides the work nobody has done. So absence is drawn the same way everywhere, as a hatched fill in charts and a dashed marker in tables ("No date", "No owner", "Not linked"). Each view pairs what was done with what wasn't:
+
+| Done | Not done, shown alongside |
+|---|---|
+| Due in the next eight weeks | **No date**: work that can't be scheduled at all |
+| Open work by owner | **No owner**: work nobody is accountable for |
+| Capability health | **No epics**: capabilities with nothing under them |
+| What changed this week | **What didn't move**: not started, blocked or on hold for `stuck_weeks`+ weeks, and anything with no update in `stale_days` |
+| Coming up | **No date set, so it can't be scheduled** |
+| Data quality score | **What's missing**: every open item without an owner, a capability, epics, a description or a required field, plus a completeness trend |
+
+Long-running work that is actively in progress isn't flagged as stuck. An epic can reasonably be In Progress for months. What counts as not moving is work that hasn't started, or is held.
 
 ## The weekly report runs itself
 
@@ -45,7 +60,7 @@ The three elements are rated like this:
 | Element | Red | Amber | Green |
 |---|---|---|---|
 | Schedule | any capability off track | any capability at risk | otherwise |
-| Momentum | 25%+ of open work stale | anything stale, or nothing completed | otherwise |
+| Momentum | 25%+ of open work stale | anything stale, or nothing completed | otherwise (the text also counts what didn't move) |
 | Data quality | under 75% of open items complete | 75–89% | 90%+ |
 
 Overall takes the worst of the three, and the headline names which element is the constraint.

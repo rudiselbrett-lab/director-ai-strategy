@@ -68,10 +68,23 @@ function ok(cond, msg) {
     // ---------- overview
     await go(SAMPLE);
     ok(await page.locator("#p-overview .band .stat").count() === 6, "overview opens with the stat band");
-    for (const t of ["Capability health", "Pipeline by Jira status", "Due in the next eight weeks", "Open work by owner",
-                     "Health week by week", "Epics completed per month", "Cycle time, created to done"])
+    for (const t of ["Capability health", "Pipeline by Jira status", "Due in the next eight weeks", "What's missing",
+                     "Open work by owner", "Time in current status", "Health week by week", "Completeness week by week",
+                     "Epics completed per month", "Cycle time, created to done"])
       ok(await page.locator(`#p-overview section[aria-label="${t}"]`).count() === 1, "chart: " + t);
-    ok(await page.locator("#p-overview .take").count() >= 7, "every chart carries a takeaway");
+    ok(await page.locator("#p-overview .take").count() >= 10, "every chart carries a takeaway");
+    // white space: what's absent is drawn, not left out
+    const due = page.locator('#p-overview section[aria-label="Due in the next eight weeks"]');
+    ok(await due.locator(".xl span", { hasText: "No date" }).count() === 1 && await due.locator(".cols .c-miss").count() === 1,
+      "due chart has a No date column");
+    ok(await due.locator(".xl span", { hasText: "Late" }).count() === 1, "due chart keeps its Late label");
+    ok(await page.locator('#p-overview section[aria-label="Open work by owner"] .track .c-miss').count() === 1, "unowned work is drawn as missing");
+    const missRows = page.locator('#p-overview section[aria-label="What\'s missing"] .gaprow');
+    ok(await missRows.count() >= 6, "what's missing shows each field filled against empty");
+    await missRows.filter({ hasText: "Due date" }).click();
+    ok((await hash()).includes("tab=actions") && (await hash()).includes("check=no_due"), "a missing field drills into its actions");
+    ok(await page.locator("#p-actions .item").count() === 3, "and lists exactly the undated items");
+    await page.locator("#t-overview").click();
     ok((await page.locator("#head").innerText()).indexOf("null") === -1, "no stray text in the page head");
     await page.locator('#p-overview button.stat[title*="off track"]').click();
     ok((await hash()).includes("health=red"), "stat tile filters by health");
@@ -92,9 +105,11 @@ function ok(cond, msg) {
     ok(await page.locator("#p-report .overall").count() === 1 && await page.locator("#p-report .elem").count() === 3,
       "overall RAG and three elements");
     ok(await page.locator("#filters").isHidden(), "filters hidden on the report");
-    for (const t of ["What changed since", "What we need to know", "Needs a decision", "Coming up"])
+    for (const t of ["What changed since", "What didn't move", "What we need to know", "Needs a decision", "Coming up", "What's missing"])
       ok(await page.locator("#p-report .rsec h3", { hasText: t }).count() === 1, "report section: " + t);
     ok(await page.locator("#p-report .rgrp h4", { hasText: "Status moves" }).count() === 1, "week-over-week status moves listed");
+    ok(await page.locator("#p-report .rgrp h4", { hasText: "Not started after" }).count() === 1, "unstarted work listed next to what changed");
+    ok(await page.locator("#p-report .rgrp h4", { hasText: "No date set" }).count() === 1, "undated work listed with what's coming up");
     const weeks = await page.locator("#r-week option").count();
     ok(weeks >= 8, "earlier weeks are kept (" + weeks + ")");
     await page.selectOption("#r-week", { index: 3 });
@@ -153,6 +168,8 @@ function ok(cond, msg) {
     const dues = (await page.locator("#p-issues tbody tr td:nth-child(8)").allInnerTexts()).map(t => t.split("\n")[0]);
     const dated = dues.filter(d => d !== "—").map(d => Date.parse(d + " 2026"));
     ok(dues.slice(dated.length).every(d => d === "—"), "undated rows sort last");
+    ok(await page.locator("#p-issues tbody .miss", { hasText: "No date" }).count() === 3, "blank due dates are marked, not dashed");
+    ok(await page.locator("#p-issues tbody .miss", { hasText: "No owner" }).count() === 3, "blank owners are marked");
     await page.locator("#f-done").check();
     ok(await page.locator("#p-issues tbody tr").count() > all, "include done adds done work");
     await page.locator("#f-done").uncheck();

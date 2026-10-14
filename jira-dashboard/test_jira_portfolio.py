@@ -345,6 +345,75 @@ class Report(unittest.TestCase):
         self.assertIsNone(reps[-1]["baseline"])
 
 
+class WhiteSpace(unittest.TestCase):
+    """What wasn't done is reported next to what was."""
+
+    def points(self, weeks):
+        """weeks: list of issue lists, oldest first, a week apart, ending today."""
+        n = len(weeks)
+        return [(TODAY - dt.timedelta(days=7 * (n - 1 - i)),
+                 [jp.compact(r) for r in jp.score(w, cfg(), TODAY - dt.timedelta(days=7 * (n - 1 - i)))])
+                for i, w in enumerate(weeks)]
+
+    def test_status_since_walks_back_until_the_status_changed(self):
+        pts = self.points([[issue("E-1", status="To Do", cat="new")],
+                           [issue("E-1", status="In Progress")],
+                           [issue("E-1", status="In Progress")],
+                           [issue("E-1", status="In Progress")]])
+        got = jp.status_since(pts, 3)["E-1"]
+        self.assertEqual(got["since"], (TODAY - dt.timedelta(days=14)).isoformat())
+        self.assertFalse(got["atLeast"])
+        self.assertTrue(jp.status_since(self.points([[issue("E-1")], [issue("E-1")]]), 1)["E-1"]["atLeast"])
+        self.assertEqual(jp.status_since(pts, 0), {})
+
+    def test_didnt_move_lists_unstarted_and_held_work(self):
+        weeks = [[issue("E-1", status="To Do", cat="new", due=60), issue("E-2", status="On Hold", due=60),
+                  issue("E-3", due=60)] for _ in range(5)]
+        pts = self.points(weeks)
+        rep = jp.weekly_report(TODAY, pts[-1][1], pts[-2], cfg(), jp.status_since(pts, 4))
+        g = Report.groups(None, rep, "What didn't move")
+        self.assertEqual(g["Not started after 3+ weeks"], ["E-1"])
+        self.assertEqual(g["Blocked or on hold for 3+ weeks"], ["E-2"])
+        self.assertNotIn("E-3", sum(g.values(), []))    # in progress for weeks is normal, not white space
+        self.assertIn("at least 4 weeks", rep["sections"][1]["groups"][0]["lines"][0]["text"])
+
+    def test_first_run_times_unstarted_work_from_created(self):
+        r = jp.score([issue("E-1", status="To Do", cat="new", due=60,
+                            created=(TODAY - dt.timedelta(days=40)).isoformat())], cfg(), TODAY)
+        rep = jp.weekly_report(TODAY, [jp.compact(x) for x in r], None, cfg(), {})
+        self.assertEqual(Report.groups(None, rep, "What didn't move")["Not started after 3+ weeks"], ["E-1"])
+        self.assertIsNotNone(rep["sections"][1]["note"])
+
+    def test_undated_work_is_listed_under_coming_up(self):
+        rep = jp.weekly_report(TODAY, [jp.compact(x) for x in jp.score(
+            [issue("E-1", due=5), issue("E-2")], cfg(), TODAY)], None, cfg())
+        g = Report.groups(None, rep, "Coming up")
+        self.assertEqual(g["No date set, so it can't be scheduled"], ["E-2"])
+
+    def test_whats_missing_groups_every_hygiene_gap(self):
+        c = cfg(required_fields=[{"field": "cv", "label": "Business value", "types": ["Capability"]}])
+        recs = jp.score([issue("C-1", typ="Capability", owner=None, desc=False, due=30),
+                         issue("E-1", due=10)], c, TODAY)
+        rep = jp.weekly_report(TODAY, [jp.compact(x) for x in recs], None, c)
+        g = Report.groups(None, rep, "What's missing")
+        self.assertEqual(g["No owner"], ["C-1"])
+        self.assertEqual(g["Epic not linked to a capability"], ["E-1"])
+        self.assertEqual(g["Capability with no epics"], ["C-1"])
+        self.assertEqual(g["Missing Business value"], ["C-1"])
+        self.assertNotIn("Assign an owner", Report.groups(None, rep, "Needs a decision"))
+
+    def test_section_order_pairs_done_with_not_done(self):
+        rep = jp.weekly_report(TODAY, [jp.compact(x) for x in jp.score([issue("E-1", due=5)], cfg(), TODAY)], None, cfg())
+        self.assertEqual([s["title"].split(" since")[0] for s in rep["sections"]],
+                         ["What changed this week", "What didn't move", "What we need to know", "Needs a decision",
+                          "Coming up", "What's missing"])
+
+    def test_completeness_trend(self):
+        pts = self.points([[issue("E-1", owner=None, due=5)], [issue("E-1", due=5, parent="C-9")]])
+        tr = jp.trends(pts, [], TODAY)
+        self.assertEqual([w["complete"] for w in tr["weekly"]], [0, 100])
+
+
 class Trends(unittest.TestCase):
     def test_monthly_completions_and_median_cycle(self):
         def done(key, created_ago, resolved_ago):

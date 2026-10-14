@@ -38,5 +38,6 @@
   "max_issues": 5000,
 
   "history_dir": "C:/Users/you/Documents/ai-portfolio/history",
-  "coming_up_days": 14
+  "coming_up_days": 14,
+  "stuck_weeks": 3
 }

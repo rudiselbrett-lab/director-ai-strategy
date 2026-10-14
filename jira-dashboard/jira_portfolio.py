@@ -83,6 +83,8 @@ DEFAULT_CONFIG = {
     "history_dir": "jira_portfolio_history",
     # "Coming up" in the weekly report looks this many days ahead.
     "coming_up_days": 14,
+    # Not started, blocked or on hold this many weeks running counts as "didn't move".
+    "stuck_weeks": 3,
 }
 
 # Every check the command center can raise. Order is the order shown.
@@ -561,6 +563,8 @@ def build_meta(cfg, today, source):
             "redStatuses": h["red_statuses"], "amberStatuses": h["amber_statuses"],
             "atRiskDays": h["at_risk_days"], "staleDays": h["stale_days"],
             "ragField": bool(cfg.get("rag_field")), "flaggedField": bool(cfg.get("flagged_field")),
+            "stuckWeeks": int(cfg.get("stuck_weeks", 3)),
+            "requiredFields": [{"label": r["label"], "types": r.get("types") or []} for r in cfg.get("required_fields", [])],
         },
     }
 
@@ -652,7 +656,45 @@ def _worst(*rags):
     return max(rags, key=lambda x: order[x])
 
 
-def weekly_report(date, curr, base, cfg):
+HYGIENE = ("no_owner", "no_due", "no_parent", "no_children", "no_description", "missing_field")
+
+
+def status_since(points, i):
+    """For each open item in points[i]: the earliest snapshot date from which it has
+    sat in its current status without a break. at_least means the run reaches back
+    to the oldest snapshot, so the real start is earlier. Empty with no history."""
+    if i == 0:
+        return {}
+    d, curr = points[i]
+    prior = [{r["key"]: r for r in issues} for _, issues in points[:i]]
+    out = {}
+    for r in curr:
+        if not is_open(r):
+            continue
+        since, at_least, j = d, False, i - 1
+        while j >= 0:
+            p = prior[j].get(r["key"])
+            if not p or p["status"] != r["status"]:
+                break
+            since, j = points[j][0], j - 1
+        else:
+            at_least = True
+        out[r["key"]] = {"since": since.isoformat(), "atLeast": at_least}
+    return out
+
+
+def days_in_status(r, since_map, date):
+    """Days in the current status, from history; for To Do work with no history,
+    from its created date, since work usually starts life in To Do."""
+    s = since_map.get(r["key"]) if since_map else None
+    if s:
+        return (date - dt.date.fromisoformat(s["since"])).days, s["atLeast"]
+    if r["statusCat"] == "todo" and r.get("created"):
+        return (date - dt.date.fromisoformat(r["created"])).days, False
+    return None, False
+
+
+def weekly_report(date, curr, base, cfg, since_map=None):
     """The week's report as data: an overall RAG, three elements, and sections of lines."""
     h = cfg["health"]
     soon = int(cfg.get("coming_up_days", 14))
@@ -714,11 +756,40 @@ def weekly_report(date, curr, base, cfg):
     if mism:
         know.append({"label": "Reported healthier than the data", "lines": [
             line(r, gap_detail(r, "rag_mismatch") or "") for r in mism]})
+
+    # --- what didn't move: the white space next to "what changed"
+    still = []
+    stuck_days = 7 * int(cfg.get("stuck_weeks", 3))
+    held = {s.lower() for s in h["red_statuses"] + h["amber_statuses"]}
+
+    def in_status(r):
+        n, at_least = days_in_status(r, since_map, date)
+        if n is None:
+            return None
+        wk = n // 7
+        return n, "%s for %s%s" % (r["status"], "at least " if at_least else "", "%d weeks" % wk if wk != 1 else "1 week")
+
+    not_started, on_hold = [], []
+    for r in open_:
+        got = in_status(r)
+        if not got or got[0] < stuck_days:
+            continue
+        if r["statusCat"] == "todo":
+            not_started.append((got[0], line(r, got[1] + ", owner " + (r["owner"] or "not set"))))
+        elif r["status"].lower() in held:
+            on_hold.append((got[0], line(r, got[1] + ", owner " + (r["owner"] or "not set"))))
+    if not_started:
+        still.append({"label": "Not started after %d+ weeks" % (stuck_days // 7),
+                      "lines": [ln for _, ln in sorted(not_started, key=lambda x: -x[0])]})
+    if on_hold:
+        still.append({"label": "Blocked or on hold for %d+ weeks" % (stuck_days // 7),
+                      "lines": [ln for _, ln in sorted(on_hold, key=lambda x: -x[0])]})
     stale = sorted([r for r in open_ if gap_detail(r, "stale")], key=lambda r: r["updated"] or "")
     if stale:
-        know.append({"label": "No update in over %d days" % h["stale_days"], "lines": [
+        still.append({"label": "No update in over %d days" % h["stale_days"], "lines": [
             line(r, "%s, owner %s" % (gap_detail(r, "stale").replace("Last updated ", "last updated "),
                                       r["owner"] or "not set")) for r in stale]})
+    n_still = len(not_started) + len(on_hold)
 
     # --- needs a decision
     decide = []
@@ -736,9 +807,6 @@ def weekly_report(date, curr, base, cfg):
     if closing:
         decide.append({"label": "Close out", "lines": [
             line(r, "marked done with open epics (%s)" % gap_detail(r, "done_open_children")) for r in closing]})
-    unowned = [r for r in open_ if gap_detail(r, "no_owner")]
-    if unowned:
-        decide.append({"label": "Assign an owner", "lines": [line(r, r["type"].lower()) for r in unowned]})
 
     # --- coming up
     horizon = (date + dt.timedelta(days=soon)).isoformat()
@@ -746,6 +814,26 @@ def weekly_report(date, curr, base, cfg):
                       key=lambda r: r["due"])
     coming = [{"label": "Due by %s" % fmt_day(horizon), "lines": [
         line(r, "due %s (%s)" % (fmt_day(r["due"]), days_until(r["due"], date))) for r in upcoming]}] if upcoming else []
+    undated = sorted([r for r in open_ if not r["due"]], key=lambda r: (r["kind"] != "capability", r["key"]))
+    if undated:
+        coming.append({"label": "No date set, so it can't be scheduled", "lines": [
+            line(r, "%s, %s, owner %s" % (r["type"].lower(), r["status"], r["owner"] or "not set")) for r in undated]})
+
+    # --- what's missing (dates are under coming up)
+    missing = []
+    for code, label in (("no_owner", "No owner"), ("no_parent", "Epic not linked to a capability"),
+                        ("no_children", "Capability with no epics"), ("no_description", "No description")):
+        rows_ = [r for r in open_ if gap_detail(r, code)]
+        if rows_:
+            missing.append({"label": label, "lines": [line(r, "%s, %s" % (r["type"].lower(), r["status"])) for r in rows_]})
+    fields = {}
+    for r in open_:
+        for g in r.get("gaps") or []:
+            if g["code"] == "missing_field":
+                fields.setdefault(g["detail"], []).append(r)
+    for label in sorted(fields):
+        missing.append({"label": label, "lines": [line(r, "%s, owner %s" % (r["type"].lower(), r["owner"] or "not set"))
+                                                   for r in fields[label]]})
 
     # --- the three elements
     n_red = sum(1 for r in units if shown(r) == "red")
@@ -768,12 +856,14 @@ def weekly_report(date, curr, base, cfg):
         "name": "Momentum",
         "rag": "red" if stale_share >= 0.25 else "amber" if n_stale or not completed else "green",
         "big": "%d completed" % len(completed),
-        "text": "%d completed since %s. %s" % (
+        "text": "%d completed since %s. %s%s" % (
             len(completed), fmt_day(since.isoformat()),
             ("%d open item%s had no update in over %d days." % (n_stale, "" if n_stale == 1 else "s", h["stale_days"]))
-            if n_stale else "Everything open was updated in the last %d days." % h["stale_days"]),
+            if n_stale else "Everything open was updated in the last %d days." % h["stale_days"],
+            (" %d %s been not started, blocked or on hold for %d+ weeks." % (
+                n_still, "has" if n_still == 1 else "have", stuck_days // 7)) if n_still else ""),
     }
-    hygiene_codes = {"no_owner", "no_due", "no_parent", "no_children", "no_description", "missing_field"}
+    hygiene_codes = set(HYGIENE)
     dirty = [r for r in open_ if any(g["code"] in hygiene_codes for g in r.get("gaps") or [])]
     clean_pct = round(100 * (1 - len(dirty) / len(open_))) if open_ else 100
     tally = {}
@@ -813,9 +903,14 @@ def weekly_report(date, curr, base, cfg):
              "note": None if base_date else "First report from this history: changes come from Jira's created and "
                                             "resolved dates. Status, date and owner moves appear from next week's run.",
              "groups": changed},
+            {"title": "What didn't move", "note": None if since_map else
+                "Time in status builds from the weekly snapshots. Until there are two, not-started work is "
+                "timed from its created date.", "groups": still},
             {"title": "What we need to know", "note": None, "groups": know},
             {"title": "Needs a decision", "note": None, "groups": decide},
             {"title": "Coming up", "note": None, "groups": coming},
+            {"title": "What's missing", "note": "Undated work is listed under Coming up." if undated else None,
+             "groups": missing},
         ],
     }
 
@@ -833,7 +928,7 @@ def build_reports(points, cfg, limit=12):
             if (d - points[j][0]).days >= 5:
                 base = points[j]
                 break
-        reports.append(weekly_report(d, issues, base, cfg))
+        reports.append(weekly_report(d, issues, base, cfg, status_since(points, i)))
     return reports[-limit:][::-1]
 
 
@@ -882,7 +977,10 @@ def trends(points, recs, today):
         for r in issues:
             if is_open(r) and (not kind or r["kind"] == kind) and r["health"] in c:
                 c[r["health"]] += 1
-        weekly.append(dict(date=d.isoformat(), **c))
+        open_ = [r for r in issues if is_open(r)]
+        clean = sum(1 for r in open_ if not any(g["code"] in HYGIENE for g in r.get("gaps") or []))
+        weekly.append(dict(date=d.isoformat(), complete=round(100 * clean / len(open_)) if open_ else None,
+                           undated=sum(1 for r in open_ if not r["due"]), **c))
     monthly = []
     for start in month_starts(today, 6):
         end = dt.date(start.year + (start.month == 12), start.month % 12 + 1, 1)
@@ -954,6 +1052,7 @@ def sample_issues(today):
     issue("AI-13", E, "Model risk validation package", "To Do", "Priya Nair", 10, 4, "AI-1")
     issue("AI-14", E, "Containment reporting", "Done", "Marcus Lee", -20, 25, "AI-1", age=70)
     issue("AI-15", E, "IVR intent pilot", "Done", "Priya Nair", -75, 70, "AI-1", age=95)
+    issue("AI-16", E, "Accessibility review", "To Do", "Priya Nair", None, 12, "AI-1", age=30)
 
     issue("AI-2", C, "Fraud alert triage copilot", "In Progress", None, 75, 6,
           rag="Green", cap_owner="Sam Okafor", age=180)
@@ -1128,6 +1227,9 @@ def main():
     else:
         history = load_history(cfg["history_dir"])
     points = weekly_points(history, today, [compact(r) for r in recs])
+    since_now = status_since(points, len(points) - 1)
+    for r in recs:
+        r["daysInStatus"], r["statusSinceAtLeast"] = days_in_status(r, since_now, today) if is_open(r) else (None, False)
     reports = build_reports(points, cfg)
     page = build_html(recs, cfg, build_meta(cfg, today, source), reports, trends(points, recs, today))
     with open(a.out, "w", encoding="utf-8") as f:
@@ -1279,6 +1381,18 @@ TEMPLATE = r"""<!DOCTYPE html>
   .c-red { background: var(--critical); } .c-amber { background: var(--warning); } .c-green { background: var(--good); }
   .c-nodate { background: var(--neutral); } .c-done { background: var(--done); } .c-data { background: var(--data); }
   .c-data-soft { background: var(--data-soft); }
+  /* White space: anything missing is drawn the same way everywhere, a hatched
+     fill in charts and a dashed marker in text, so absence is as visible as
+     activity. */
+  .c-miss { background: repeating-linear-gradient(135deg, var(--neutral) 0 2px, transparent 2px 6px); box-shadow: inset 0 0 0 1px var(--neutral); }
+  .miss { display: inline-block; border: 1px dashed var(--field); color: var(--ink-2); border-radius: 2px; padding: 0 6px;
+          font-size: 12px; line-height: 18px; white-space: nowrap; }
+  .gaprow { display: grid; grid-template-columns: minmax(90px, 150px) minmax(0, 1fr) 84px; gap: var(--s3); align-items: center;
+            font-size: 13px; padding: 5px 0; cursor: pointer; }
+  .gaprow:hover .lab { color: var(--link); }
+  .gaprow .lab { text-align: right; color: var(--ink-2); }
+  .gaprow .val { font-variant-numeric: tabular-nums; }
+  .gaprow .val.zero { color: var(--ink-3); }
 
   /* ---------- stat band ---------- */
   .band { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid var(--hairline); margin-bottom: var(--s5); }
@@ -1597,6 +1711,7 @@ const fmt = (s, opt) => s ? d8(s).toLocaleDateString(undefined, opt || { month: 
 const fmtY = s => fmt(s, { month: "short", day: "numeric", year: "numeric" });
 const rel = n => n == null ? "" : n === 0 ? "today" : n > 0 ? "in " + plural(n, "day") : plural(-n, "day") + " ago";
 
+const miss = t => h("span", { class: "miss", text: t });
 function glyph(hk) { return h("span", { class: "g c-" + hk + " " + hk, "aria-hidden": "true", text: HEALTH[hk].glyph }); }
 function badge(hk) { return h("span", { class: "hb" }, glyph(hk), HEALTH[hk].label); }
 function keyLink(r) {
@@ -1722,16 +1837,18 @@ function columns(list) {
       h("div", { class: "stack", style: "height:" + (100 * c.total / max) + "%" },
         c.segs.filter(s => s.n).map(s => h("span", { class: "c-" + s.k, style: "flex:" + s.n, "data-tip": c.tipLabel + ": " + s.n + " " + (s.label || "") }))),
       h("div", { class: "top", text: c.total || "" })))),
-    h("div", { class: "xl" }, list.map((c, i) => h("span", { text: list.length <= 7 || i % 2 === (list.length - 1) % 2 ? c.label : "" }))));
+    h("div", { class: "xl" }, list.map((c, i) => h("span", { text: list.length <= 7 || i === 0 || i === list.length - 1 || (i % 2 === 0 && i < list.length - 2) ? c.label : "" }))));
 }
-function line(pts) {
+function line(pts, o) {
+  o = o || {};
+  const unit = o.unit || "d", tipOf = o.tip || (p => p.label + ": median " + p.v + " days (" + plural(p.n, "item") + ")");
   const W = 300, H = 130, P = 16, valid = pts.filter(p => p.v != null);
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("class", "line"); svg.setAttribute("viewBox", "0 0 " + W + " " + (H + 18)); svg.setAttribute("preserveAspectRatio", "none");
   svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", pts.map(p => p.label + ": " + (p.v == null ? "none" : p.v + " days")).join(", "));
+  svg.setAttribute("aria-label", pts.map(p => p.label + ": " + (p.v == null ? "none" : p.v + unit)).join(", "));
   const S_ = (t, a, txt) => { const e = document.createElementNS("http://www.w3.org/2000/svg", t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; svg.append(e); return e; };
-  const max = Math.max(1, ...valid.map(p => p.v)), min = 0;
+  const max = o.max || Math.max(1, ...valid.map(p => p.v)), min = 0;
   const x = i => P + (W - 2 * P) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
   const y = v => P + (H - 2 * P) * (1 - (v - min) / (max - min || 1));
   S_("line", { class: "axis", x1: 0, x2: W, y1: H, y2: H });
@@ -1741,8 +1858,8 @@ function line(pts) {
     S_("text", { x: x(i), y: H + 15, "text-anchor": "middle" }, p.label);
     if (p.v == null) return;
     const c = S_("circle", { class: "pt", cx: x(i), cy: y(p.v), r: 4, "vector-effect": "non-scaling-stroke" });
-    c.setAttribute("data-tip", p.label + ": median " + p.v + " days (" + plural(p.n, "item") + ")");
-    if (i === pts.length - 1 || p === valid[0]) S_("text", { x: x(i), y: y(p.v) - 9, "text-anchor": "middle" }, p.v + "d");
+    c.setAttribute("data-tip", tipOf(p));
+    if (i === pts.length - 1 || p === valid[0]) S_("text", { x: x(i), y: y(p.v) - 9, "text-anchor": "middle" }, p.v + unit);
   });
   return svg;
 }
@@ -1784,7 +1901,7 @@ function renderOverview() {
     const kids = c.children.map(k => BY_KEY.get(k)).filter(k => k && isOpen(k));
     const mini = h("div", { class: "mini" }, kids.length ? OPEN_H.filter(k => c.childCounts[k]).map(k =>
       h("span", { class: "c-" + k, style: "flex:" + c.childCounts[k], "data-tip": c.childCounts[k] + " " + HEALTH[k].label.toLowerCase() }))
-      : h("span", { class: "c-nodate", style: "flex:1;opacity:.35", "data-tip": "No open epics" }));
+      : h("span", { class: "c-miss", style: "flex:1", "data-tip": c.children.length ? "No open epics" : "No epics yet" }));
     return h("div", { class: "caprow", tabindex: "0", role: "button", onclick: () => openDrawer(c.key), onkeydown: e => { if (e.key === "Enter") openDrawer(c.key); } },
       glyph(c.rollup), h("span", { class: "nm", title: c.summary }, h("span", { class: "k", text: c.key }), c.summary),
       mini, h("span", { class: "hl", text: HEALTH[c.rollup].label }));
@@ -1827,37 +1944,98 @@ function renderOverview() {
     cycV.length > 1 ? "Median " + cycV[cycV.length - 1].v + " days in " + cycV[cycV.length - 1].label + ", " +
       (cycV[cycV.length - 1].v <= cycV[cycV.length - 2].v ? "down" : "up") + " from " + cycV[cycV.length - 2].v + " in " + cycV[cycV.length - 2].label + "." : null);
 
-  // due ahead
+  // due ahead, with the undated work as its own column: what can't be scheduled is as visible as what's coming
   const base = d8(META.today);
   const buckets = [{ label: "Late", test: n => n < 0 }].concat([0, 1, 2, 3, 4, 5, 6, 7].map(i => ({
     label: i === 0 ? "This wk" : fmt(new Date(base.getTime() + 7 * i * 864e5).toISOString().slice(0, 10)), test: n => n >= 7 * i && n < 7 * (i + 1) })));
-  const dated = all.filter(r => r.daysToDue != null);
+  const dated = all.filter(r => r.daysToDue != null), undated = all.filter(r => r.daysToDue == null);
   const dueCols = buckets.map(b => { const l = dated.filter(r => b.test(r.daysToDue));
     return { label: b.label, tipLabel: b.label === "Late" ? "Past due" : "Due week of " + b.label, total: l.length,
       segs: ["green", "amber", "red"].map(k => ({ k, n: l.filter(r => shown(r) === k).length, label: HEALTH[k].label.toLowerCase() })) }; });
+  dueCols.push({ label: "No date", tipLabel: "No due date", total: undated.length, segs: [{ k: "miss", n: undated.length, label: "with no due date" }] });
   const late = dueCols[0].total, twoWk = dueCols[1].total + dueCols[2].total;
   const dueCard = card("Due in the next eight weeks", columns(dueCols),
     plural(twoWk, "item is", "items are") + " due in the next two weeks" + (late ? " and " + plural(late, "is", "are") + " already late" : "") +
-    ". " + plural(all.length - dated.length, "open item has", "open items have") + " no due date.", healthLegend(["green", "amber", "red"]));
+    ". " + (undated.length ? plural(undated.length, "open item has", "open items have") + " no due date at all, so " + (undated.length === 1 ? "it" : "they") + " can't be scheduled."
+      : "Every open item has a due date."),
+    h("div", { class: "legend" }, ["green", "amber", "red"].map(k => h("span", null, h("span", { class: "sw c-" + k }), HEALTH[k].label)),
+      h("span", null, h("span", { class: "sw c-miss" }), "No date")));
+
+  // what's missing: each field the board needs, filled versus empty
+  const reqFields = (META.rules.requiredFields || []);
+  const gapRows = [
+    { label: "Owner", code: "no_owner", of: all },
+    { label: "Due date", code: "no_due", of: all },
+    { label: "Capability link", code: "no_parent", of: all.filter(r => r.kind === "epic"), unit: "epics" },
+    { label: "Epics", code: "no_children", of: caps, unit: "capabilities" },
+    { label: "Description", code: "no_description", of: all },
+    ...reqFields.map(f => ({ label: f.label, code: "missing_field", detail: "Missing " + f.label,
+      of: f.types.length ? all.filter(r => f.types.includes(r.type)) : all })),
+    { label: "Update in " + META.rules.staleDays + " days", code: "stale", of: all },
+  ].filter(g => CHECK[g.code] && g.of.length);
+  const hasGap = (r, g) => r.gaps.some(x => x.code === g.code && (!g.detail || x.detail === g.detail));
+  for (const g of gapRows) g.miss = g.of.filter(r => hasGap(r, g)).length;
+  const missBody = gapRows.length ? h("div", null, gapRows.map(g => h("div", { class: "gaprow", role: "button", tabindex: "0",
+      title: g.miss ? "See the " + g.miss + " in Actions" : null,
+      onclick: () => set({ tab: "actions", check: g.code }), onkeydown: e => { if (e.key === "Enter") set({ tab: "actions", check: g.code }); } },
+    h("span", { class: "lab", text: g.label }),
+    h("div", { class: "track" }, g.of.length - g.miss ? h("span", { class: "c-data", style: "flex:" + (g.of.length - g.miss),
+        "data-tip": (g.of.length - g.miss) + " of " + g.of.length + " " + (g.unit || "open items") + " have it" }) : null,
+      g.miss ? h("span", { class: "c-miss", style: "flex:" + g.miss, "data-tip": g.miss + " of " + g.of.length + " " + (g.unit || "open items") + " missing it" }) : null),
+    h("span", { class: "val" + (g.miss ? "" : " zero"), text: g.miss ? g.miss + " missing" : "complete" }))))
+    : h("div", { class: "empty", text: "Nothing open matches these filters." });
+  const worstGap = gapRows.filter(g => g.miss).sort((a, b) => b.miss / b.of.length - a.miss / a.of.length)[0];
+  const missCard = card("What's missing", missBody, worstGap
+    ? "Biggest gap: " + worstGap.label.toLowerCase() + ", missing on " + worstGap.miss + " of " + worstGap.of.length + " " + (worstGap.unit || "open items") + ". Select a row to see which."
+    : "Nothing missing. Every open item carries what the board needs.",
+    h("div", { class: "legend" }, h("span", null, h("span", { class: "sw c-data" }), "Has it"), h("span", null, h("span", { class: "sw c-miss" }), "Missing")));
+
+  // time in current status: what hasn't moved
+  const tb = [["< 1 wk", 0, 7], ["1–2 wks", 7, 14], ["2–4 wks", 14, 28], ["4–8 wks", 28, 56], ["8+ wks", 56, Infinity]];
+  const timed = all.filter(r => r.daysInStatus != null), untimed = all.filter(r => r.daysInStatus == null);
+  const tCols = tb.map(([label, lo, hi]) => { const l = timed.filter(r => r.daysInStatus >= lo && r.daysInStatus < hi);
+    return { label, tipLabel: "In the same status " + label, total: l.length,
+      segs: ["green", "nodate", "amber", "red"].map(k => ({ k, n: l.filter(r => shown(r) === k).length, label: HEALTH[k].label.toLowerCase() })) }; });
+  if (untimed.length) tCols.push({ label: "Unknown", tipLabel: "No history yet", total: untimed.length, segs: [{ k: "miss", n: untimed.length, label: "not yet timed" }] });
+  const sw = META.rules.stuckWeeks || 3;
+  const stuck = timed.filter(r => r.daysInStatus >= 7 * sw && (r.statusCat === "todo" || META.rules.redStatuses.concat(META.rules.amberStatuses).map(s => s.toLowerCase()).includes(r.status.toLowerCase())));
+  const statusCard = card("Time in current status", columns(tCols),
+    (stuck.length ? plural(stuck.length, "open item has", "open items have") + " been not started, blocked or on hold for " + sw + "+ weeks: " +
+      stuck.slice(0, 4).map(r => r.key).join(", ") + (stuck.length > 4 ? " and more" : "") + ". " : "Nothing has sat unstarted, blocked or on hold for " + sw + "+ weeks. ") +
+    (untimed.length ? plural(untimed.length, "item isn't", "items aren't") + " timed yet; each weekly snapshot adds history." : ""),
+    healthLegend());
 
   // by owner
   const owners = {};
   for (const r of all) (owners[r.owner || "No owner"] = owners[r.owner || "No owner"] || []).push(r);
   const ownList = Object.entries(owners).sort((a, b) => (a[0] === "No owner") - (b[0] === "No owner") || b[1].length - a[1].length || a[0].localeCompare(b[0]));
   const topOwners = ownList.slice(0, 10);
-  const ownCard = card("Open work by owner", topOwners.length ? hbars(topOwners.map(([o, l]) => ({ label: o, total: l.length, segs: segsOf(l),
+  const ownCard = card("Open work by owner", topOwners.length ? hbars(topOwners.map(([o, l]) => ({ label: o, total: l.length,
+      segs: o === "No owner" ? [{ k: "miss", n: l.length, tip: l.length + " with no owner" }] : segsOf(l),
       onclick: () => set({ tab: "issues", owner: o === "No owner" ? NONE : o }), title: "List " + o + "'s open work" })))
     : h("div", { class: "empty", text: "Nothing open matches these filters." }),
     ownList.length ? (() => { const named = ownList.filter(([o]) => o !== "No owner"); const none = owners["No owner"];
       return (named.length ? named[0][0] + " carries the most (" + named[0][1].length + "). " : "") +
-        (none ? plural(none.length, "item has", "items have") + " no owner." : "Every open item has an owner.") +
-        (ownList.length > 10 ? " Top ten shown." : ""); })() : null, healthLegend());
+        (none ? plural(none.length, "item has", "items have") + " nobody accountable." : "Every open item has an owner.") +
+        (ownList.length > 10 ? " Top ten shown." : ""); })() : null,
+    h("div", { class: "legend" }, OPEN_H.map(k => h("span", null, h("span", { class: "sw c-" + k }), HEALTH[k].label)),
+      h("span", null, h("span", { class: "sw c-miss" }), "No owner")));
+
+  // completeness trend
+  const cw = W.filter(w => w.complete != null);
+  const compCard = cw.length > 1 ? card("Completeness week by week", line(cw.map(w => ({ label: fmt(w.date), v: w.complete, n: w.undated })),
+      { unit: "%", max: 100, tip: p => "Week of " + p.label + ": " + p.v + "% of open items complete, " + p.n + " undated" }),
+      "Share of open items with an owner, a date, a link and their required fields: " + cw[0].complete + "% on " + fmt(cw[0].date) +
+      ", " + cw[cw.length - 1].complete + "% now. " + (cw[cw.length - 1].complete >= cw[0].complete ? "The white space is shrinking." : "The white space is growing."))
+    : card("Completeness week by week", h("div", { class: "empty", text: "Builds from the snapshot each run saves." }));
 
   $("p-overview").replaceChildren(band,
     h("div", { class: "grid2" }, card("Capability health", capBody, capTake, healthLegend()), card("Pipeline by Jira status", pipe, pipeTake)),
-    h("div", { class: "grid2" }, dueCard, ownCard),
+    h("div", { class: "grid2" }, dueCard, missCard),
+    h("div", { class: "grid2" }, ownCard, statusCard),
     h("div", { class: "section-h" }, h("h2", { text: "Trends" }), h("p", { text: "Whole portfolio, from the weekly snapshots and Jira's created and resolved dates. Filters don't apply." })),
-    h("div", { class: "grid3" }, weekCard, doneCard, cycleCard));
+    h("div", { class: "grid2" }, weekCard, compCard),
+    h("div", { class: "grid2" }, doneCard, cycleCard));
 }
 
 /* ---------- weekly report ---------- */
@@ -1975,7 +2153,7 @@ function renderActions() {
       l.map(({ r, g }) => { const id = nid(r, g), when = nudged[id];
         return h("div", { class: "item" + (when ? " nudged" : "") }, glyph(shown(r)), keyLink(r),
           h("span", { class: "sm" }, h("button", { class: "linkish", type: "button", title: r.summary, onclick: () => openDrawer(r.key), text: r.summary })),
-          h("span", { class: "o", text: S.group === "owner" ? CHECK[g.code].label : (r.owner || "No owner") }),
+          h("span", { class: "o" }, S.group === "owner" ? CHECK[g.code].label : (r.owner || miss("No owner"))),
           h("span", { class: "d", text: g.detail }),
           h("span", { class: "nb" }, h("button", { class: "tlink", type: "button", "aria-pressed": String(!!when),
             title: when ? "Nudged " + when + ". Select to clear." : "Note that you've followed up (kept in this browser)",
@@ -2007,15 +2185,15 @@ function renderCaps() {
       h("td", { class: "nw" }, shownKids.length ? h("button", { class: "tog", type: "button", "aria-expanded": String(open),
         "aria-label": (open ? "Hide" : "Show") + " epics of " + c.key, onclick: e => { e.stopPropagation(); open ? capOpen.delete(c.key) : capOpen.add(c.key); if (S.cap === c.key) S.cap = ""; writeHash(); renderCaps(); },
         text: open ? "▾" : "▸" }) : h("span", { class: "tog", "aria-hidden": "true" }), badge(c.rollup)),
-      h("td", null, h("div", { class: "ttl" }, keyLink(c), "  ", c.summary), h("div", { class: "sub", text: (c.owner || "No owner") + " · " + c.status })),
-      h("td", null, mini, h("div", { class: "sub", text: plural(nOpen, "open epic") + (kids.length > nOpen ? " · " + (kids.length - nOpen) + " done" : "") })),
-      h("td", { class: "nw" }, c.due ? fmt(c.due) : "—", h("div", { class: "sub", text: c.due ? rel(c.daysToDue) : "no date" })),
+      h("td", null, h("div", { class: "ttl" }, keyLink(c), "  ", c.summary), h("div", { class: "sub" }, c.owner || miss("No owner"), " · " + c.status)),
+      h("td", null, kids.length ? [mini, h("div", { class: "sub", text: plural(nOpen, "open epic") + (kids.length > nOpen ? " · " + (kids.length - nOpen) + " done" : "") })] : miss("No epics")),
+      h("td", { class: "nw" }, c.due ? [fmt(c.due), h("div", { class: "sub", text: rel(c.daysToDue) })] : isOpen(c) ? miss("No date") : "—"),
       h("td", { class: "num" }, c.gaps.length ? h("span", { "data-tip": c.gaps.map(g => CHECK[g.code].label).join(", "), text: c.gaps.length }) : h("span", { class: "sub", text: "0" }))));
     if (open) for (const k of shownKids.sort(worstFirst)) tb.append(h("tr", { class: "row child", onclick: () => openDrawer(k.key) },
       h("td", { class: "nw", style: "padding-left:32px" }, badge(k.health)),
-      h("td", null, h("div", null, keyLink(k), "  ", k.summary), h("div", { class: "sub", text: (k.owner || "No owner") + " · " + k.status })),
+      h("td", null, h("div", null, keyLink(k), "  ", k.summary), h("div", { class: "sub" }, k.owner || miss("No owner"), " · " + k.status)),
       h("td", { class: "sub", text: (k.reasons || [])[0] || "" }),
-      h("td", { class: "nw" }, k.due ? fmt(k.due) : "—", h("div", { class: "sub", text: k.due ? rel(k.daysToDue) : "no date" })),
+      h("td", { class: "nw" }, k.due ? [fmt(k.due), h("div", { class: "sub", text: rel(k.daysToDue) })] : isOpen(k) ? miss("No date") : "—"),
       h("td", { class: "num" }, k.gaps.length ? String(k.gaps.length) : h("span", { class: "sub", text: "0" }))));
   }
   const orphans = ISSUES.filter(r => r.kind === "epic" && !(r.parent && BY_KEY.has(r.parent)) && match(r));
@@ -2034,11 +2212,11 @@ const COLS = {
   type:    { label: "Type", val: r => r.type, cell: r => h("td", { class: "nw", text: r.type }) },
   summary: { label: "Summary", val: r => r.summary.toLowerCase(), cell: r => h("td", { style: "min-width:220px" }, r.summary) },
   cap:     { label: "Capability", val: r => isCap(r) ? "" : r.parent || "~", cmp: byKey, cell: r => h("td", { class: "nw", title: r.parentSummary || "" },
-             isCap(r) ? h("span", { class: "sub", text: "—" }) : r.parent ? r.parent : h("span", { class: "sub", text: "None" })) },
-  owner:   { label: "Owner", val: r => (r.owner || "~").toLowerCase(), cell: r => h("td", { class: "nw" }, r.owner || h("span", { class: "sub", text: "None" })) },
+             isCap(r) ? h("span", { class: "sub", text: "—" }) : r.parent ? r.parent : r.kind === "epic" ? miss("Not linked") : h("span", { class: "sub", text: "—" })) },
+  owner:   { label: "Owner", val: r => (r.owner || "~").toLowerCase(), cell: r => h("td", { class: "nw" }, r.owner || miss("No owner")) },
   status:  { label: "Status", val: r => r.status.toLowerCase(), cell: r => h("td", { class: "nw", text: r.status }) },
   health:  { label: "Health", val: r => HEALTH[shown(r)].rank, cell: r => h("td", { class: "nw", "data-tip": (r.reasons || []).join(" · ") }, badge(shown(r))) },
-  due:     { label: "Due", val: r => r.due || "9999", cell: r => h("td", { class: "nw" }, r.due ? fmt(r.due) : h("span", { class: "sub", text: "—" }),
+  due:     { label: "Due", val: r => r.due || "9999", cell: r => h("td", { class: "nw" }, r.due ? fmt(r.due) : isOpen(r) ? miss("No date") : h("span", { class: "sub", text: "—" }),
              r.due && isOpen(r) ? h("div", { class: "sub", text: rel(r.daysToDue) }) : null) },
   updated: { label: "Updated", val: r => r.updated || "", cell: r => h("td", { class: "nw" }, r.daysSinceUpdate == null ? "—" : rel(-r.daysSinceUpdate)) },
   actions: { label: "Actions", num: true, val: r => r.gaps.length, cell: r => h("td", { class: "num" },
@@ -2106,6 +2284,10 @@ function renderMethod() {
     h("h2", { text: "Weekly report" }),
     h("p", { text: "Each run saves a snapshot of the scored portfolio. The report compares this week's snapshot with the one from about a week before: what was completed or added, what went off track or recovered, and which statuses, due dates and owners moved. With no earlier snapshot, it falls back to Jira's created and resolved dates." }),
     h("p", { text: "Three elements are rated. Schedule: red if any capability is off track, amber if any is at risk. Momentum: red if a quarter or more of open work has gone stale, amber if anything has or nothing was completed. Data quality: green when 90% or more of open items carry an owner, a date, a link and their required fields; amber from 75%. Overall takes the worst of the three." }),
+    h("h2", { text: "What's not there" }),
+    h("p", null, "Missing things are shown, not left blank. In charts they're a hatched fill ", h("span", { class: "sw c-miss", style: "vertical-align:-1px" }),
+      "; in tables they're a marker like ", miss("No date"), ". The due-dates chart has a No date column, the Overview's What's missing card shows each field filled against empty, and Time in current status shows what hasn't moved."),
+    h("p", { text: "The weekly report pairs what was done with what wasn't: What didn't move sits next to What changed, Coming up lists work with no date alongside work that's due, and What's missing names every open item without an owner, a capability, epics, a description or a required field. “Didn't move” means not started, blocked or on hold for " + (R.stuckWeeks || 3) + "+ weeks, timed from the weekly snapshots (or, for not-started work with no history yet, from its created date)." }),
     h("h2", { text: "Actions" }),
     h("table", { class: "tbl" }, h("thead", null, h("tr", null, h("th", { text: "Check" }), h("th", { text: "Group" }), h("th", { text: "What to do" }))),
       h("tbody", null, CHECKS.map(c => h("tr", null, h("td", { text: c.label }), h("td", { text: c.group }), h("td", { text: c.hint }))))),
@@ -2126,14 +2308,15 @@ function openDrawer(key) {
   const u = safe(r.url); $("d-open").hidden = $("d-copy").hidden = !u; if (u) $("d-open").href = u;
   const p = r.parent ? BY_KEY.get(r.parent) : null;
   const muted = t => h("span", { class: "sub", text: t });
-  const kv = [["Status", r.status], ["Owner", r.owner || muted("Not set")],
-    [isCap(r) ? "Parent" : "Capability", r.parent ? (p ? h("button", { class: "linkish", style: "color:var(--link)", type: "button", onclick: () => openDrawer(p.key), text: p.key + " " + p.summary }) : r.parent) : muted("None")],
-    ["Due", r.due ? fmtY(r.due) + (isOpen(r) ? " (" + rel(r.daysToDue) + ")" : "") : muted("Not set")],
+  const kv = [["Status", r.status + (r.daysInStatus != null ? " (" + (r.statusSinceAtLeast ? "at least " : "") + plural(Math.floor(r.daysInStatus / 7), "week") + ")" : "")],
+    ["Owner", r.owner || miss("No owner")],
+    [isCap(r) ? "Parent" : "Capability", r.parent ? (p ? h("button", { class: "linkish", style: "color:var(--link)", type: "button", onclick: () => openDrawer(p.key), text: p.key + " " + p.summary }) : r.parent) : r.kind === "epic" ? miss("Not linked") : muted("None")],
+    ["Due", r.due ? fmtY(r.due) + (isOpen(r) ? " (" + rel(r.daysToDue) + ")" : "") : isOpen(r) ? miss("No date") : muted("Not set")],
     ["Last updated", r.updated ? fmtY(r.updated) + " (" + rel(-r.daysSinceUpdate) + ")" : "—"],
     ["Created", fmtY(r.created) || "—"]];
   if (r.resolved) kv.push(["Resolved", fmtY(r.resolved)]);
   if (r.rag) kv.push(["Reported RAG", RAG[r.rag]]);
-  for (const [l, v] of r.extra || []) kv.push([l, v || muted("—")]);
+  for (const [l, v] of r.extra || []) kv.push([l, v || miss("Empty")]);
   const body = [h("h2", { id: "d-title", text: r.summary }),
     h("dl", { class: "kv" }, kv.flatMap(([k, v]) => [h("dt", { text: k }), h("dd", null, v)])),
     h("h3", { text: "Health" }),
